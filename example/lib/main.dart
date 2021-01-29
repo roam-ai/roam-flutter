@@ -78,7 +78,15 @@ class _MyAppState extends State<MyApp> {
                     print('Initialization Error');
                   }
                 }),
-            RaisedButton(child: Text('Get Current Location'), onPressed: null)
+            RaisedButton(
+                child: Text('Create User'),
+                onPressed: () async {
+                  try {
+                    await RoamFlutter.createUser(description: 'Flutter User');
+                  } on PlatformException {
+                    print('Create User Error');
+                  }
+                })
           ],
         )),
       ),

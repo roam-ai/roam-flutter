@@ -5,6 +5,7 @@ import GeoSpark
 public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
   private static let METHOD_INITIALIZE = "initialize";
   private static let METHOD_GET_CURRENT_LOCATION = "getCurrentLocation";
+  private static let METHOD_CREATE_USER = "createUser";
 
   private static var channel: FlutterMethodChannel?;
 
@@ -20,6 +21,10 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
         let arguments = call.arguments as! [String: Any]
         let publishKey = arguments["publishKey"]  as! String;
         GeoSpark.intialize(publishKey)
+      case SwiftRoamFlutterPlugin.METHOD_CREATE_USER:
+        let arguments = call.arguments as! [String: Any]
+        let description = arguments["description"]  as! String;
+        GeoSpark.createUser(description)
       default:
         result("iOS " + UIDevice.current.systemVersion)
     }

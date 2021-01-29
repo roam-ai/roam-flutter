@@ -13,6 +13,7 @@ typedef void RoamCallBack({
 class RoamFlutter {
   static const String METHOD_INITIALIZE = "initialize";
   static const String METHOD_GET_CURRENT_LOCATION = "getCurrentLocation";
+  static const String METHOD_CREATE_USER = "createUser";
   static const MethodChannel _channel = const MethodChannel('roam_flutter');
   static RoamCallBack _callBack;
 
@@ -23,6 +24,17 @@ class RoamFlutter {
       'publishKey': publishKey
     };
     final bool result = await _channel.invokeMethod(METHOD_INITIALIZE, params);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<bool> createUser({
+    @required String description,
+  }) async {
+    final Map<String, dynamic> params = <String, dynamic>{
+      'description': description
+    };
+    final bool result = await _channel.invokeMethod(METHOD_CREATE_USER, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
