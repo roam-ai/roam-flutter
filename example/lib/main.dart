@@ -86,7 +86,16 @@ class _MyAppState extends State<MyApp> {
                   } on PlatformException {
                     print('Create User Error');
                   }
-                })
+                }),
+            RaisedButton(
+                child: Text('Update Current Location'),
+                onPressed: () async {
+                  try {
+                    await RoamFlutter.updateCurrentLocation(accuracy: 100);
+                  } on PlatformException {
+                    print('Update Current Location Error');
+                  }
+                }),
           ],
         )),
       ),

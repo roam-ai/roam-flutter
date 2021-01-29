@@ -14,6 +14,7 @@ class RoamFlutter {
   static const String METHOD_INITIALIZE = "initialize";
   static const String METHOD_GET_CURRENT_LOCATION = "getCurrentLocation";
   static const String METHOD_CREATE_USER = "createUser";
+  static const String METHOD_UPDATE_CURRENT_LOCATION = "updateCurrentLocation";
   static const MethodChannel _channel = const MethodChannel('roam_flutter');
   static RoamCallBack _callBack;
 
@@ -35,6 +36,16 @@ class RoamFlutter {
       'description': description
     };
     final bool result = await _channel.invokeMethod(METHOD_CREATE_USER, params);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<bool> updateCurrentLocation({
+    @required int accuracy,
+  }) async {
+    final Map<String, dynamic> params = <String, dynamic>{'accuracy': accuracy};
+    final bool result =
+        await _channel.invokeMethod(METHOD_UPDATE_CURRENT_LOCATION, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }

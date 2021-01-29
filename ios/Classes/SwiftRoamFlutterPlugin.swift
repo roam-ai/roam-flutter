@@ -6,6 +6,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
   private static let METHOD_INITIALIZE = "initialize";
   private static let METHOD_GET_CURRENT_LOCATION = "getCurrentLocation";
   private static let METHOD_CREATE_USER = "createUser";
+  private static let METHOD_UPDATE_CURRENT_LOCATION = "updateCurrentLocation";
 
   private static var channel: FlutterMethodChannel?;
 
@@ -25,6 +26,10 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
         let arguments = call.arguments as! [String: Any]
         let description = arguments["description"]  as! String;
         GeoSpark.createUser(description)
+      case SwiftRoamFlutterPlugin.METHOD_UPDATE_CURRENT_LOCATION:
+        let arguments = call.arguments as! [String: Any]
+        let accuracy = arguments["accuracy"]  as! Int;
+        GeoSpark.updateCurrentLocation(accuracy)
       default:
         result("iOS " + UIDevice.current.systemVersion)
     }
