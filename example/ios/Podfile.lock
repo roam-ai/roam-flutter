@@ -1,0 +1,69 @@
+PODS:
+  - AWSAuthCore (2.22.0):
+    - AWSCore (= 2.22.0)
+  - AWSCognitoIdentityProvider (2.22.0):
+    - AWSCognitoIdentityProviderASF (= 2.22.0)
+    - AWSCore (= 2.22.0)
+  - AWSCognitoIdentityProviderASF (2.22.0)
+  - AWSCore (2.22.0)
+  - AWSIoT (2.22.0):
+    - AWSCore (= 2.22.0)
+  - AWSMobileClient (2.22.0):
+    - AWSAuthCore (= 2.22.0)
+    - AWSCognitoIdentityProvider (= 2.22.0)
+    - AWSCognitoIdentityProviderASF (= 2.22.0)
+    - AWSCore (= 2.22.0)
+  - Flutter (1.0.0)
+  - GeoSpark (3.1.2):
+    - AWSIoT
+    - AWSMobileClient
+  - integration_test (0.0.1):
+    - Flutter
+  - "permission_handler (5.0.1+1)":
+    - Flutter
+  - roam_flutter (0.0.2):
+    - Flutter
+    - GeoSpark (~> 3.1.2)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - integration_test (from `.symlinks/plugins/integration_test/ios`)
+  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
+  - roam_flutter (from `.symlinks/plugins/roam_flutter/ios`)
+
+SPEC REPOS:
+  trunk:
+    - AWSAuthCore
+    - AWSCognitoIdentityProvider
+    - AWSCognitoIdentityProviderASF
+    - AWSCore
+    - AWSIoT
+    - AWSMobileClient
+    - GeoSpark
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  integration_test:
+    :path: ".symlinks/plugins/integration_test/ios"
+  permission_handler:
+    :path: ".symlinks/plugins/permission_handler/ios"
+  roam_flutter:
+    :path: ".symlinks/plugins/roam_flutter/ios"
+
+SPEC CHECKSUMS:
+  AWSAuthCore: b54e2008da479e5a6ffdb6b482821d8f5a9afaa4
+  AWSCognitoIdentityProvider: 32a91ad644e49e40235a408a8fbb96ea74891f19
+  AWSCognitoIdentityProviderASF: 8b92721c17f2951ecd5bcfb749d5534f2851c2c7
+  AWSCore: 8bd1def9cb0b6770c65b6d394f1c1cbc0a5562b7
+  AWSIoT: 708e1284bf67df14f263f8f76c6a7fb0e0e14e1f
+  AWSMobileClient: bba690cc09c6569cc1111141beaa4e2f789f536b
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  GeoSpark: e409452d309c203e99153f54dbde6b0133a4bb11
+  integration_test: 5ed24a436eb7ec17b6a13046e9bf7ca4a404e59e
+  permission_handler: eac8e15b4a1a3fba55b761d19f3f4e6b005d15b6
+  roam_flutter: 90394dd931aa23b3a1e80609ddd8725372d42024
+
+PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea
+
+COCOAPODS: 1.10.1
