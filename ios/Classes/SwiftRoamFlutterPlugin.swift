@@ -30,6 +30,19 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
         let arguments = call.arguments as! [String: Any]
         let accuracy = arguments["accuracy"]  as! Int;
         GeoSpark.updateCurrentLocation(accuracy)
+      case SwiftRoamFlutterPlugin.METHOD_GET_CURRENT_LOCATION:
+        let arguments = call.arguments as! [String: Any]
+        let accuracy = arguments["accuracy"]  as! Int;
+        GeoSpark.getCurrentLocation(accuracy) { (location, error) in
+        // let locationInput = ["latitude":location?.coordinate.latitude,"longitude":location?.coordinate.longitude];
+          let args: NSDictionary = [
+            "location": location
+          ]
+          dump(location)
+          print(SwiftRoamFlutterPlugin.channel)
+          print(args)
+          SwiftRoamFlutterPlugin.channel!.invokeMethod("callback", arguments: args);
+        }
       default:
         result("iOS " + UIDevice.current.systemVersion)
     }

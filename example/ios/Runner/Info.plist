@@ -10,6 +10,12 @@
 	</array>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Location</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Local Network</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_dartobservatory._tcp</string>
+	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

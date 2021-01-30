@@ -3,12 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-typedef void RoamCallBack({
-  @required String roamStatus,
-  Map<dynamic, dynamic> location,
-  List<Map<dynamic, dynamic>> roamEvents,
-  Map<dynamic, dynamic> roamUser,
-});
+typedef void RoamCallBack({Map<dynamic, dynamic> location});
 
 class RoamFlutter {
   static const String METHOD_INITIALIZE = "initialize";
@@ -50,15 +45,19 @@ class RoamFlutter {
     return result;
   }
 
+  static Future<bool> getCurrentLocation(
+      {@required int accuracy, RoamCallBack callBack}) async {
+    _callBack = callBack;
+    final Map<String, dynamic> params = <String, dynamic>{'accuracy': accuracy};
+    final bool result =
+        await _channel.invokeMethod(METHOD_GET_CURRENT_LOCATION, params);
+    return result;
+  }
+
   static Future<void> _methodCallHandler(MethodCall call) async {
     switch (call.method) {
       case 'callback':
-        _callBack(
-          roamStatus: call.arguments['roamStatus'],
-          location: call.arguments['location'],
-          roamEvents: call.arguments['roamEvents'],
-          roamUser: call.arguments['roamUser'],
-        );
+        _callBack(location: call.arguments['location']);
         break;
       default:
         print('This normally shouldn\'t happen.');
