@@ -10,6 +10,12 @@ class RoamFlutter {
   static const String METHOD_GET_CURRENT_LOCATION = "getCurrentLocation";
   static const String METHOD_CREATE_USER = "createUser";
   static const String METHOD_UPDATE_CURRENT_LOCATION = "updateCurrentLocation";
+  static const String METHOD_START_TRACKING = "startTracking";
+
+  static const String TRACKING_MODE_PASSIVE = "passive";
+  static const String TRACKING_MODE_REACTIVE = "reactive";
+  static const String TRACKING_MODE_ACTIVE = "active";
+
   static const MethodChannel _channel = const MethodChannel('roam_flutter');
   static RoamCallBack _callBack;
 
@@ -47,11 +53,19 @@ class RoamFlutter {
 
   static Future<void> getCurrentLocation(
       {@required int accuracy, RoamCallBack callBack}) async {
-    // _callBack = callBack;
     final Map<String, dynamic> params = <String, dynamic>{'accuracy': accuracy};
     final String result =
         await _channel.invokeMethod(METHOD_GET_CURRENT_LOCATION, params);
     callBack(location: result);
+  }
+
+  static Future<bool> startTracking({@required String trackingMode}) async {
+    final Map<String, dynamic> params = <String, dynamic>{
+      'trackingMode': trackingMode
+    };
+    final bool result =
+        await _channel.invokeMethod(METHOD_START_TRACKING, params);
+    return result;
   }
 
   static Future<void> _methodCallHandler(MethodCall call) async {

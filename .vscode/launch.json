@@ -5,6 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "roam_flutter_release",
+            "type": "dart",
+            "request": "launch",
+            "flutterMode": "release"
+        },
+        {
             "name": "roam_flutter_profile",
             "request": "launch",
             "type": "dart",

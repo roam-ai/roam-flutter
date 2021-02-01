@@ -7,6 +7,11 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
   private static let METHOD_GET_CURRENT_LOCATION = "getCurrentLocation";
   private static let METHOD_CREATE_USER = "createUser";
   private static let METHOD_UPDATE_CURRENT_LOCATION = "updateCurrentLocation";
+  private static let METHOD_START_TRACKING = "startTracking";
+
+  private static let TRACKING_MODE_PASSIVE = "passive";
+  private static let TRACKING_MODE_REACTIVE = "reactive";
+  private static let TRACKING_MODE_ACTIVE = "active";
 
   private static var channel: FlutterMethodChannel?;
 
@@ -51,6 +56,27 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
               result(theJSONText)
               }
         }
+      case SwiftRoamFlutterPlugin.METHOD_START_TRACKING:
+        let arguments = call.arguments as! [String: Any]
+        let trackingMode = arguments["trackingMode"]  as? String;
+        var options = GeoSparkTrackingMode.active
+        // guard let localtrackingMode = trackingMode else {
+        //   GeoSpark.startTracking(trackingMode as GeoSparkTrackingMode);
+        //   result(true);
+        //   return;
+        //   }
+        switch (trackingMode!) {
+          case SwiftRoamFlutterPlugin.TRACKING_MODE_PASSIVE:
+            options = GeoSparkTrackingMode.passive
+          case SwiftRoamFlutterPlugin.TRACKING_MODE_REACTIVE:
+            options = GeoSparkTrackingMode.reactive
+          case SwiftRoamFlutterPlugin.TRACKING_MODE_ACTIVE:
+            options = GeoSparkTrackingMode.active
+          default:
+            options = GeoSparkTrackingMode.active
+          }
+      GeoSpark.startTracking(options)
+      result(true);
       default:
         result("iOS " + UIDevice.current.systemVersion)
     }

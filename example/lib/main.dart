@@ -121,6 +121,15 @@ class _MyAppState extends State<MyApp> {
                     print('Get Current Location Error');
                   }
                 }),
+            RaisedButton(
+                child: Text('Start Tracking'),
+                onPressed: () async {
+                  try {
+                    await RoamFlutter.startTracking(trackingMode: 'passive');
+                  } on PlatformException {
+                    print('Start Tracking Error');
+                  }
+                }),
           ],
         )),
       ),
