@@ -87,7 +87,7 @@ class _MyAppState extends State<MyApp> {
                 child: Text('Create User'),
                 onPressed: () async {
                   try {
-                    await RoamFlutter.createUser(description: 'Flutter User');
+                    await RoamFlutter.createUser(description: 'Joe');
                   } on PlatformException {
                     print('Create User Error');
                   }
@@ -125,9 +125,27 @@ class _MyAppState extends State<MyApp> {
                 child: Text('Start Tracking'),
                 onPressed: () async {
                   try {
-                    await RoamFlutter.startTracking(trackingMode: 'passive');
+                    await RoamFlutter.startTracking(trackingMode: 'active');
                   } on PlatformException {
                     print('Start Tracking Error');
+                  }
+                }),
+            RaisedButton(
+                child: Text('Stop Tracking'),
+                onPressed: () async {
+                  try {
+                    await RoamFlutter.stopTracking();
+                  } on PlatformException {
+                    print('Stop Tracking Error');
+                  }
+                }),
+            RaisedButton(
+                child: Text('Logout User'),
+                onPressed: () async {
+                  try {
+                    await RoamFlutter.logoutUser();
+                  } on PlatformException {
+                    print('Logout User Error');
                   }
                 }),
           ],

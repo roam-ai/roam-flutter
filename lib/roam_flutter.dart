@@ -11,6 +11,8 @@ class RoamFlutter {
   static const String METHOD_CREATE_USER = "createUser";
   static const String METHOD_UPDATE_CURRENT_LOCATION = "updateCurrentLocation";
   static const String METHOD_START_TRACKING = "startTracking";
+  static const String METHOD_STOP_TRACKING = "stopTracking";
+  static const String METHOD_LOGOUT_USER = "logoutUser";
 
   static const String TRACKING_MODE_PASSIVE = "passive";
   static const String TRACKING_MODE_REACTIVE = "reactive";
@@ -65,6 +67,18 @@ class RoamFlutter {
     };
     final bool result =
         await _channel.invokeMethod(METHOD_START_TRACKING, params);
+    return result;
+  }
+
+  static Future<bool> logoutUser() async {
+    final bool result = await _channel.invokeMethod(METHOD_LOGOUT_USER);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<bool> stopTracking() async {
+    final bool result = await _channel.invokeMethod(METHOD_STOP_TRACKING);
+    _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 

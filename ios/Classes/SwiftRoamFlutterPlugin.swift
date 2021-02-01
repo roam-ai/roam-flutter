@@ -8,6 +8,8 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
   private static let METHOD_CREATE_USER = "createUser";
   private static let METHOD_UPDATE_CURRENT_LOCATION = "updateCurrentLocation";
   private static let METHOD_START_TRACKING = "startTracking";
+  private static let METHOD_STOP_TRACKING = "stopTracking";
+  private static let METHOD_LOGOUT_USER = "logoutUser";
 
   private static let TRACKING_MODE_PASSIVE = "passive";
   private static let TRACKING_MODE_REACTIVE = "reactive";
@@ -77,6 +79,10 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
           }
       GeoSpark.startTracking(options)
       result(true);
+      case SwiftRoamFlutterPlugin.METHOD_STOP_TRACKING:
+        GeoSpark.stopTracking()
+      case SwiftRoamFlutterPlugin.METHOD_LOGOUT_USER:
+        GeoSpark.logoutUser()
       default:
         result("iOS " + UIDevice.current.systemVersion)
     }
