@@ -18,7 +18,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   bool isTracking = false;
-  String location;
+  String myLocation;
 
   @override
   void initState() {
@@ -59,6 +59,10 @@ class _MyAppState extends State<MyApp> {
           children: [
             Text('Running on: $_platformVersion\n'),
             Text('Tracking status: $isTracking\n'),
+            Text(
+              'Received Location:\n $myLocation\n',
+              textAlign: TextAlign.center,
+            ),
             RaisedButton(
                 child: Text('Request Location Permissions'),
                 onPressed: () async {
@@ -100,16 +104,19 @@ class _MyAppState extends State<MyApp> {
             RaisedButton(
                 child: Text('Get Current Location'),
                 onPressed: () async {
+                  setState(() {
+                    myLocation = "fetching location..";
+                  });
                   try {
                     await RoamFlutter.getCurrentLocation(
-                        accuracy: 100,
-                        callBack: ({location}) {
-                          print('Callback Executed');
-                          setState(() {
-                            location = location;
-                          });
-                          print([location]);
+                      accuracy: 50,
+                      callBack: ({location}) {
+                        setState(() {
+                          myLocation = location;
                         });
+                        print(location);
+                      },
+                    );
                   } on PlatformException {
                     print('Get Current Location Error');
                   }

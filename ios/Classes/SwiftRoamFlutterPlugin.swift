@@ -34,14 +34,22 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
         let arguments = call.arguments as! [String: Any]
         let accuracy = arguments["accuracy"]  as! Int;
         GeoSpark.getCurrentLocation(accuracy) { (location, error) in
-        // let locationInput = ["latitude":location?.coordinate.latitude,"longitude":location?.coordinate.longitude];
-          let args: NSDictionary = [
-            "location": location
+          let coordinates: NSDictionary = [
+            "latitude": location?.coordinate.latitude as Any,
+            "longitude": location?.coordinate.longitude as Any
           ]
-          dump(location)
-          print(SwiftRoamFlutterPlugin.channel)
-          print(args)
-          SwiftRoamFlutterPlugin.channel!.invokeMethod("callback", arguments: args);
+          let location: NSDictionary = [
+            "coordinate": coordinates,
+            "altitude":location?.altitude as Any,
+            "horizontalAccuracy":location?.horizontalAccuracy as Any,
+            "verticalAccuracy":location?.verticalAccuracy as Any
+          ]
+          if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: location,
+            options: []) {
+              let theJSONText = String(data: theJSONData,encoding: .ascii)
+              result(theJSONText)
+              }
         }
       default:
         result("iOS " + UIDevice.current.systemVersion)

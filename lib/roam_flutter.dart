@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-typedef void RoamCallBack({Map<dynamic, dynamic> location});
+typedef void RoamCallBack({String location});
 
 class RoamFlutter {
   static const String METHOD_INITIALIZE = "initialize";
@@ -45,13 +45,13 @@ class RoamFlutter {
     return result;
   }
 
-  static Future<bool> getCurrentLocation(
+  static Future<void> getCurrentLocation(
       {@required int accuracy, RoamCallBack callBack}) async {
-    _callBack = callBack;
+    // _callBack = callBack;
     final Map<String, dynamic> params = <String, dynamic>{'accuracy': accuracy};
-    final bool result =
+    final String result =
         await _channel.invokeMethod(METHOD_GET_CURRENT_LOCATION, params);
-    return result;
+    callBack(location: result);
   }
 
   static Future<void> _methodCallHandler(MethodCall call) async {
