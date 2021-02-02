@@ -21,7 +21,32 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
     let channel = FlutterMethodChannel(name: "roam_flutter", binaryMessenger: registrar.messenger())
     let instance = SwiftRoamFlutterPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
+    registrar.addApplicationDelegate(instance)
   }
+
+  public func didUpdateLocation(_ geospark: GeoSparkLocation) {
+    debugPrint("Location Received")
+    }
+
+  public func applicationDidBecomeActive(_ application: UIApplication) {
+    debugPrint("applicationDidBecomeActive")
+    }
+
+  public func applicationWillTerminate(_ application: UIApplication) {
+    debugPrint("applicationWillTerminate")
+    }
+
+  public func applicationWillResignActive(_ application: UIApplication) {
+    debugPrint("applicationWillResignActive")
+    }
+
+  public func applicationDidEnterBackground(_ application: UIApplication) {
+    debugPrint("applicationDidEnterBackground")
+    }
+
+  public func applicationWillEnterForeground(_ application: UIApplication) {
+    print("applicationWillEnterForeground")
+    }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch (call.method) {

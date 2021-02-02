@@ -109,7 +109,7 @@ class _MyAppState extends State<MyApp> {
                   });
                   try {
                     await RoamFlutter.getCurrentLocation(
-                      accuracy: 50,
+                      accuracy: 100,
                       callBack: ({location}) {
                         setState(() {
                           myLocation = location;
