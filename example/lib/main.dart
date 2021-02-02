@@ -108,6 +108,25 @@ class _MyAppState extends State<MyApp> {
                   }
                 }),
             RaisedButton(
+                child: Text('Get User'),
+                onPressed: () async {
+                  setState(() {
+                    myUser = "getting user..";
+                  });
+                  try {
+                    await RoamFlutter.getUser(
+                        userId: '60181b1f521e0249023652bc',
+                        callBack: ({user}) {
+                          setState(() {
+                            myUser = user;
+                          });
+                          print(user);
+                        });
+                  } on PlatformException {
+                    print('Create User Error');
+                  }
+                }),
+            RaisedButton(
                 child: Text('Update Current Location'),
                 onPressed: () async {
                   try {

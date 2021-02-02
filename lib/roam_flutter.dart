@@ -14,6 +14,7 @@ class RoamFlutter {
   static const String METHOD_START_TRACKING = "startTracking";
   static const String METHOD_STOP_TRACKING = "stopTracking";
   static const String METHOD_LOGOUT_USER = "logoutUser";
+  static const String METHOD_GET_USER = "getUser";
 
   static const String TRACKING_MODE_PASSIVE = "passive";
   static const String TRACKING_MODE_REACTIVE = "reactive";
@@ -41,6 +42,13 @@ class RoamFlutter {
     };
     final String result =
         await _channel.invokeMethod(METHOD_CREATE_USER, params);
+    callBack(user: result);
+  }
+
+  static Future<void> getUser(
+      {@required String userId, RoamUserCallBack callBack}) async {
+    final Map<String, dynamic> params = <String, dynamic>{'userId': userId};
+    final String result = await _channel.invokeMethod(METHOD_GET_USER, params);
     callBack(user: result);
   }
 

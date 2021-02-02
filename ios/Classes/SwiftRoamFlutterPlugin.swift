@@ -2,7 +2,7 @@ import Flutter
 import UIKit
 import GeoSpark
 
-public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
+public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
   private static let METHOD_INITIALIZE = "initialize";
   private static let METHOD_GET_CURRENT_LOCATION = "getCurrentLocation";
   private static let METHOD_CREATE_USER = "createUser";
@@ -10,6 +10,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
   private static let METHOD_START_TRACKING = "startTracking";
   private static let METHOD_STOP_TRACKING = "stopTracking";
   private static let METHOD_LOGOUT_USER = "logoutUser";
+  private static let METHOD_GET_USER = "getUser";
 
   private static let TRACKING_MODE_PASSIVE = "passive";
   private static let TRACKING_MODE_REACTIVE = "reactive";
@@ -59,7 +60,22 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
         let description = arguments["description"]  as! String;
         GeoSpark.createUser(description) {(roamUser, error) in
           let user: NSDictionary = [
-            "userId": roamUser?.userId,
+            "userId": roamUser?.userId as Any,
+            "description":roamUser?.userDescription as Any
+          ]
+        if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: user,
+            options: []) {
+              let theJSONText = String(data: theJSONData,encoding: .ascii)
+              result(theJSONText)
+              }
+        }
+      case SwiftRoamFlutterPlugin.METHOD_GET_USER:
+        let arguments = call.arguments as! [String: Any]
+        let userId = arguments["userId"]  as! String;
+        GeoSpark.getUser(userId) {(roamUser, error) in
+          let user: NSDictionary = [
+            "userId": roamUser?.userId as Any,
             "description":roamUser?.userDescription as Any
           ]
         if let theJSONData = try? JSONSerialization.data(
