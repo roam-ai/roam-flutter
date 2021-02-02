@@ -19,6 +19,7 @@ class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   bool isTracking = false;
   String myLocation;
+  String myUser;
 
   @override
   void initState() {
@@ -63,6 +64,10 @@ class _MyAppState extends State<MyApp> {
               'Received Location:\n $myLocation\n',
               textAlign: TextAlign.center,
             ),
+            Text(
+              'User:\n $myUser\n',
+              textAlign: TextAlign.center,
+            ),
             RaisedButton(
                 child: Text('Request Location Permissions'),
                 onPressed: () async {
@@ -86,8 +91,18 @@ class _MyAppState extends State<MyApp> {
             RaisedButton(
                 child: Text('Create User'),
                 onPressed: () async {
+                  setState(() {
+                    myUser = "creating user..";
+                  });
                   try {
-                    await RoamFlutter.createUser(description: 'Joe');
+                    await RoamFlutter.createUser(
+                        description: 'Joe',
+                        callBack: ({user}) {
+                          setState(() {
+                            myUser = user;
+                          });
+                          print(user);
+                        });
                   } on PlatformException {
                     print('Create User Error');
                   }

@@ -57,7 +57,18 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
       case SwiftRoamFlutterPlugin.METHOD_CREATE_USER:
         let arguments = call.arguments as! [String: Any]
         let description = arguments["description"]  as! String;
-        GeoSpark.createUser(description)
+        GeoSpark.createUser(description) {(roamUser, error) in
+          let user: NSDictionary = [
+            "userId": roamUser?.userId,
+            "description":roamUser?.userDescription as Any
+          ]
+        if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: user,
+            options: []) {
+              let theJSONText = String(data: theJSONData,encoding: .ascii)
+              result(theJSONText)
+              }
+        }
       case SwiftRoamFlutterPlugin.METHOD_UPDATE_CURRENT_LOCATION:
         let arguments = call.arguments as! [String: Any]
         let accuracy = arguments["accuracy"]  as! Int;

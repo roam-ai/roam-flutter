@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 typedef void RoamCallBack({String location});
+typedef void RoamUserCallBack({String user});
 
 class RoamFlutter {
   static const String METHOD_INITIALIZE = "initialize";
@@ -20,6 +21,7 @@ class RoamFlutter {
 
   static const MethodChannel _channel = const MethodChannel('roam_flutter');
   static RoamCallBack _callBack;
+  static RoamUserCallBack _userCallBack;
 
   static Future<bool> initialize({
     @required String publishKey,
@@ -32,15 +34,14 @@ class RoamFlutter {
     return result;
   }
 
-  static Future<bool> createUser({
-    @required String description,
-  }) async {
+  static Future<void> createUser(
+      {@required String description, RoamUserCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{
       'description': description
     };
-    final bool result = await _channel.invokeMethod(METHOD_CREATE_USER, params);
-    _channel.setMethodCallHandler(_methodCallHandler);
-    return result;
+    final String result =
+        await _channel.invokeMethod(METHOD_CREATE_USER, params);
+    callBack(user: result);
   }
 
   static Future<bool> updateCurrentLocation({
@@ -85,7 +86,12 @@ class RoamFlutter {
   static Future<void> _methodCallHandler(MethodCall call) async {
     switch (call.method) {
       case 'callback':
-        _callBack(location: call.arguments['location']);
+        _callBack(
+          location: call.arguments['location'],
+        );
+        _userCallBack(
+          user: call.arguments['user'],
+        );
         break;
       default:
         print('This normally shouldn\'t happen.');
