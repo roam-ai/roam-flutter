@@ -13,6 +13,6 @@ import GeoSpark
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
     func didUpdateLocation(_ location: GeoSparkLocation) {
-        print("Location Received")
+        print("Location Received App")
     }
 }

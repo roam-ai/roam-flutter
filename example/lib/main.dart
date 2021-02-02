@@ -127,6 +127,38 @@ class _MyAppState extends State<MyApp> {
                   }
                 }),
             RaisedButton(
+                child: Text('Toogle Listener'),
+                onPressed: () async {
+                  setState(() {
+                    myUser = "updating user listener status..";
+                  });
+                  try {
+                    await RoamFlutter.toggleListener(
+                        locations: true,
+                        events: true,
+                        callBack: ({user}) {
+                          setState(() {
+                            myUser = user;
+                          });
+                          print(user);
+                        });
+                  } on PlatformException {
+                    print('Toggle Listener Error');
+                  }
+                }),
+            RaisedButton(
+                child: Text('Subscribe Location'),
+                onPressed: () async {
+                  setState(() {
+                    myUser = "user location subscribed";
+                  });
+                  try {
+                    await RoamFlutter.subscribeLocation();
+                  } on PlatformException {
+                    print('Subscribe Location Error');
+                  }
+                }),
+            RaisedButton(
                 child: Text('Update Current Location'),
                 onPressed: () async {
                   try {

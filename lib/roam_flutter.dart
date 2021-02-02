@@ -15,6 +15,8 @@ class RoamFlutter {
   static const String METHOD_STOP_TRACKING = "stopTracking";
   static const String METHOD_LOGOUT_USER = "logoutUser";
   static const String METHOD_GET_USER = "getUser";
+  static const String METHOD_TOGGLE_LISTENER = "toggleListener";
+  static const String METHOD_SUBSCRIBE_LOCATION = "subscribeLocation";
 
   static const String TRACKING_MODE_PASSIVE = "passive";
   static const String TRACKING_MODE_REACTIVE = "reactive";
@@ -52,6 +54,19 @@ class RoamFlutter {
     callBack(user: result);
   }
 
+  static Future<void> toggleListener(
+      {@required bool events,
+      bool locations,
+      RoamUserCallBack callBack}) async {
+    final Map<String, dynamic> params = <String, dynamic>{
+      'events': events,
+      'locations': locations
+    };
+    final String result =
+        await _channel.invokeMethod(METHOD_TOGGLE_LISTENER, params);
+    callBack(user: result);
+  }
+
   static Future<bool> updateCurrentLocation({
     @required int accuracy,
   }) async {
@@ -81,6 +96,12 @@ class RoamFlutter {
 
   static Future<bool> logoutUser() async {
     final bool result = await _channel.invokeMethod(METHOD_LOGOUT_USER);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<bool> subscribeLocation() async {
+    final bool result = await _channel.invokeMethod(METHOD_SUBSCRIBE_LOCATION);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
