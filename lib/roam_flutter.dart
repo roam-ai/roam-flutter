@@ -16,6 +16,7 @@ class RoamFlutter {
   static const String METHOD_LOGOUT_USER = "logoutUser";
   static const String METHOD_GET_USER = "getUser";
   static const String METHOD_TOGGLE_LISTENER = "toggleListener";
+  static const String METHOD_GET_LISTENER_STATUS = "getListenerStatus";
   static const String METHOD_SUBSCRIBE_LOCATION = "subscribeLocation";
 
   static const String TRACKING_MODE_PASSIVE = "passive";
@@ -64,6 +65,12 @@ class RoamFlutter {
     };
     final String result =
         await _channel.invokeMethod(METHOD_TOGGLE_LISTENER, params);
+    callBack(user: result);
+  }
+
+  static Future<void> getListenerStatus({RoamUserCallBack callBack}) async {
+    final String result =
+        await _channel.invokeMethod(METHOD_GET_LISTENER_STATUS);
     callBack(user: result);
   }
 

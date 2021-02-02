@@ -147,6 +147,23 @@ class _MyAppState extends State<MyApp> {
                   }
                 }),
             RaisedButton(
+                child: Text('Get Listener Status'),
+                onPressed: () async {
+                  setState(() {
+                    myUser = "fetching user listener status..";
+                  });
+                  try {
+                    await RoamFlutter.getListenerStatus(callBack: ({user}) {
+                      setState(() {
+                        myUser = user;
+                      });
+                      print(user);
+                    });
+                  } on PlatformException {
+                    print('Get Listener Status Error');
+                  }
+                }),
+            RaisedButton(
                 child: Text('Subscribe Location'),
                 onPressed: () async {
                   setState(() {

@@ -89,6 +89,19 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
               result(theJSONText)
               }
         }
+      case SwiftRoamFlutterPlugin.METHOD_GET_LISTENER_STATUS:
+        GeoSpark.getListenerStatus() {(roamUser, error) in
+          let user: NSDictionary = [
+            "locationListener": roamUser?.locationListener,
+            "eventsListener":roamUser?.eventsListener
+          ]
+          if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: user,
+            options: []) {
+              let theJSONText = String(data: theJSONData,encoding: .ascii)
+              result(theJSONText)
+              }
+        }
       case SwiftRoamFlutterPlugin.METHOD_GET_USER:
         let arguments = call.arguments as! [String: Any]
         let userId = arguments["userId"]  as! String;
