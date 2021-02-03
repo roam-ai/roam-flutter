@@ -22,10 +22,30 @@ class _MyAppState extends State<MyApp> {
   String myUser;
   bool isAccuracyEngineEnabled = false;
 
+  //Native to Flutter Channel
+  static const platform = const MethodChannel("myChannel");
+
   @override
   void initState() {
+    platform.setMethodCallHandler(
+        nativeMethodCallHandler); //Native to Flutter Channel
     super.initState();
     initPlatformState();
+  }
+
+  //Native to Flutter Channel
+  Future<dynamic> nativeMethodCallHandler(MethodCall methodCall) async {
+    switch (methodCall.method) {
+      case "location":
+        print(methodCall.arguments);
+        setState(() {
+          myLocation = methodCall.arguments;
+        });
+        break;
+      default:
+        return "Nothing";
+        break;
+    }
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
