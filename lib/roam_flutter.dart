@@ -16,8 +16,11 @@ class RoamFlutter {
   static const String METHOD_LOGOUT_USER = "logoutUser";
   static const String METHOD_GET_USER = "getUser";
   static const String METHOD_TOGGLE_LISTENER = "toggleListener";
+  static const String METHOD_TOGGLE_EVENTS = "toggleEvents";
   static const String METHOD_GET_LISTENER_STATUS = "getListenerStatus";
   static const String METHOD_SUBSCRIBE_LOCATION = "subscribeLocation";
+  static const String METHOD_SUBSCRIBE_USER_LOCATION = "subscribeUserLocation";
+  static const String METHOD_SUBSCRIBE_EVENTS = "subscribeEvents";
 
   static const String TRACKING_MODE_PASSIVE = "passive";
   static const String TRACKING_MODE_REACTIVE = "reactive";
@@ -68,6 +71,23 @@ class RoamFlutter {
     callBack(user: result);
   }
 
+  static Future<void> toggleEvents(
+      {@required bool location,
+      bool geofence,
+      bool trips,
+      bool movingGeofence,
+      RoamUserCallBack callBack}) async {
+    final Map<String, dynamic> params = <String, dynamic>{
+      'geofence': geofence,
+      'location': location,
+      'trips': trips,
+      'movingGeofence': movingGeofence
+    };
+    final String result =
+        await _channel.invokeMethod(METHOD_TOGGLE_EVENTS, params);
+    callBack(user: result);
+  }
+
   static Future<void> getListenerStatus({RoamUserCallBack callBack}) async {
     final String result =
         await _channel.invokeMethod(METHOD_GET_LISTENER_STATUS);
@@ -109,6 +129,22 @@ class RoamFlutter {
 
   static Future<bool> subscribeLocation() async {
     final bool result = await _channel.invokeMethod(METHOD_SUBSCRIBE_LOCATION);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<bool> subscribeEvents() async {
+    final bool result = await _channel.invokeMethod(METHOD_SUBSCRIBE_EVENTS);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<bool> subscribeUserLocation({
+    @required String userId,
+  }) async {
+    final Map<String, dynamic> params = <String, dynamic>{'userId': userId};
+    final bool result =
+        await _channel.invokeMethod(METHOD_SUBSCRIBE_USER_LOCATION, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }

@@ -54,7 +54,7 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Roam Plugin Example App'),
         ),
-        body: Center(
+        body: SingleChildScrollView(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -147,6 +147,28 @@ class _MyAppState extends State<MyApp> {
                   }
                 }),
             RaisedButton(
+                child: Text('Toogle Events'),
+                onPressed: () async {
+                  setState(() {
+                    myUser = "updating user events status..";
+                  });
+                  try {
+                    await RoamFlutter.toggleEvents(
+                        location: true,
+                        geofence: true,
+                        trips: true,
+                        movingGeofence: true,
+                        callBack: ({user}) {
+                          setState(() {
+                            myUser = user;
+                          });
+                          print(user);
+                        });
+                  } on PlatformException {
+                    print('Toggle Events Error');
+                  }
+                }),
+            RaisedButton(
                 child: Text('Get Listener Status'),
                 onPressed: () async {
                   setState(() {
@@ -173,6 +195,31 @@ class _MyAppState extends State<MyApp> {
                     await RoamFlutter.subscribeLocation();
                   } on PlatformException {
                     print('Subscribe Location Error');
+                  }
+                }),
+            RaisedButton(
+                child: Text('Subscribe User Location'),
+                onPressed: () async {
+                  try {
+                    setState(() {
+                      myUser = "user location subscribed";
+                    });
+                    await RoamFlutter.subscribeUserLocation(
+                        userId: '60181b1f521e0249023652bc');
+                  } on PlatformException {
+                    print('Subscribe User Location Error');
+                  }
+                }),
+            RaisedButton(
+                child: Text('Subscribe Events'),
+                onPressed: () async {
+                  try {
+                    setState(() {
+                      myUser = "user events subscribed";
+                    });
+                    await RoamFlutter.subscribeEvents();
+                  } on PlatformException {
+                    print('Subscribe Events Error');
                   }
                 }),
             RaisedButton(

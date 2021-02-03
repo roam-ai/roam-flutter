@@ -13,7 +13,10 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
   private static let METHOD_GET_USER = "getUser";
   private static let METHOD_TOGGLE_LISTENER = "toggleListener";
   private static let METHOD_GET_LISTENER_STATUS = "getListenerStatus";
+  private static let METHOD_TOGGLE_EVENTS = "toggleEvents";
   private static let METHOD_SUBSCRIBE_LOCATION = "subscribeLocation";
+  private static let METHOD_SUBSCRIBE_USER_LOCATION = "subscribeUserLocation";
+  private static let METHOD_SUBSCRIBE_EVENTS = "subscribeEvents";
 
   private static let TRACKING_MODE_PASSIVE = "passive";
   private static let TRACKING_MODE_REACTIVE = "reactive";
@@ -81,6 +84,26 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
           let user: NSDictionary = [
             "locationListener": roamUser?.locationListener,
             "eventsListener":roamUser?.eventsListener
+          ]
+          if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: user,
+            options: []) {
+              let theJSONText = String(data: theJSONData,encoding: .ascii)
+              result(theJSONText)
+              }
+        }
+      case SwiftRoamFlutterPlugin.METHOD_TOGGLE_EVENTS:
+        let arguments = call.arguments as! [String: Any]
+        let Geofence = arguments["geofence"]  as! Bool;
+        let Location = arguments["location"]  as! Bool;
+        let Trips = arguments["trips"]  as! Bool;
+        let MovingGeofence = arguments["movingGeofence"]  as! Bool;
+        GeoSpark.toggleEvents(Geofence: Geofence, Trip: Trips, Location: Location, MovingGeofence: MovingGeofence) {(roamUser, error) in
+          let user: NSDictionary = [
+            "locationEvents": roamUser?.locationEvents,
+            "geofenceEvents":roamUser?.geofenceEvents,
+            "tripsEvents":roamUser?.tripsEvents,
+            "movingGeofenceEvents":roamUser?.nearbyEvents,
           ]
           if let theJSONData = try? JSONSerialization.data(
             withJSONObject: user,
@@ -169,6 +192,12 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
         GeoSpark.logoutUser()
       case SwiftRoamFlutterPlugin.METHOD_SUBSCRIBE_LOCATION:
         GeoSpark.subscribeLocation()
+      case SwiftRoamFlutterPlugin.METHOD_SUBSCRIBE_EVENTS:
+        GeoSpark.subscribeEvents()
+      case SwiftRoamFlutterPlugin.METHOD_SUBSCRIBE_USER_LOCATION:
+        let arguments = call.arguments as! [String: Any]
+        let userId = arguments["userId"]  as! String;
+        GeoSpark.subscribeUserLocation(userId)
       default:
         result("iOS " + UIDevice.current.systemVersion)
     }
