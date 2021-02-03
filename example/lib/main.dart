@@ -20,6 +20,7 @@ class _MyAppState extends State<MyApp> {
   bool isTracking = false;
   String myLocation;
   String myUser;
+  bool isAccuracyEngineEnabled = false;
 
   @override
   void initState() {
@@ -60,6 +61,7 @@ class _MyAppState extends State<MyApp> {
           children: [
             Text('Running on: $_platformVersion\n'),
             Text('Tracking status: $isTracking\n'),
+            Text('Accuracy Engine status: $isAccuracyEngineEnabled\n'),
             Text(
               'Received Location:\n $myLocation\n',
               textAlign: TextAlign.center,
@@ -252,6 +254,30 @@ class _MyAppState extends State<MyApp> {
                   }
                 }),
             RaisedButton(
+                child: Text('Enable Accuracy Engine'),
+                onPressed: () async {
+                  setState(() {
+                    isAccuracyEngineEnabled = true;
+                  });
+                  try {
+                    await RoamFlutter.enableAccuracyEngine();
+                  } on PlatformException {
+                    print('Enable Accuracy Engine Error');
+                  }
+                }),
+            RaisedButton(
+                child: Text('Disable Accuracy Engine'),
+                onPressed: () async {
+                  setState(() {
+                    isAccuracyEngineEnabled = false;
+                  });
+                  try {
+                    await RoamFlutter.disableAccuracyEngine();
+                  } on PlatformException {
+                    print('Disable Accuracy Engine Error');
+                  }
+                }),
+            RaisedButton(
                 child: Text('Start Tracking'),
                 onPressed: () async {
                   try {
@@ -278,6 +304,7 @@ class _MyAppState extends State<MyApp> {
                     print('Logout User Error');
                   }
                 }),
+            RaisedButton(child: Text('Trips'), onPressed: null),
           ],
         )),
       ),

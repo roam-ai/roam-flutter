@@ -17,6 +17,8 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
   private static let METHOD_SUBSCRIBE_LOCATION = "subscribeLocation";
   private static let METHOD_SUBSCRIBE_USER_LOCATION = "subscribeUserLocation";
   private static let METHOD_SUBSCRIBE_EVENTS = "subscribeEvents";
+  private static let METHOD_ENABLE_ACCURACY_ENGINE = "enableAccuracyEngine";
+  private static let METHOD_DISABLE_ACCURACY_ENGINE = "disableAccuracyEngine";
 
   private static let TRACKING_MODE_PASSIVE = "passive";
   private static let TRACKING_MODE_REACTIVE = "reactive";
@@ -194,6 +196,10 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
         GeoSpark.subscribeLocation()
       case SwiftRoamFlutterPlugin.METHOD_SUBSCRIBE_EVENTS:
         GeoSpark.subscribeEvents()
+      case SwiftRoamFlutterPlugin.METHOD_ENABLE_ACCURACY_ENGINE:
+        GeoSpark.enableAccuracyEngine()
+      case SwiftRoamFlutterPlugin.METHOD_DISABLE_ACCURACY_ENGINE:
+        GeoSpark.disableAccuracyEngine()
       case SwiftRoamFlutterPlugin.METHOD_SUBSCRIBE_USER_LOCATION:
         let arguments = call.arguments as! [String: Any]
         let userId = arguments["userId"]  as! String;

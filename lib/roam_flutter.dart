@@ -21,6 +21,8 @@ class RoamFlutter {
   static const String METHOD_SUBSCRIBE_LOCATION = "subscribeLocation";
   static const String METHOD_SUBSCRIBE_USER_LOCATION = "subscribeUserLocation";
   static const String METHOD_SUBSCRIBE_EVENTS = "subscribeEvents";
+  static const String METHOD_ENABLE_ACCURACY_ENGINE = "enableAccuracyEngine";
+  static const String METHOD_DISABLE_ACCURACY_ENGINE = "disableAccuracyEngine";
 
   static const String TRACKING_MODE_PASSIVE = "passive";
   static const String TRACKING_MODE_REACTIVE = "reactive";
@@ -151,6 +153,20 @@ class RoamFlutter {
 
   static Future<bool> stopTracking() async {
     final bool result = await _channel.invokeMethod(METHOD_STOP_TRACKING);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<bool> enableAccuracyEngine() async {
+    final bool result =
+        await _channel.invokeMethod(METHOD_ENABLE_ACCURACY_ENGINE);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<bool> disableAccuracyEngine() async {
+    final bool result =
+        await _channel.invokeMethod(METHOD_DISABLE_ACCURACY_ENGINE);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
