@@ -1,4 +1,4 @@
-![Roam](https://raw.githubusercontent.com/geosparklabs/roam-flutter/master/logo.png?v=3)
+![Roam](https://github.com/geosparks/roam-flutter/blob/master/logo.png?raw=true)
 
 [Roam](https://roam.ai) is the location intelligence platform.
 
