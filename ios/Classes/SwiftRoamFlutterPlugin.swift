@@ -19,6 +19,16 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
   private static let METHOD_SUBSCRIBE_EVENTS = "subscribeEvents";
   private static let METHOD_ENABLE_ACCURACY_ENGINE = "enableAccuracyEngine";
   private static let METHOD_DISABLE_ACCURACY_ENGINE = "disableAccuracyEngine";
+  private static let METHOD_CREATE_TRIP = "createTrip";
+  private static let METHOD_GET_TRIP_DETAILS = "getTripDetails";
+  private static let METHOD_GET_TRIP_STATUS = "getTripStatus";
+  private static let METHOD_SUBSCRIBE_TRIP_STATUS = "subscribeTripStatus";
+  private static let METHOD_UNSUBSCRIBE_TRIP_STATUS = "unSubscribeTripStatus";
+  private static let METHOD_START_TRIP = "startTrip";
+  private static let METHOD_PAUSE_TRIP = "pauseTrip";
+  private static let METHOD_RESUME_TRIP = "resumeTrip";
+  private static let METHOD_END_TRIP = "endTrip";
+  private static let METHOD_GET_TRIP_SUMMARY = "getTripSummary";
 
   private static let TRACKING_MODE_PASSIVE = "passive";
   private static let TRACKING_MODE_REACTIVE = "reactive";
@@ -186,8 +196,8 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
           default:
             options = GeoSparkTrackingMode.active
           }
-      GeoSpark.startTracking(options)
-      result(true);
+        GeoSpark.startTracking(options)
+        result(true);
       case SwiftRoamFlutterPlugin.METHOD_STOP_TRACKING:
         GeoSpark.stopTracking()
       case SwiftRoamFlutterPlugin.METHOD_LOGOUT_USER:
@@ -204,6 +214,94 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
         let arguments = call.arguments as! [String: Any]
         let userId = arguments["userId"]  as! String;
         GeoSpark.subscribeUserLocation(userId)
+      case SwiftRoamFlutterPlugin.METHOD_CREATE_TRIP:
+        let arguments = call.arguments as! [String: Any]
+        let isOffline = arguments["isOffline"]  as! Bool;
+        GeoSpark.createTrip(isOffline, nil) {(roamTrip, error) in
+          let trip: NSDictionary = [
+            "userId": roamTrip?.userId as Any,
+            "tripId": roamTrip?.tripId as Any
+            ]
+          if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: trip,
+            options: []) {
+              let theJSONText = String(data: theJSONData,encoding: .ascii)
+              result(theJSONText)
+              }
+        }
+      case SwiftRoamFlutterPlugin.METHOD_GET_TRIP_DETAILS:
+        let arguments = call.arguments as! [String: Any]
+        let tripId = arguments["tripId"]  as! String;
+        GeoSpark.getTripDetails(tripId) {(roamTrip, error) in
+          let trip: NSDictionary = [
+            "userId": roamTrip?.userId as Any,
+            "tripId": roamTrip?.tripId as Any
+            ]
+          if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: trip,
+            options: []) {
+              let theJSONText = String(data: theJSONData,encoding: .ascii)
+              result(theJSONText)
+              }
+        }
+      case SwiftRoamFlutterPlugin.METHOD_GET_TRIP_STATUS:
+        let arguments = call.arguments as! [String: Any]
+        let tripId = arguments["tripId"]  as! String;
+        GeoSpark.getTripStatus(tripId) {(roamTrip, error) in
+          let trip: NSDictionary = [
+            "distance": roamTrip?.distance as Any,
+            "speed": roamTrip?.speed as Any,
+            "duration": roamTrip?.duration as Any,
+            "tripId": roamTrip?.tripId as Any
+            ]
+          if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: trip,
+            options: []) {
+              let theJSONText = String(data: theJSONData,encoding: .ascii)
+              result(theJSONText)
+              }
+        }
+      case SwiftRoamFlutterPlugin.METHOD_SUBSCRIBE_TRIP_STATUS:
+        let arguments = call.arguments as! [String: Any]
+        let tripId = arguments["tripId"]  as! String;
+        GeoSpark.subscribeTripStatus(tripId)
+      case SwiftRoamFlutterPlugin.METHOD_UNSUBSCRIBE_TRIP_STATUS:
+        let arguments = call.arguments as! [String: Any]
+        let tripId = arguments["tripId"]  as! String;
+        GeoSpark.unsubscribeTripStatus(tripId)
+      case SwiftRoamFlutterPlugin.METHOD_START_TRIP:
+        let arguments = call.arguments as! [String: Any]
+        let tripId = arguments["tripId"]  as! String;
+        GeoSpark.startTrip(tripId)
+      case SwiftRoamFlutterPlugin.METHOD_PAUSE_TRIP:
+        let arguments = call.arguments as! [String: Any]
+        let tripId = arguments["tripId"]  as! String;
+        GeoSpark.pauseTrip(tripId)
+      case SwiftRoamFlutterPlugin.METHOD_RESUME_TRIP:
+        let arguments = call.arguments as! [String: Any]
+        let tripId = arguments["tripId"]  as! String;
+        GeoSpark.resumeTrip(tripId)
+      case SwiftRoamFlutterPlugin.METHOD_END_TRIP:
+        let arguments = call.arguments as! [String: Any]
+        let tripId = arguments["tripId"]  as! String;
+        GeoSpark.stopTrip(tripId)
+      case SwiftRoamFlutterPlugin.METHOD_GET_TRIP_SUMMARY:
+        let arguments = call.arguments as! [String: Any]
+        let tripId = arguments["tripId"]  as! String;
+        GeoSpark.getTripSummary(tripId) {(roamTrip, error) in
+          let trip: NSDictionary = [
+            "distance": roamTrip?.distanceCovered as Any,
+            "duration": roamTrip?.duration as Any,
+            "tripId": roamTrip?.tripId as Any
+            ]
+          print(roamTrip?.route)
+          if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: trip,
+            options: []) {
+              let theJSONText = String(data: theJSONData,encoding: .ascii)
+              result(theJSONText)
+              }
+        }
       default:
         result("iOS " + UIDevice.current.systemVersion)
     }

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 typedef void RoamCallBack({String location});
 typedef void RoamUserCallBack({String user});
+typedef void RoamTripCallBack({String trip});
 
 class RoamFlutter {
   static const String METHOD_INITIALIZE = "initialize";
@@ -23,6 +24,16 @@ class RoamFlutter {
   static const String METHOD_SUBSCRIBE_EVENTS = "subscribeEvents";
   static const String METHOD_ENABLE_ACCURACY_ENGINE = "enableAccuracyEngine";
   static const String METHOD_DISABLE_ACCURACY_ENGINE = "disableAccuracyEngine";
+  static const String METHOD_CREATE_TRIP = "createTrip";
+  static const String METHOD_GET_TRIP_DETAILS = "getTripDetails";
+  static const String METHOD_GET_TRIP_STATUS = "getTripStatus";
+  static const String METHOD_SUBSCRIBE_TRIP_STATUS = "subscribeTripStatus";
+  static const String METHOD_UNSUBSCRIBE_TRIP_STATUS = "unSubscribeTripStatus";
+  static const String METHOD_START_TRIP = "startTrip";
+  static const String METHOD_PAUSE_TRIP = "pauseTrip";
+  static const String METHOD_RESUME_TRIP = "resumeTrip";
+  static const String METHOD_END_TRIP = "endTrip";
+  static const String METHOD_GET_TRIP_SUMMARY = "getTripSummary";
 
   static const String TRACKING_MODE_PASSIVE = "passive";
   static const String TRACKING_MODE_REACTIVE = "reactive";
@@ -31,6 +42,7 @@ class RoamFlutter {
   static const MethodChannel _channel = const MethodChannel('roam_flutter');
   static RoamCallBack _callBack;
   static RoamUserCallBack _userCallBack;
+  static RoamTripCallBack _tripCallBack;
 
   static Future<bool> initialize({
     @required String publishKey,
@@ -171,6 +183,96 @@ class RoamFlutter {
     return result;
   }
 
+  static Future<void> createTrip(
+      {@required bool isOffline, RoamTripCallBack callBack}) async {
+    final Map<String, dynamic> params = <String, dynamic>{
+      'isOffline': isOffline
+    };
+    final String result =
+        await _channel.invokeMethod(METHOD_CREATE_TRIP, params);
+    callBack(trip: result);
+  }
+
+  static Future<void> getTripDetails(
+      {@required String tripId, RoamTripCallBack callBack}) async {
+    final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
+    final String result =
+        await _channel.invokeMethod(METHOD_GET_TRIP_DETAILS, params);
+    callBack(trip: result);
+  }
+
+  static Future<void> getTripStatus(
+      {@required String tripId, RoamTripCallBack callBack}) async {
+    final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
+    final String result =
+        await _channel.invokeMethod(METHOD_GET_TRIP_STATUS, params);
+    callBack(trip: result);
+  }
+
+  static Future<void> subscribeTripStatus({
+    @required String tripId,
+  }) async {
+    final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
+    final bool result =
+        await _channel.invokeMethod(METHOD_SUBSCRIBE_TRIP_STATUS, params);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<void> ubSubscribeTripStatus({
+    @required String tripId,
+  }) async {
+    final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
+    final bool result =
+        await _channel.invokeMethod(METHOD_UNSUBSCRIBE_TRIP_STATUS, params);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<void> startTrip({
+    @required String tripId,
+  }) async {
+    final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
+    final bool result = await _channel.invokeMethod(METHOD_START_TRIP, params);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<void> pauseTrip({
+    @required String tripId,
+  }) async {
+    final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
+    final bool result = await _channel.invokeMethod(METHOD_PAUSE_TRIP, params);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<void> resumeTrip({
+    @required String tripId,
+  }) async {
+    final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
+    final bool result = await _channel.invokeMethod(METHOD_RESUME_TRIP, params);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<void> endTrip({
+    @required String tripId,
+  }) async {
+    final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
+    final bool result = await _channel.invokeMethod(METHOD_END_TRIP, params);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<void> getTripSummary(
+      {@required String tripId, RoamTripCallBack callBack}) async {
+    final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
+    final String result =
+        await _channel.invokeMethod(METHOD_GET_TRIP_SUMMARY, params);
+    callBack(trip: result);
+  }
+
   static Future<void> _methodCallHandler(MethodCall call) async {
     switch (call.method) {
       case 'callback':
@@ -179,6 +281,9 @@ class RoamFlutter {
         );
         _userCallBack(
           user: call.arguments['user'],
+        );
+        _tripCallBack(
+          trip: call.arguments['trip'],
         );
         break;
       default:
