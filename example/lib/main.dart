@@ -207,6 +207,121 @@ class MyItemsPage extends StatefulWidget {
 
 class _MyItemsPageState extends State<MyItemsPage> {
   String myTrip;
+  String tripId;
+
+  TextEditingController _textFieldController = TextEditingController();
+
+  Future<void> _displayTripsInputDialog(
+      BuildContext context, String type) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Enter Trip Id'),
+            content: TextField(
+              onChanged: (value) {
+                setState(() {
+                  tripId = value;
+                });
+              },
+              controller: _textFieldController,
+              decoration: InputDecoration(hintText: "Enter Trip Id"),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                color: Colors.red,
+                textColor: Colors.white,
+                child: Text('CANCEL'),
+                onPressed: () {
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                },
+              ),
+              FlatButton(
+                color: Colors.green,
+                textColor: Colors.white,
+                child: Text('OK'),
+                onPressed: () async {
+                  try {
+                    switch (type) {
+                      case "getTripStatus":
+                        RoamFlutter.getTripStatus(
+                            tripId: tripId,
+                            callBack: ({trip}) {
+                              setState(() {
+                                myTrip = trip;
+                              });
+                              print(trip);
+                            });
+                        break;
+                      case "getTripDetails":
+                        RoamFlutter.getTripDetails(
+                            tripId: tripId,
+                            callBack: ({trip}) {
+                              setState(() {
+                                myTrip = trip;
+                              });
+                              print(trip);
+                            });
+                        break;
+                      case "subscribeTripStatus":
+                        RoamFlutter.subscribeTripStatus(
+                          tripId: tripId,
+                        );
+                        break;
+                      case "unSubscribeTripStatus":
+                        print("unSubscribeTripStatus");
+                        RoamFlutter.ubSubscribeTripStatus(
+                          tripId: tripId,
+                        );
+                        break;
+                      case "startTrip":
+                        RoamFlutter.startTrip(
+                          tripId: tripId,
+                        );
+                        break;
+                      case "pauseTrip":
+                        RoamFlutter.pauseTrip(
+                          tripId: tripId,
+                        );
+                        break;
+                      case "resumeTrip":
+                        RoamFlutter.resumeTrip(
+                          tripId: tripId,
+                        );
+                        break;
+                      case "endTrip":
+                        RoamFlutter.endTrip(
+                          tripId: tripId,
+                        );
+                        break;
+                      case "getTripSummary":
+                        RoamFlutter.getTripSummary(
+                            tripId: tripId,
+                            callBack: ({trip}) {
+                              setState(() {
+                                myTrip = trip;
+                              });
+                              print(trip);
+                            });
+                        break;
+                      default:
+                        print("default");
+                        Navigator.pop(context);
+                        break;
+                    }
+                  } on PlatformException {
+                    print('Trip Error');
+                  }
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -242,40 +357,12 @@ class _MyItemsPageState extends State<MyItemsPage> {
             RaisedButton(
                 child: Text('Get Trip Details'),
                 onPressed: () async {
-                  setState(() {
-                    myTrip = "fetching trip details..";
-                  });
-                  try {
-                    await RoamFlutter.getTripDetails(
-                        tripId: '601e45cb623bd22e82f419d0',
-                        callBack: ({trip}) {
-                          setState(() {
-                            myTrip = trip;
-                          });
-                          print(trip);
-                        });
-                  } on PlatformException {
-                    print('Get Trip Details Error');
-                  }
+                  _displayTripsInputDialog(context, "getTripDetails");
                 }),
             RaisedButton(
                 child: Text('Get Trip Status'),
                 onPressed: () async {
-                  setState(() {
-                    myTrip = "fetching trip details..";
-                  });
-                  try {
-                    await RoamFlutter.getTripStatus(
-                        tripId: '601e45cb623bd22e82f419d0',
-                        callBack: ({trip}) {
-                          setState(() {
-                            myTrip = trip;
-                          });
-                          print(trip);
-                        });
-                  } on PlatformException {
-                    print('Get Trip Details Error');
-                  }
+                  _displayTripsInputDialog(context, "getTripStatus");
                 }),
             RaisedButton(
                 child: Text('Subscribe Trip Status'),
@@ -284,8 +371,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                     myTrip = 'trip subscribed';
                   });
                   try {
-                    await RoamFlutter.subscribeTripStatus(
-                        tripId: '601e45cb623bd22e82f419d0');
+                    _displayTripsInputDialog(context, "subscribeTripStatus");
                   } on PlatformException {
                     print('Subscribe Trip Status Error');
                   }
@@ -297,8 +383,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                     myTrip = 'trip unsubscribed';
                   });
                   try {
-                    await RoamFlutter.ubSubscribeTripStatus(
-                        tripId: '601e45cb623bd22e82f419d0');
+                    _displayTripsInputDialog(context, "unSubscribeTripStatus");
                   } on PlatformException {
                     print('Unsubscribe Trip Status Error');
                   }
@@ -307,8 +392,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                 child: Text('Start Trip'),
                 onPressed: () async {
                   try {
-                    await RoamFlutter.startTrip(
-                        tripId: '601e45cb623bd22e82f419d0');
+                    _displayTripsInputDialog(context, "startTrip");
                   } on PlatformException {
                     print('Start Trip Error');
                   }
@@ -317,8 +401,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                 child: Text('Pause Trip'),
                 onPressed: () async {
                   try {
-                    await RoamFlutter.pauseTrip(
-                        tripId: '601e45cb623bd22e82f419d0');
+                    _displayTripsInputDialog(context, "pauseTrip");
                   } on PlatformException {
                     print('Pause Trip Error');
                   }
@@ -327,8 +410,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                 child: Text('Resume Trip'),
                 onPressed: () async {
                   try {
-                    await RoamFlutter.resumeTrip(
-                        tripId: '601e45cb623bd22e82f419d0');
+                    _displayTripsInputDialog(context, "resumeTrip");
                   } on PlatformException {
                     print('Resume Trip Error');
                   }
@@ -337,8 +419,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                 child: Text('End Trip'),
                 onPressed: () async {
                   try {
-                    await RoamFlutter.endTrip(
-                        tripId: '601e45cb623bd22e82f419d0');
+                    _displayTripsInputDialog(context, "endTrip");
                   } on PlatformException {
                     print('End Trip Error');
                   }
@@ -350,14 +431,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                     myTrip = "fetching trip summary..";
                   });
                   try {
-                    await RoamFlutter.getTripSummary(
-                        tripId: '601e45cb623bd22e82f419d0',
-                        callBack: ({trip}) {
-                          setState(() {
-                            myTrip = trip;
-                          });
-                          print(trip);
-                        });
+                    _displayTripsInputDialog(context, "getTripSummary");
                   } on PlatformException {
                     print('Get Trip Summary Error');
                   }
@@ -459,25 +533,6 @@ class _MyUsersPageState extends State<MyUsersPage> {
                   try {
                     await RoamFlutter.createUser(
                         description: 'Joe',
-                        callBack: ({user}) {
-                          setState(() {
-                            myUser = user;
-                          });
-                          print(user);
-                        });
-                  } on PlatformException {
-                    print('Create User Error');
-                  }
-                }),
-            RaisedButton(
-                child: Text('Get User'),
-                onPressed: () async {
-                  setState(() {
-                    myUser = "getting user..";
-                  });
-                  try {
-                    await RoamFlutter.getUser(
-                        userId: '601e459e623bd22e59f419cf',
                         callBack: ({user}) {
                           setState(() {
                             myUser = user;
