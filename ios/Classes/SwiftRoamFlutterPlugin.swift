@@ -33,6 +33,9 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
   private static let TRACKING_MODE_PASSIVE = "passive";
   private static let TRACKING_MODE_REACTIVE = "reactive";
   private static let TRACKING_MODE_ACTIVE = "active";
+  private static let TRACKING_MODE_CUSTOM = "custom";
+    
+  private static let ACTIVITY_TYPE_FITNESS = "fitness";
 
   private static var channel: FlutterMethodChannel?;
 
@@ -180,6 +183,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
       case SwiftRoamFlutterPlugin.METHOD_START_TRACKING:
         let arguments = call.arguments as! [String: Any]
         let trackingMode = arguments["trackingMode"]  as? String;
+        let customMethods = arguments["customMethods"]  as? NSDictionary;
         var options = GeoSparkTrackingMode.active
         // guard let localtrackingMode = trackingMode else {
         //   GeoSpark.startTracking(trackingMode as GeoSparkTrackingMode);
@@ -193,6 +197,13 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
             options = GeoSparkTrackingMode.reactive
           case SwiftRoamFlutterPlugin.TRACKING_MODE_ACTIVE:
             options = GeoSparkTrackingMode.active
+          case SwiftRoamFlutterPlugin.TRACKING_MODE_CUSTOM:
+            let options = GeoSparkTrackingCustomMethods.init()
+            options.allowBackgroundLocationUpdates = customMethods?["allowBackgroundLocationUpdates"] as? Bool
+            options.pausesLocationUpdatesAutomatically = customMethods?["pausesLocationUpdatesAutomatically"] as? Bool
+            options.desiredAccuracy = customMethods?["desiredAccuracy"] as? LocationAccuracy
+            options.showsBackgroundLocationIndicator = customMethods?["showsBackgroundLocationIndicator"] as? Bool
+            options.accuracyFilter = customMethods?["accuracyFilter"] as? Int
           default:
             options = GeoSparkTrackingMode.active
           }

@@ -126,9 +126,11 @@ class RoamFlutter {
     callBack(location: result);
   }
 
-  static Future<bool> startTracking({@required String trackingMode}) async {
+  static Future<bool> startTracking(
+      {@required dynamic trackingMode, Map customMethods}) async {
     final Map<String, dynamic> params = <String, dynamic>{
-      'trackingMode': trackingMode
+      'trackingMode': trackingMode,
+      'customMethods': customMethods
     };
     final bool result =
         await _channel.invokeMethod(METHOD_START_TRACKING, params);
