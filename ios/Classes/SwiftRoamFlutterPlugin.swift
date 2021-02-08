@@ -262,10 +262,13 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
             switch (trackingMode!) {
             case SwiftRoamFlutterPlugin.TRACKING_MODE_PASSIVE:
                 options = GeoSparkTrackingMode.passive
+                GeoSpark.startTracking(options)
             case SwiftRoamFlutterPlugin.TRACKING_MODE_REACTIVE:
                 options = GeoSparkTrackingMode.reactive
+                GeoSpark.startTracking(options)
             case SwiftRoamFlutterPlugin.TRACKING_MODE_ACTIVE:
                 options = GeoSparkTrackingMode.active
+                GeoSpark.startTracking(options)
             case SwiftRoamFlutterPlugin.TRACKING_MODE_CUSTOM:
                 let options = GeoSparkTrackingCustomMethods.init()
                 options.activityType = self.getActivityType((customMethods?["activityType"] as? String)!)
@@ -276,10 +279,10 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
                 options.showsBackgroundLocationIndicator = customMethods?["showsBackgroundLocationIndicator"] as? Bool
                 options.accuracyFilter = customMethods?["accuracyFilter"] as? Int
                 options.distanceFilter = customMethods?["distanceFilter"] as? CLLocationDistance
+                GeoSpark.startTracking(.custom, options: options)
             default:
                 options = GeoSparkTrackingMode.active
             }
-            GeoSpark.startTracking(options)
             result(true);
         case SwiftRoamFlutterPlugin.METHOD_STOP_TRACKING:
             GeoSpark.stopTracking()

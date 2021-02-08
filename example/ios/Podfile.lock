@@ -1,18 +1,18 @@
 PODS:
-  - AWSAuthCore (2.22.0):
-    - AWSCore (= 2.22.0)
-  - AWSCognitoIdentityProvider (2.22.0):
-    - AWSCognitoIdentityProviderASF (= 2.22.0)
-    - AWSCore (= 2.22.0)
-  - AWSCognitoIdentityProviderASF (2.22.0)
-  - AWSCore (2.22.0)
-  - AWSIoT (2.22.0):
-    - AWSCore (= 2.22.0)
-  - AWSMobileClient (2.22.0):
-    - AWSAuthCore (= 2.22.0)
-    - AWSCognitoIdentityProvider (= 2.22.0)
-    - AWSCognitoIdentityProviderASF (= 2.22.0)
-    - AWSCore (= 2.22.0)
+  - AWSAuthCore (2.22.2):
+    - AWSCore (= 2.22.2)
+  - AWSCognitoIdentityProvider (2.22.2):
+    - AWSCognitoIdentityProviderASF (= 2.22.2)
+    - AWSCore (= 2.22.2)
+  - AWSCognitoIdentityProviderASF (2.22.2)
+  - AWSCore (2.22.2)
+  - AWSIoT (2.22.2):
+    - AWSCore (= 2.22.2)
+  - AWSMobileClient (2.22.2):
+    - AWSAuthCore (= 2.22.2)
+    - AWSCognitoIdentityProvider (= 2.22.2)
+    - AWSCognitoIdentityProviderASF (= 2.22.2)
+    - AWSCore (= 2.22.2)
   - Flutter (1.0.0)
   - GeoSpark (3.1.2):
     - AWSIoT
@@ -52,15 +52,15 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/roam_flutter/ios"
 
 SPEC CHECKSUMS:
-  AWSAuthCore: b54e2008da479e5a6ffdb6b482821d8f5a9afaa4
-  AWSCognitoIdentityProvider: 32a91ad644e49e40235a408a8fbb96ea74891f19
-  AWSCognitoIdentityProviderASF: 8b92721c17f2951ecd5bcfb749d5534f2851c2c7
-  AWSCore: 8bd1def9cb0b6770c65b6d394f1c1cbc0a5562b7
-  AWSIoT: 708e1284bf67df14f263f8f76c6a7fb0e0e14e1f
-  AWSMobileClient: bba690cc09c6569cc1111141beaa4e2f789f536b
+  AWSAuthCore: 6ebee920932858d8f74092a67734599c7e1d04db
+  AWSCognitoIdentityProvider: 89fd21fdfc22a33ff86520d2905eac9201a55b69
+  AWSCognitoIdentityProviderASF: a5c421ef17e27c226e4d780a24ac3af675cbf57a
+  AWSCore: df612cf038f1230dfae4695feb8497c512f1143a
+  AWSIoT: 87930b426717c05c7938bbc02dfbe2d36467d893
+  AWSMobileClient: fd1b6ee5c6129d0cf891417179c854f8df225235
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   GeoSpark: e409452d309c203e99153f54dbde6b0133a4bb11
-  integration_test: 5ed24a436eb7ec17b6a13046e9bf7ca4a404e59e
+  integration_test: 6eb66a19f7104200dcfdd62bc0077e1b09686e4f
   permission_handler: eac8e15b4a1a3fba55b761d19f3f4e6b005d15b6
   roam_flutter: 90394dd931aa23b3a1e80609ddd8725372d42024
 
