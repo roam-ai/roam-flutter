@@ -1,11 +1,18 @@
-![Roam](https://github.com/geosparks/roam-flutter/blob/master/logo.png?raw=true)
+<p align="center">
+  <a href="https://roam.ai" target="_blank" align="center">
+    <img src="https://github.com/geosparks/roam-flutter/blob/master/logo.png?raw=true" width="280">
+  </a>
+  <br />
+</p>
 
-[Roam](https://roam.ai) is the location intelligence platform.
+[![pub package](https://img.shields.io/pub/v/roam_flutter.svg)](https://pub.dartlang.org/packages/roam_flutter)
 
-## Documentation
+# Official Roam Flutter SDK
+This is the official Roam Flutter SDK developed and maintained by Roam B.V
 
-See the full documentation [here](https://github.com/geosparks/roam-flutter/wiki).
+## Installation and Quick Start
+- Please visit our :100:[Developer Center](https://github.com/geosparks/roam-flutter/wiki) for instructions on installing and using our the SDK.
+- For developing the SDK, please visit our [CONTRIBUTING.md](https://github.com/geosparks/roam-flutter/blob/main/CONTRIBUTING.md) to get started.
 
-## Support
-
-Have questions? We're here to help! Email us at [support@roam.ao](mailto:support@roam.ai).
+## Need Help?
+If you have any problems or issues over our SDK, feel free to create a github issue or submit a request on [Roam Help](https://geosparkai.atlassian.net/servicedesk/customer/portal/2).
