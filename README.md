@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="https://roam.ai" target="_blank" align="center">
-    <img src="https://github.com/geosparks/roam-flutter/blob/master/logo.png?raw=true" width="280">
+  <a href="https://roam.ai" target="_blank" align="left">
+    <img src="https://github.com/geosparks/roam-flutter/blob/master/logo.png?raw=true" width="180">
   </a>
   <br />
 </p>
