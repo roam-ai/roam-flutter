@@ -39,6 +39,8 @@ class RoamFlutter {
   static const String TRACKING_MODE_REACTIVE = "reactive";
   static const String TRACKING_MODE_ACTIVE = "active";
 
+  static const String ACTIVITY_TYPE_FITNESS = "fitness";
+
   static const MethodChannel _channel = const MethodChannel('roam_flutter');
   static RoamCallBack _callBack;
   static RoamUserCallBack _userCallBack;

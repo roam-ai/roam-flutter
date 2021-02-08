@@ -62,6 +62,9 @@ class _MyHomePage extends State<MyHomePage> {
         nativeMethodCallHandler); //Native to Flutter Channel
     super.initState();
     initPlatformState();
+    RoamFlutter.initialize(
+        publishKey:
+            "fd7bd6d1b1ecbfbd456bf9ccd3f4157323eb184d919e5cd341ad0fad216d0b06");
   }
 
   //Native to Flutter Channel
@@ -488,11 +491,9 @@ class _MyUsersPageState extends State<MyUsersPage> {
                 child: Text('OK'),
                 onPressed: () async {
                   setState(() {
-                    codeDialog = valueText;
-                    print(codeDialog);
                     try {
                       RoamFlutter.getUser(
-                          userId: codeDialog,
+                          userId: valueText,
                           callBack: ({user}) {
                             setState(() {
                               myUser = user;
@@ -753,6 +754,85 @@ class MyLocationTrackingPage extends StatefulWidget {
 
 class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
   bool isTracking;
+  String valueText;
+  TextEditingController _textFieldController = TextEditingController();
+  Future<void> _displayTextInputDialog(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Enter Tracking Type'),
+            content: TextField(
+              onChanged: (value) {
+                setState(() {
+                  valueText = value;
+                });
+              },
+              controller: _textFieldController,
+              decoration:
+                  InputDecoration(hintText: "active/passsive/reactive/custom"),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                color: Colors.red,
+                textColor: Colors.white,
+                child: Text('CANCEL'),
+                onPressed: () {
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                },
+              ),
+              FlatButton(
+                color: Colors.green,
+                textColor: Colors.white,
+                child: Text('OK'),
+                onPressed: () async {
+                  try {
+                    switch (valueText) {
+                      case "active":
+                        RoamFlutter.startTracking(trackingMode: "active");
+                        Navigator.pop(context);
+                        break;
+                      case "reactive":
+                        RoamFlutter.startTracking(trackingMode: "reactive");
+                        Navigator.pop(context);
+                        break;
+                      case "passive":
+                        RoamFlutter.startTracking(trackingMode: "passive");
+                        Navigator.pop(context);
+                        break;
+                      case "custom":
+                        Map<String, dynamic> fitnessTracking = {
+                          "activityType": "fitness",
+                          "pausesLocationUpdatesAutomatically": true,
+                          "showsBackgroundLocationIndicator": true,
+                          "distanceFilter": 10,
+                          "useSignificantLocationChanges": false,
+                          "useRegionMonitoring": false,
+                          "useVisits": false,
+                          "desiredAccuracy": "nearestTenMeters"
+                        };
+                        RoamFlutter.startTracking(
+                            trackingMode: "custom",
+                            customMethods: fitnessTracking);
+                        Navigator.pop(context);
+                        break;
+                      default:
+                        Navigator.pop(context);
+                        break;
+                    }
+                  } on PlatformException {
+                    print('Trip Error');
+                  }
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -775,21 +855,7 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
             RaisedButton(
                 child: Text('Start Tracking'),
                 onPressed: () async {
-                  try {
-                    // Map<String, dynamic> trackingOptions = {
-                    //   "activityType": "fitness",
-                    //   "pausesLocationUpdatesAutomatically": true,
-                    //   "showsBackgroundLocationIndicator": true,
-                    //   "distanceFilter": 10,
-                    //   "useSignificantLocationChanges": false,
-                    //   "useRegionMonitoring": false,
-                    //   "useVisits": false,
-                    //   "desiredAccuracy": "nearestTenMeters"
-                    // };
-                    await RoamFlutter.startTracking(trackingMode: 'active');
-                  } on PlatformException {
-                    print('Start Tracking Error');
-                  }
+                  _displayTextInputDialog(context);
                 }),
             RaisedButton(
                 child: Text('Stop Tracking'),
