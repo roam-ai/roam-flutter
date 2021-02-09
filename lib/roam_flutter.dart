@@ -7,7 +7,7 @@ typedef void RoamCallBack({String location});
 typedef void RoamUserCallBack({String user});
 typedef void RoamTripCallBack({String trip});
 
-class RoamFlutter {
+class Roam {
   static const String METHOD_INITIALIZE = "initialize";
   static const String METHOD_GET_CURRENT_LOCATION = "getCurrentLocation";
   static const String METHOD_CREATE_USER = "createUser";

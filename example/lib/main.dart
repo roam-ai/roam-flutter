@@ -62,7 +62,7 @@ class _MyHomePage extends State<MyHomePage> {
         nativeMethodCallHandler); //Native to Flutter Channel
     super.initState();
     initPlatformState();
-    RoamFlutter.initialize(
+    Roam.initialize(
         publishKey:
             "fd7bd6d1b1ecbfbd456bf9ccd3f4157323eb184d919e5cd341ad0fad216d0b06");
   }
@@ -87,7 +87,7 @@ class _MyHomePage extends State<MyHomePage> {
     String platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await RoamFlutter.platformVersion;
+      platformVersion = await Roam.platformVersion;
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -118,7 +118,7 @@ class _MyHomePage extends State<MyHomePage> {
               'Received Location:\n $myLocation\n',
               textAlign: TextAlign.center,
             ),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Request Location Permissions'),
                 onPressed: () async {
                   try {
@@ -127,14 +127,14 @@ class _MyHomePage extends State<MyHomePage> {
                     print('Error getting location permissions');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Get Current Location'),
                 onPressed: () async {
                   setState(() {
                     myLocation = "fetching location..";
                   });
                   try {
-                    await RoamFlutter.getCurrentLocation(
+                    await Roam.getCurrentLocation(
                       accuracy: 100,
                       callBack: ({location}) {
                         setState(() {
@@ -147,29 +147,29 @@ class _MyHomePage extends State<MyHomePage> {
                     print('Get Current Location Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Initialize SDK'),
                 onPressed: () async {
                   try {
-                    await RoamFlutter.initialize(
+                    await Roam.initialize(
                         publishKey:
                             'fd7bd6d1b1ecbfbd456bf9ccd3f4157323eb184d919e5cd341ad0fad216d0b06');
                   } on PlatformException {
                     print('Initialization Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Users'), onPressed: _onUsersButtonPressed),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Subcribe Location/Events'),
                 onPressed: _onSubscriptionButtonPressed),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Accuracy Engine'),
                 onPressed: _onAccuracyEngineButtonPressed),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Location Tracking'),
                 onPressed: _onLocationTrackingButtonPressed),
-            RaisedButton(child: Text('Trips'), onPressed: _onButtonPressed),
+            ElevatedButton(child: Text('Trips'), onPressed: _onButtonPressed),
           ],
         )),
       ),
@@ -249,7 +249,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                   try {
                     switch (type) {
                       case "getTripStatus":
-                        RoamFlutter.getTripStatus(
+                        Roam.getTripStatus(
                             tripId: tripId,
                             callBack: ({trip}) {
                               setState(() {
@@ -259,7 +259,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                             });
                         break;
                       case "getTripDetails":
-                        RoamFlutter.getTripDetails(
+                        Roam.getTripDetails(
                             tripId: tripId,
                             callBack: ({trip}) {
                               setState(() {
@@ -269,38 +269,38 @@ class _MyItemsPageState extends State<MyItemsPage> {
                             });
                         break;
                       case "subscribeTripStatus":
-                        RoamFlutter.subscribeTripStatus(
+                        Roam.subscribeTripStatus(
                           tripId: tripId,
                         );
                         break;
                       case "unSubscribeTripStatus":
                         print("unSubscribeTripStatus");
-                        RoamFlutter.ubSubscribeTripStatus(
+                        Roam.ubSubscribeTripStatus(
                           tripId: tripId,
                         );
                         break;
                       case "startTrip":
-                        RoamFlutter.startTrip(
+                        Roam.startTrip(
                           tripId: tripId,
                         );
                         break;
                       case "pauseTrip":
-                        RoamFlutter.pauseTrip(
+                        Roam.pauseTrip(
                           tripId: tripId,
                         );
                         break;
                       case "resumeTrip":
-                        RoamFlutter.resumeTrip(
+                        Roam.resumeTrip(
                           tripId: tripId,
                         );
                         break;
                       case "endTrip":
-                        RoamFlutter.endTrip(
+                        Roam.endTrip(
                           tripId: tripId,
                         );
                         break;
                       case "getTripSummary":
-                        RoamFlutter.getTripSummary(
+                        Roam.getTripSummary(
                             tripId: tripId,
                             callBack: ({trip}) {
                               setState(() {
@@ -338,14 +338,14 @@ class _MyItemsPageState extends State<MyItemsPage> {
               '\nTrip Details:\n $myTrip\n',
               textAlign: TextAlign.center,
             ),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Create Trip'),
                 onPressed: () async {
                   setState(() {
                     myTrip = "creating trip..";
                   });
                   try {
-                    await RoamFlutter.createTrip(
+                    await Roam.createTrip(
                         isOffline: false,
                         callBack: ({trip}) {
                           setState(() {
@@ -357,17 +357,17 @@ class _MyItemsPageState extends State<MyItemsPage> {
                     print('Create Trip Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Get Trip Details'),
                 onPressed: () async {
                   _displayTripsInputDialog(context, "getTripDetails");
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Get Trip Status'),
                 onPressed: () async {
                   _displayTripsInputDialog(context, "getTripStatus");
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Subscribe Trip Status'),
                 onPressed: () async {
                   setState(() {
@@ -379,7 +379,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                     print('Subscribe Trip Status Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Unsubscribe Trip Status'),
                 onPressed: () async {
                   setState(() {
@@ -391,7 +391,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                     print('Unsubscribe Trip Status Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Start Trip'),
                 onPressed: () async {
                   try {
@@ -400,7 +400,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                     print('Start Trip Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Pause Trip'),
                 onPressed: () async {
                   try {
@@ -409,7 +409,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                     print('Pause Trip Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Resume Trip'),
                 onPressed: () async {
                   try {
@@ -418,7 +418,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                     print('Resume Trip Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('End Trip'),
                 onPressed: () async {
                   try {
@@ -427,7 +427,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                     print('End Trip Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Get Trip Summary'),
                 onPressed: () async {
                   setState(() {
@@ -492,7 +492,7 @@ class _MyUsersPageState extends State<MyUsersPage> {
                 onPressed: () async {
                   setState(() {
                     try {
-                      RoamFlutter.getUser(
+                      Roam.getUser(
                           userId: valueText,
                           callBack: ({user}) {
                             setState(() {
@@ -525,14 +525,14 @@ class _MyUsersPageState extends State<MyUsersPage> {
               '\nUser Details:\n $myUser\n',
               textAlign: TextAlign.center,
             ),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Create User'),
                 onPressed: () async {
                   setState(() {
                     myUser = "creating user..";
                   });
                   try {
-                    await RoamFlutter.createUser(
+                    await Roam.createUser(
                         description: 'Joe',
                         callBack: ({user}) {
                           setState(() {
@@ -544,19 +544,19 @@ class _MyUsersPageState extends State<MyUsersPage> {
                     print('Create User Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Get User'),
                 onPressed: () async {
                   _displayTextInputDialog(context);
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Toogle Listener'),
                 onPressed: () async {
                   setState(() {
                     myUser = "updating user listener status..";
                   });
                   try {
-                    await RoamFlutter.toggleListener(
+                    await Roam.toggleListener(
                         locations: true,
                         events: true,
                         callBack: ({user}) {
@@ -569,14 +569,14 @@ class _MyUsersPageState extends State<MyUsersPage> {
                     print('Toggle Listener Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Toogle Events'),
                 onPressed: () async {
                   setState(() {
                     myUser = "updating user events status..";
                   });
                   try {
-                    await RoamFlutter.toggleEvents(
+                    await Roam.toggleEvents(
                         location: true,
                         geofence: true,
                         trips: true,
@@ -591,14 +591,14 @@ class _MyUsersPageState extends State<MyUsersPage> {
                     print('Toggle Events Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Get Listener Status'),
                 onPressed: () async {
                   setState(() {
                     myUser = "fetching user listener status..";
                   });
                   try {
-                    await RoamFlutter.getListenerStatus(callBack: ({user}) {
+                    await Roam.getListenerStatus(callBack: ({user}) {
                       setState(() {
                         myUser = user;
                       });
@@ -608,11 +608,11 @@ class _MyUsersPageState extends State<MyUsersPage> {
                     print('Get Listener Status Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Logout User'),
                 onPressed: () async {
                   try {
-                    await RoamFlutter.logoutUser();
+                    await Roam.logoutUser();
                   } on PlatformException {
                     print('Logout User Error');
                   }
@@ -647,39 +647,39 @@ class _MySubcriptionPageState extends State<MySubcriptionPage> {
               '\nUser Details:\n $myUser\n',
               textAlign: TextAlign.center,
             ),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Subscribe Location'),
                 onPressed: () async {
                   setState(() {
                     myUser = "user location subscribed";
                   });
                   try {
-                    await RoamFlutter.subscribeLocation();
+                    await Roam.subscribeLocation();
                   } on PlatformException {
                     print('Subscribe Location Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Subscribe User Location'),
                 onPressed: () async {
                   try {
                     setState(() {
                       myUser = "user location subscribed";
                     });
-                    await RoamFlutter.subscribeUserLocation(
+                    await Roam.subscribeUserLocation(
                         userId: '60181b1f521e0249023652bc');
                   } on PlatformException {
                     print('Subscribe User Location Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Subscribe Events'),
                 onPressed: () async {
                   try {
                     setState(() {
                       myUser = "user events subscribed";
                     });
-                    await RoamFlutter.subscribeEvents();
+                    await Roam.subscribeEvents();
                   } on PlatformException {
                     print('Subscribe Events Error');
                   }
@@ -712,26 +712,26 @@ class _MyAccuracyEnginePageState extends State<MyAccuracyEnginePage> {
           children: [
             SelectableText(
                 '\nAccuracy Engine status: $isAccuracyEngineEnabled\n'),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Enable Accuracy Engine'),
                 onPressed: () async {
                   setState(() {
                     isAccuracyEngineEnabled = true;
                   });
                   try {
-                    await RoamFlutter.enableAccuracyEngine();
+                    await Roam.enableAccuracyEngine();
                   } on PlatformException {
                     print('Enable Accuracy Engine Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Disable Accuracy Engine'),
                 onPressed: () async {
                   setState(() {
                     isAccuracyEngineEnabled = false;
                   });
                   try {
-                    await RoamFlutter.disableAccuracyEngine();
+                    await Roam.disableAccuracyEngine();
                   } on PlatformException {
                     print('Disable Accuracy Engine Error');
                   }
@@ -791,15 +791,15 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                   try {
                     switch (valueText) {
                       case "active":
-                        RoamFlutter.startTracking(trackingMode: "active");
+                        Roam.startTracking(trackingMode: "active");
                         Navigator.pop(context);
                         break;
                       case "reactive":
-                        RoamFlutter.startTracking(trackingMode: "reactive");
+                        Roam.startTracking(trackingMode: "reactive");
                         Navigator.pop(context);
                         break;
                       case "passive":
-                        RoamFlutter.startTracking(trackingMode: "passive");
+                        Roam.startTracking(trackingMode: "passive");
                         Navigator.pop(context);
                         break;
                       case "custom":
@@ -813,7 +813,7 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                           "useVisits": false,
                           "desiredAccuracy": "nearestTenMeters"
                         };
-                        RoamFlutter.startTracking(
+                        Roam.startTracking(
                             trackingMode: "custom",
                             customMethods: fitnessTracking);
                         Navigator.pop(context);
@@ -843,25 +843,25 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
         child: Column(
           children: [
             SelectableText('\nTracking status: $isTracking\n'),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Update Current Location'),
                 onPressed: () async {
                   try {
-                    await RoamFlutter.updateCurrentLocation(accuracy: 100);
+                    await Roam.updateCurrentLocation(accuracy: 100);
                   } on PlatformException {
                     print('Update Current Location Error');
                   }
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Start Tracking'),
                 onPressed: () async {
                   _displayTextInputDialog(context);
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Stop Tracking'),
                 onPressed: () async {
                   try {
-                    await RoamFlutter.stopTracking();
+                    await Roam.stopTracking();
                   } on PlatformException {
                     print('Stop Tracking Error');
                   }
