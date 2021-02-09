@@ -1,6 +1,6 @@
 ## 0.0.4
 
-* Rename the SDK class from RoamFlutter to Roam
+* Renamed the SDK class from RoamFlutter to Roam
 ## 0.0.3
 
 * Fixed custom tracking method in iOS.
