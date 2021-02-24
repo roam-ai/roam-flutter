@@ -2,8 +2,15 @@ package ai.roam.roam_flutter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.Location;
 
 import com.geospark.lib.GeoSpark;
+import com.geospark.lib.GeoSparkTrackingMode;
+import com.geospark.lib.callback.GeoSparkLocationCallback;
+import com.geospark.lib.models.GeoSparkError;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -25,6 +32,36 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
   private Activity activity;
 
   private static final String METHOD_INITIALIZE = "initialize";
+  private static final String METHOD_GET_CURRENT_LOCATION = "getCurrentLocation";
+  private static final String METHOD_CREATE_USER = "createUser";
+  private static final String METHOD_UPDATE_CURRENT_LOCATION = "updateCurrentLocation";
+  private static final String METHOD_START_TRACKING = "startTracking";
+  private static final String METHOD_STOP_TRACKING = "stopTracking";
+  private static final String METHOD_LOGOUT_USER = "logoutUser";
+  private static final String METHOD_GET_USER = "getUser";
+  private static final String METHOD_TOGGLE_LISTENER = "toggleListener";
+  private static final String METHOD_GET_LISTENER_STATUS = "getListenerStatus";
+  private static final String METHOD_TOGGLE_EVENTS = "toggleEvents";
+  private static final String METHOD_SUBSCRIBE_LOCATION = "subscribeLocation";
+  private static final String METHOD_SUBSCRIBE_USER_LOCATION = "subscribeUserLocation";
+  private static final String METHOD_SUBSCRIBE_EVENTS = "subscribeEvents";
+  private static final String METHOD_ENABLE_ACCURACY_ENGINE = "enableAccuracyEngine";
+  private static final String METHOD_DISABLE_ACCURACY_ENGINE = "disableAccuracyEngine";
+  private static final String METHOD_CREATE_TRIP = "createTrip";
+  private static final String METHOD_GET_TRIP_DETAILS = "getTripDetails";
+  private static final String METHOD_GET_TRIP_STATUS = "getTripStatus";
+  private static final String METHOD_SUBSCRIBE_TRIP_STATUS = "subscribeTripStatus";
+  private static final String METHOD_UNSUBSCRIBE_TRIP_STATUS = "unSubscribeTripStatus";
+  private static final String METHOD_START_TRIP = "startTrip";
+  private static final String METHOD_PAUSE_TRIP = "pauseTrip";
+  private static final String METHOD_RESUME_TRIP = "resumeTrip";
+  private static final String METHOD_END_TRIP = "endTrip";
+  private static final String METHOD_GET_TRIP_SUMMARY = "getTripSummary";
+
+  private static final String TRACKING_MODE_PASSIVE = "passive";
+  private static final String TRACKING_MODE_REACTIVE = "reactive";
+  private static final String TRACKING_MODE_ACTIVE = "active";
+  private static final String TRACKING_MODE_CUSTOM = "custom";
 
   private Context context;
 
@@ -67,7 +104,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
   }
 
   @Override
-  public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
+  public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
      try {
        switch (call.method) {
          case "getPlatformVersion":
@@ -77,6 +114,33 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
          case METHOD_INITIALIZE:
            final String publishKey = call.argument("publishKey");
            GeoSpark.initialize(this.context, publishKey);
+           break;
+         case METHOD_GET_CURRENT_LOCATION:
+           final Integer accuracy = call.argument("accuracy");
+           GeoSpark.getCurrentLocation(GeoSparkTrackingMode.DesiredAccuracy.MEDIUM, accuracy, new GeoSparkLocationCallback() {
+             @Override
+             public void location(Location location) {
+               JSONObject coordinates = new JSONObject();
+               JSONObject roamLocation = new JSONObject();
+               try {
+                 coordinates.put("latitude", location.getLatitude());
+                 coordinates.put("longitude", location.getLongitude());
+                 roamLocation.put("coordinate", coordinates);
+                 roamLocation.put("altitude", location.getAltitude());
+                 roamLocation.put("accuracy", location.getAccuracy());
+                 String locationText = roamLocation.toString().substring(1, roamLocation.toString().length() - 1);
+                 result.success(locationText);
+               } catch (JSONException e) {
+                 e.printStackTrace();
+               }
+             }
+
+             @Override
+             public void onFailure(GeoSparkError geoSparkError) {
+               geoSparkError.getCode();
+               geoSparkError.getMessage();
+             }
+           });
            break;
 
          default:
