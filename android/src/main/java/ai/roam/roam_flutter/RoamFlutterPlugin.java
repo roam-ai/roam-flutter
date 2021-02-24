@@ -293,6 +293,19 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            });
            break;
 
+         case METHOD_SUBSCRIBE_LOCATION:
+           GeoSpark.subscribeLocation();
+           break;
+
+         case METHOD_SUBSCRIBE_USER_LOCATION:
+           final String otherUserId = call.argument("userId");
+           GeoSpark.subscribeUserLocation(otherUserId);
+           break;
+
+         case METHOD_SUBSCRIBE_EVENTS:
+           GeoSpark.subscribeEvents();
+           break;
+
          default:
            result.notImplemented();
            break;
