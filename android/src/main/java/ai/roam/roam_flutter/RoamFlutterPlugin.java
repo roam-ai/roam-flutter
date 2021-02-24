@@ -169,6 +169,31 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            });
            break;
 
+         case METHOD_GET_USER:
+           final String userId = call.argument("userId");
+           GeoSpark.getUser(userId, new GeoSparkCallback() {
+             @Override
+             public void onSuccess(GeoSparkUser geoSparkUser) {
+               JSONObject user = new JSONObject();
+               try {
+                 user.put("userId", geoSparkUser.getUserId());
+                 user.put("description", geoSparkUser.getDescription());
+                 String userText = user.toString().substring(1, user.toString().length() - 1);
+                 result.success(userText);
+               } catch (JSONException e) {
+                 e.printStackTrace();
+               }
+             }
+
+             @Override
+             public void onFailure(GeoSparkError geoSparkError) {
+               geoSparkError.getMessage();
+               geoSparkError.getCode();
+             }
+           });
+
+           break;
+
          default:
            result.notImplemented();
            break;
