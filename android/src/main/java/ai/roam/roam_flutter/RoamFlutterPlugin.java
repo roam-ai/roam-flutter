@@ -318,6 +318,27 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            GeoSpark.updateCurrentLocation(GeoSparkTrackingMode.DesiredAccuracy.MEDIUM, updateAccuracy);
            break;
 
+         case METHOD_START_TRACKING:
+           final String trackingMode = call.argument("trackingMode");
+
+           switch (trackingMode) {
+             case TRACKING_MODE_PASSIVE:
+               GeoSpark.startTracking(GeoSparkTrackingMode.PASSIVE);
+               break;
+
+             case TRACKING_MODE_REACTIVE:
+               GeoSpark.startTracking(GeoSparkTrackingMode.REACTIVE);
+               break;
+
+             case TRACKING_MODE_ACTIVE:
+               GeoSpark.startTracking(GeoSparkTrackingMode.ACTIVE);
+               break;
+
+             default:
+               break;
+           }
+           break;
+
          default:
            result.notImplemented();
            break;
