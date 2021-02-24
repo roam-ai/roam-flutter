@@ -339,6 +339,10 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            }
            break;
 
+         case METHOD_STOP_TRACKING:
+           GeoSpark.stopTracking();
+           break;
+
          default:
            result.notImplemented();
            break;
