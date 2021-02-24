@@ -306,6 +306,13 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            GeoSpark.subscribeEvents();
            break;
 
+         case METHOD_ENABLE_ACCURACY_ENGINE:
+           GeoSpark.enableAccuracyEngine();
+           break;
+         case METHOD_DISABLE_ACCURACY_ENGINE:
+           GeoSpark.disableAccuracyEngine();
+           break;
+
          default:
            result.notImplemented();
            break;
