@@ -313,6 +313,11 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            GeoSpark.disableAccuracyEngine();
            break;
 
+         case METHOD_UPDATE_CURRENT_LOCATION:
+           final Integer updateAccuracy = call.argument("accuracy");
+           GeoSpark.updateCurrentLocation(GeoSparkTrackingMode.DesiredAccuracy.MEDIUM, updateAccuracy);
+           break;
+
          default:
            result.notImplemented();
            break;
