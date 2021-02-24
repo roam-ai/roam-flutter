@@ -6,8 +6,10 @@ import android.location.Location;
 
 import com.geospark.lib.GeoSpark;
 import com.geospark.lib.GeoSparkTrackingMode;
+import com.geospark.lib.callback.GeoSparkCallback;
 import com.geospark.lib.callback.GeoSparkLocationCallback;
 import com.geospark.lib.models.GeoSparkError;
+import com.geospark.lib.models.GeoSparkUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -139,6 +141,30 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              public void onFailure(GeoSparkError geoSparkError) {
                geoSparkError.getCode();
                geoSparkError.getMessage();
+             }
+           });
+           break;
+
+         case METHOD_CREATE_USER:
+           final String description = call.argument("description");
+           GeoSpark.createUser(description, new GeoSparkCallback() {
+             @Override
+             public void onSuccess(GeoSparkUser geoSparkUser) {
+               JSONObject user = new JSONObject();
+               try {
+                 user.put("userId", geoSparkUser.getUserId());
+                 user.put("description", geoSparkUser.getDescription());
+                 String userText = user.toString().substring(1, user.toString().length() - 1);
+                 result.success(userText);
+               } catch (JSONException e) {
+                 e.printStackTrace();
+               }
+             }
+
+             @Override
+             public void onFailure(GeoSparkError geoSparkError) {
+               geoSparkError.getMessage();
+               geoSparkError.getCode();
              }
            });
            break;
