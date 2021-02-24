@@ -8,6 +8,7 @@ import com.geospark.lib.GeoSpark;
 import com.geospark.lib.GeoSparkTrackingMode;
 import com.geospark.lib.callback.GeoSparkCallback;
 import com.geospark.lib.callback.GeoSparkLocationCallback;
+import com.geospark.lib.callback.GeoSparkLogoutCallback;
 import com.geospark.lib.models.GeoSparkError;
 import com.geospark.lib.models.GeoSparkUser;
 
@@ -267,6 +268,21 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                } catch (JSONException e) {
                  e.printStackTrace();
                }
+             }
+
+             @Override
+             public void onFailure(GeoSparkError geoSparkError) {
+               geoSparkError.getMessage();
+               geoSparkError.getCode();
+             }
+           });
+           break;
+
+         case METHOD_LOGOUT_USER:
+           GeoSpark.logout(new GeoSparkLogoutCallback() {
+             @Override
+             public void onSuccess(String s) {
+
              }
 
              @Override
