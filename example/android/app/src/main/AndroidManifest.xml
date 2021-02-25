@@ -9,6 +9,13 @@
    <application
         android:label="roam_flutter_example"
         android:icon="@mipmap/ic_launcher">
+       <receiver android:name=".MyGeoSparkReceiver"
+           android:enabled="true"
+           android:exported="false">
+           <intent-filter>
+               <action android:name="com.geospark.android.RECEIVED"/>
+           </intent-filter>
+       </receiver>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
