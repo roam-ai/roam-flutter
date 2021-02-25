@@ -7,13 +7,24 @@ import android.location.Location;
 import com.geospark.lib.GeoSpark;
 import com.geospark.lib.GeoSparkTrackingMode;
 import com.geospark.lib.callback.GeoSparkCallback;
+import com.geospark.lib.callback.GeoSparkCreateTripCallback;
 import com.geospark.lib.callback.GeoSparkLocationCallback;
 import com.geospark.lib.callback.GeoSparkLogoutCallback;
+import com.geospark.lib.callback.GeoSparkTripCallback;
+import com.geospark.lib.callback.GeoSparkTripDetailCallback;
+import com.geospark.lib.callback.GeoSparkTripStatusCallback;
+import com.geospark.lib.callback.GeoSparkTripSummaryCallback;
 import com.geospark.lib.models.GeoSparkError;
+import com.geospark.lib.models.GeoSparkTripStatus;
 import com.geospark.lib.models.GeoSparkUser;
+import com.geospark.lib.models.createtrip.GeoSparkCreateTrip;
+import com.geospark.lib.models.gettrip.GeoSparkTripDetail;
+import com.geospark.lib.models.tripsummary.GeoSparkTripSummary;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -334,6 +345,21 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                GeoSpark.startTracking(GeoSparkTrackingMode.ACTIVE);
                break;
 
+             case TRACKING_MODE_CUSTOM:
+               GeoSparkTrackingMode customTrackingMode;
+               final Map customMethods = call.argument("customMethods");
+               if(customMethods.containsKey("distanceInterval")){
+                 final int distanceInterval = (int) customMethods.get("distanceInterval");
+                 customTrackingMode = new GeoSparkTrackingMode.Builder(distanceInterval, 5).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.MEDIUM).build();
+               } else if(customMethods.containsKey("timeInterval")){
+                 final int timeInterval = (int) customMethods.get("timeInterval");
+                 customTrackingMode = new GeoSparkTrackingMode.Builder(timeInterval).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.MEDIUM).build();
+               } else {
+                 customTrackingMode = new GeoSparkTrackingMode.Builder(10, 5).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.MEDIUM).build();
+               }
+               GeoSpark.startTracking(customTrackingMode);
+               break;
+
              default:
                break;
            }
@@ -341,6 +367,184 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
          case METHOD_STOP_TRACKING:
            GeoSpark.stopTracking();
+           break;
+
+         case METHOD_CREATE_TRIP:
+           final Boolean isOffline = call.argument("isOffline");
+           GeoSpark.createTrip(null, null, isOffline, new GeoSparkCreateTripCallback() {
+             @Override
+             public void onSuccess(GeoSparkCreateTrip geoSparkCreateTrip) {
+               JSONObject trip = new JSONObject();
+               try {
+                 trip.put("userId", geoSparkCreateTrip.getUser_id());
+                 trip.put("tripId", geoSparkCreateTrip.getId());
+
+                 String tripText = trip.toString().substring(1, trip.toString().length() - 1);
+                 result.success(tripText);
+               } catch (JSONException e) {
+                 e.printStackTrace();
+               }
+             }
+
+             @Override
+             public void onFailure(GeoSparkError geoSparkError) {
+               geoSparkError.getMessage();
+               geoSparkError.getCode();
+             }
+           });
+           break;
+
+         case METHOD_GET_TRIP_DETAILS:
+           final String tripId = call.argument("tripId");
+           GeoSpark.getTripDetails(tripId, new GeoSparkTripDetailCallback() {
+             @Override
+             public void onSuccess(GeoSparkTripDetail geoSparkTripDetail) {
+               JSONObject trip = new JSONObject();
+               try {
+                 trip.put("userId", geoSparkTripDetail.getUser_id());
+                 trip.put("tripId", geoSparkTripDetail.getId());
+
+                 String tripText = trip.toString().substring(1, trip.toString().length() - 1);
+                 result.success(tripText);
+               } catch (JSONException e) {
+                 e.printStackTrace();
+               }
+             }
+
+             @Override
+             public void onFailure(GeoSparkError geoSparkError) {
+               geoSparkError.getMessage();
+               geoSparkError.getCode();
+             }
+           });
+           break;
+
+         case METHOD_GET_TRIP_STATUS:
+           final String statusTripId = call.argument("tripId");
+           GeoSpark.getTripStatus(statusTripId, new GeoSparkTripStatusCallback() {
+             @Override
+             public void onSuccess(GeoSparkTripStatus geoSparkTripStatus) {
+               JSONObject trip = new JSONObject();
+               try {
+                 trip.put("distance", geoSparkTripStatus.getDistance());
+                 trip.put("speed", geoSparkTripStatus.getSpeed());
+                 trip.put("duration", geoSparkTripStatus.getDuration());
+                 trip.put("tripId", geoSparkTripStatus.getTripId());
+
+                 String tripText = trip.toString().substring(1, trip.toString().length() - 1);
+                 result.success(tripText);
+               } catch (JSONException e) {
+                 e.printStackTrace();
+               }
+             }
+
+             @Override
+             public void onFailure(GeoSparkError geoSparkError) {
+               geoSparkError.getMessage();
+               geoSparkError.getCode();
+             }
+           });
+           break;
+
+         case METHOD_SUBSCRIBE_TRIP_STATUS:
+           final String subscribeTripId = call.argument("tripId");
+           GeoSpark.subscribeTripStatus(subscribeTripId);
+           break;
+
+         case METHOD_UNSUBSCRIBE_TRIP_STATUS:
+           final String unSubscribeTripId = call.argument("tripId");
+           GeoSpark.unSubscribeTripStatus(unSubscribeTripId);
+           break;
+
+         case METHOD_START_TRIP:
+           final String startTripId = call.argument("tripId");
+           GeoSpark.startTrip(startTripId, null, new GeoSparkTripCallback() {
+             @Override
+             public void onSuccess(String s) {
+
+             }
+
+             @Override
+             public void onFailure(GeoSparkError geoSparkError) {
+               geoSparkError.getMessage();
+               geoSparkError.getCode();
+             }
+           });
+           break;
+
+         case METHOD_PAUSE_TRIP:
+           final String pauseTripId = call.argument("tripId");
+           GeoSpark.pauseTrip(pauseTripId, new GeoSparkTripCallback() {
+             @Override
+             public void onSuccess(String s) {
+
+             }
+
+             @Override
+             public void onFailure(GeoSparkError geoSparkError) {
+               geoSparkError.getMessage();
+               geoSparkError.getCode();
+             }
+           });
+           break;
+
+         case METHOD_RESUME_TRIP:
+           final String resumeTripId = call.argument("tripId");
+           GeoSpark.resumeTrip(resumeTripId, new GeoSparkTripCallback() {
+             @Override
+             public void onSuccess(String s) {
+
+             }
+
+             @Override
+             public void onFailure(GeoSparkError geoSparkError) {
+               geoSparkError.getMessage();
+               geoSparkError.getCode();
+             }
+           });
+           break;
+
+         case METHOD_END_TRIP:
+           final String endTripId = call.argument("tripId");
+           GeoSpark.stopTrip(endTripId, new GeoSparkTripCallback() {
+             @Override
+             public void onSuccess(String s) {
+
+             }
+
+             @Override
+             public void onFailure(GeoSparkError geoSparkError) {
+               geoSparkError.getMessage();
+               geoSparkError.getCode();
+             }
+           });
+           break;
+
+         case METHOD_GET_TRIP_SUMMARY:
+           final String summaryTripId = call.argument("tripId");
+           GeoSpark.getTripSummary(summaryTripId, new GeoSparkTripSummaryCallback() {
+             @Override
+             public void onSuccess(GeoSparkTripSummary geoSparkTripSummary) {
+               JSONObject trip = new JSONObject();
+               try {
+                 trip.put("distance", geoSparkTripSummary.getDistance_covered());
+                 trip.put("duration", geoSparkTripSummary.getDuration());
+                 trip.put("tripId", geoSparkTripSummary.getTrip_id());
+                 trip.put("route", geoSparkTripSummary.getRoute());
+
+                 String tripText = trip.toString().substring(1, trip.toString().length() - 1);
+                 result.success(tripText);
+               } catch (JSONException e) {
+                 e.printStackTrace();
+               }
+             }
+
+             @Override
+             public void onFailure(GeoSparkError geoSparkError) {
+               geoSparkError.getMessage();
+               geoSparkError.getCode();
+             }
+           });
            break;
 
          default:

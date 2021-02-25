@@ -811,7 +811,8 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                           "useSignificantLocationChanges": false,
                           "useRegionMonitoring": false,
                           "useVisits": false,
-                          "desiredAccuracy": "nearestTenMeters"
+                          "desiredAccuracy": "nearestTenMeters",
+                          "distanceInterval": 10
                         };
                         Roam.startTracking(
                             trackingMode: "custom",
