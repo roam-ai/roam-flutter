@@ -351,13 +351,15 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                if(customMethods.containsKey("distanceInterval")){
                  final int distanceInterval = (int) customMethods.get("distanceInterval");
                  customTrackingMode = new GeoSparkTrackingMode.Builder(distanceInterval, 5).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.MEDIUM).build();
+                 GeoSpark.startTracking(customTrackingMode);
                } else if(customMethods.containsKey("timeInterval")){
                  final int timeInterval = (int) customMethods.get("timeInterval");
                  customTrackingMode = new GeoSparkTrackingMode.Builder(timeInterval).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.MEDIUM).build();
+                 GeoSpark.startTracking(customTrackingMode);
                } else {
                  customTrackingMode = new GeoSparkTrackingMode.Builder(10, 5).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.MEDIUM).build();
+                 GeoSpark.startTracking(customTrackingMode);
                }
-               GeoSpark.startTracking(customTrackingMode);
                break;
 
              default:
