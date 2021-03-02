@@ -814,12 +814,9 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                       case "custom":
                         Map<String, dynamic> fitnessTracking = {
                           "activityType": "fitness",
-                          "pausesLocationUpdatesAutomatically": true,
                           "showsBackgroundLocationIndicator": true,
+                          "allowBackgroundLocationUpdates": true,
                           "distanceFilter": 10,
-                          "useSignificantLocationChanges": false,
-                          "useRegionMonitoring": false,
-                          "useVisits": false,
                           "desiredAccuracy": "nearestTenMeters",
                           "distanceInterval": 15
                         };

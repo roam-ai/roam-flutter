@@ -31,47 +31,47 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
     private static let METHOD_RESUME_TRIP = "resumeTrip";
     private static let METHOD_END_TRIP = "endTrip";
     private static let METHOD_GET_TRIP_SUMMARY = "getTripSummary";
-    
+
     private static let TRACKING_MODE_PASSIVE = "passive";
     private static let TRACKING_MODE_REACTIVE = "reactive";
     private static let TRACKING_MODE_ACTIVE = "active";
     private static let TRACKING_MODE_CUSTOM = "custom";
-    
+
     private static let ACTIVITY_TYPE_FITNESS = "fitness";
-    
+
     private static var channel: FlutterMethodChannel?;
-    
+
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "roam_flutter", binaryMessenger: registrar.messenger())
         let instance = SwiftRoamFlutterPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
         registrar.addApplicationDelegate(instance)
     }
-    
+
     public func didUpdateLocation(_ geospark: GeoSparkLocation) {
         debugPrint("Location Received SDK")
     }
-    
+
     public func applicationDidBecomeActive(_ application: UIApplication) {
         debugPrint("applicationDidBecomeActive")
     }
-    
+
     public func applicationWillTerminate(_ application: UIApplication) {
         debugPrint("applicationWillTerminate")
     }
-    
+
     public func applicationWillResignActive(_ application: UIApplication) {
         debugPrint("applicationWillResignActive")
     }
-    
+
     public func applicationDidEnterBackground(_ application: UIApplication) {
         debugPrint("applicationDidEnterBackground")
     }
-    
+
     public func applicationWillEnterForeground(_ application: UIApplication) {
         print("applicationWillEnterForeground")
     }
-    
+
     private func getActivityType(_ type:String) -> CLActivityType
     {
         if type == "fitness"{
@@ -96,7 +96,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
             return .other
         }
     }
-    
+
     private func getDesiredAccuracy(_ type:String) -> LocationAccuracy
     {
         if type == "best"{
@@ -121,8 +121,8 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
             return .kCLLocationAccuracyHundredMeters
         }
     }
-    
-    
+
+
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch (call.method) {
         case SwiftRoamFlutterPlugin.METHOD_INITIALIZE:
@@ -246,7 +246,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
                         let theJSONText = String(data: theJSONData,encoding: .ascii)
                         result(theJSONText)
                     }
-                    
+
                 }
             }
         case SwiftRoamFlutterPlugin.METHOD_START_TRACKING:
@@ -272,10 +272,9 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
             case SwiftRoamFlutterPlugin.TRACKING_MODE_CUSTOM:
                 let options = GeoSparkTrackingCustomMethods.init()
                 options.activityType = self.getActivityType((customMethods?["activityType"] as? String)!)
-//                options.desiredAccuracy = self.getDesiredAccuracy((customMethods?["distanceFilter"] as? LocationAccuracy))
+                options.desiredAccuracy = self.getDesiredAccuracy(((customMethods?["desiredAccuracy"] as? String)!))
                 options.allowBackgroundLocationUpdates = customMethods?["allowBackgroundLocationUpdates"] as? Bool
                 options.pausesLocationUpdatesAutomatically = customMethods?["pausesLocationUpdatesAutomatically"] as? Bool
-                options.desiredAccuracy = customMethods?["desiredAccuracy"] as? LocationAccuracy
                 options.showsBackgroundLocationIndicator = customMethods?["showsBackgroundLocationIndicator"] as? Bool
                 options.accuracyFilter = customMethods?["accuracyFilter"] as? Int
                 options.distanceFilter = customMethods?["distanceFilter"] as? CLLocationDistance
@@ -375,7 +374,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
             let arguments = call.arguments as! [String: Any]
             let tripId = arguments["tripId"]  as! String;
             GeoSpark.getTripSummary(tripId) {(roamTrip, error) in
-                
+
                 roamTrip?.route.forEach({ (route) in
                     let coordinates: NSDictionary = [
                         "latitude": route.coordinates[0],
