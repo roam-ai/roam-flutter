@@ -34,6 +34,8 @@ class Roam {
   static const String METHOD_RESUME_TRIP = "resumeTrip";
   static const String METHOD_END_TRIP = "endTrip";
   static const String METHOD_GET_TRIP_SUMMARY = "getTripSummary";
+  static const String METHOD_DISABLE_BATTERY_OPTIMIZATION =
+      "disableBatteryOptimization";
 
   static const String TRACKING_MODE_PASSIVE = "passive";
   static const String TRACKING_MODE_REACTIVE = "reactive";
@@ -141,6 +143,13 @@ class Roam {
 
   static Future<bool> logoutUser() async {
     final bool result = await _channel.invokeMethod(METHOD_LOGOUT_USER);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<bool> disableBatteryOptimization() async {
+    final bool result =
+        await _channel.invokeMethod(METHOD_DISABLE_BATTERY_OPTIMIZATION);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }

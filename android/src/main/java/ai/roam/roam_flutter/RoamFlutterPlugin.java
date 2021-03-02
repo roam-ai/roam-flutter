@@ -71,6 +71,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
   private static final String METHOD_RESUME_TRIP = "resumeTrip";
   private static final String METHOD_END_TRIP = "endTrip";
   private static final String METHOD_GET_TRIP_SUMMARY = "getTripSummary";
+  private static final String METHOD_DISABLE_BATTERY_OPTIMIZATION = "disableBatteryOptimization";
 
   private static final String TRACKING_MODE_PASSIVE = "passive";
   private static final String TRACKING_MODE_REACTIVE = "reactive";
@@ -350,14 +351,14 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                final Map customMethods = call.argument("customMethods");
                if(customMethods.containsKey("distanceInterval")){
                  final int distanceInterval = (int) customMethods.get("distanceInterval");
-                 customTrackingMode = new GeoSparkTrackingMode.Builder(distanceInterval, 5).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.MEDIUM).build();
+                 customTrackingMode = new GeoSparkTrackingMode.Builder(distanceInterval, 30).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.HIGH).build();
                  GeoSpark.startTracking(customTrackingMode);
                } else if(customMethods.containsKey("timeInterval")){
                  final int timeInterval = (int) customMethods.get("timeInterval");
-                 customTrackingMode = new GeoSparkTrackingMode.Builder(timeInterval).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.MEDIUM).build();
+                 customTrackingMode = new GeoSparkTrackingMode.Builder(timeInterval).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.HIGH).build();
                  GeoSpark.startTracking(customTrackingMode);
                } else {
-                 customTrackingMode = new GeoSparkTrackingMode.Builder(10, 5).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.MEDIUM).build();
+                 customTrackingMode = new GeoSparkTrackingMode.Builder(15, 30).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.HIGH).build();
                  GeoSpark.startTracking(customTrackingMode);
                }
                break;
@@ -547,6 +548,10 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                geoSparkError.getCode();
              }
            });
+           break;
+
+         case METHOD_DISABLE_BATTERY_OPTIMIZATION:
+           GeoSpark.disableBatteryOptimization();
            break;
 
          default:
