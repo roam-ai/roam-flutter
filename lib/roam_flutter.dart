@@ -34,6 +34,8 @@ class Roam {
   static const String METHOD_RESUME_TRIP = "resumeTrip";
   static const String METHOD_END_TRIP = "endTrip";
   static const String METHOD_GET_TRIP_SUMMARY = "getTripSummary";
+  static const String METHOD_DISABLE_BATTERY_OPTIMIZATION =
+      "disableBatteryOptimization";
 
   static const String TRACKING_MODE_PASSIVE = "passive";
   static const String TRACKING_MODE_REACTIVE = "reactive";
@@ -46,6 +48,8 @@ class Roam {
   static RoamUserCallBack _userCallBack;
   static RoamTripCallBack _tripCallBack;
 
+  /// Initialize SDK
+  /// Accepts SDK Key from GeoSpark Playground Project Setting
   static Future<bool> initialize({
     @required String publishKey,
   }) async {
@@ -57,6 +61,9 @@ class Roam {
     return result;
   }
 
+  /// Create User
+  /// Accepts Description in String Format
+  /// Returns GeoSpark User
   static Future<void> createUser(
       {@required String description, RoamUserCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{
@@ -67,6 +74,9 @@ class Roam {
     callBack(user: result);
   }
 
+  /// Get User
+  /// Accepts GeoSpark User Id in String Format
+  /// Returns GeoSpark User
   static Future<void> getUser(
       {@required String userId, RoamUserCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{'userId': userId};
@@ -74,6 +84,9 @@ class Roam {
     callBack(user: result);
   }
 
+  /// Toggle User Listener
+  /// Accepts Boolean values for Events & Locations
+  /// Returns GeoSpark User
   static Future<void> toggleListener(
       {@required bool events,
       bool locations,
@@ -87,6 +100,9 @@ class Roam {
     callBack(user: result);
   }
 
+  /// Toggle User Events
+  /// Accepts Boolean values for Geofence, Trips, Moving Geofence & Location
+  /// Returns GeoSpark User
   static Future<void> toggleEvents(
       {@required bool location,
       bool geofence,
@@ -104,12 +120,18 @@ class Roam {
     callBack(user: result);
   }
 
+  /// Get User Listener Status
+  /// Accepts GeoSpark User Id in String Format
+  /// Returns GeoSpark User
   static Future<void> getListenerStatus({RoamUserCallBack callBack}) async {
     final String result =
         await _channel.invokeMethod(METHOD_GET_LISTENER_STATUS);
     callBack(user: result);
   }
 
+  /// Update Current Location
+  /// Accepts Accuracy Value in Int format
+  /// Returns Location
   static Future<bool> updateCurrentLocation({
     @required int accuracy,
   }) async {
@@ -120,6 +142,9 @@ class Roam {
     return result;
   }
 
+  /// Get Current Location
+  /// Accepts Accuracy Value in Int format
+  /// Returns Location
   static Future<void> getCurrentLocation(
       {@required int accuracy, RoamCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{'accuracy': accuracy};
@@ -141,6 +166,13 @@ class Roam {
 
   static Future<bool> logoutUser() async {
     final bool result = await _channel.invokeMethod(METHOD_LOGOUT_USER);
+    _channel.setMethodCallHandler(_methodCallHandler);
+    return result;
+  }
+
+  static Future<bool> disableBatteryOptimization() async {
+    final bool result =
+        await _channel.invokeMethod(METHOD_DISABLE_BATTERY_OPTIMIZATION);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }

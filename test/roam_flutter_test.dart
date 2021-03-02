@@ -18,6 +18,6 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    expect(await RoamFlutter.platformVersion, '42');
+    expect(await Roam.platformVersion, '42');
   });
 }

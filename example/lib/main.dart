@@ -128,6 +128,15 @@ class _MyHomePage extends State<MyHomePage> {
                   }
                 }),
             ElevatedButton(
+                child: Text('Disable Battery Optimization'),
+                onPressed: () async {
+                  try {
+                    await Roam.disableBatteryOptimization();
+                  } on PlatformException {
+                    print('Disable Battery Optimization Error');
+                  }
+                }),
+            ElevatedButton(
                 child: Text('Get Current Location'),
                 onPressed: () async {
                   setState(() {
@@ -805,13 +814,11 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                       case "custom":
                         Map<String, dynamic> fitnessTracking = {
                           "activityType": "fitness",
-                          "pausesLocationUpdatesAutomatically": true,
                           "showsBackgroundLocationIndicator": true,
+                          "allowBackgroundLocationUpdates": true,
                           "distanceFilter": 10,
-                          "useSignificantLocationChanges": false,
-                          "useRegionMonitoring": false,
-                          "useVisits": false,
-                          "desiredAccuracy": "nearestTenMeters"
+                          "desiredAccuracy": "nearestTenMeters",
+                          "distanceInterval": 15
                         };
                         Roam.startTracking(
                             trackingMode: "custom",

@@ -1,3 +1,6 @@
+## 0.0.5
+
+* Added Roam.ai Android SDK support to our flutter plugin
 ## 0.0.4
 
 * Renamed the SDK class from RoamFlutter to Roam
