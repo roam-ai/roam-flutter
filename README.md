@@ -10,7 +10,7 @@
 # Official Roam Flutter SDK
 This is the official Roam Flutter SDK developed and maintained by Roam B.V
 
-## Quick Start
+# Quick Start
 The Roam Flutter Plugin makes it quick and easy to build a
 location tracker for your Flutter app. We provide powerful and
 customizable tracking modes and features that can be used to collect
@@ -18,8 +18,8 @@ your users location updates.
 
 Here’s a link to our example app : [Example Application](https://github.com/roam-ai/roam-flutter/tree/master/example)
 
-**Install the plugin**
-======================
+## Install the plugin
+
 Add following lines to your applications pubspec.yml:
 
 ```dart
@@ -32,8 +32,8 @@ flutter pub get
 ```
 Alternatively, the code editor might support flutter pub get. Check the editor docs for your editor to learn more.
 
-**Platform Configuration**
-==========================
+## Platform Configuration
+
 **iOS**
 
 To configure the location services, add following entries to the
@@ -64,8 +64,7 @@ Add below lines in your `AndroidManifest.xml` file.
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 ```
 
-**Initialize SDK**
-==================
+## Initialize SDK
 
 Import the plugin in the main.dart file of your project
 
@@ -79,8 +78,7 @@ Initialize the plugin with your `sdk key`.
 Roam.initialize(publishKey:'YOUR-SDK-KEY');
 ```
 
-Creating Users
-==============
+## Creating Users
 
 Once the SDK is initialized, we need to *create* or *get a user* to
 start the tracking and use other methods. Every user created will have a
@@ -115,8 +113,7 @@ print(user);
 });
 ```
 
-**Request Permissions**
-=======================
+## Request Permissions
 
 Get location permission from the App user on the device. Also check if
 the user has turned on location services for the device.
@@ -136,8 +133,7 @@ Used the below below method to request location permissions.
 ```dart
 Permission.locationAlways.request();
 ```
-Location Tracking
-=================
+## Location Tracking
 ### Start Tracking
 
 ``` dart
