@@ -164,12 +164,17 @@ class Roam {
     return result;
   }
 
+  /// Logout User
+  /// Use this method to logout current session of the user and before creating/get another user
   static Future<bool> logoutUser() async {
     final bool result = await _channel.invokeMethod(METHOD_LOGOUT_USER);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
+  /// Disable Battery Optimization in Android
+  /// This method is only for Android devices to disable all battery optimization settings by OS and allow
+  /// the application to track location in background
   static Future<bool> disableBatteryOptimization() async {
     final bool result =
         await _channel.invokeMethod(METHOD_DISABLE_BATTERY_OPTIMIZATION);
@@ -177,18 +182,25 @@ class Roam {
     return result;
   }
 
+  /// Subscribe Location
+  /// Use this method to enable subscription to own location updates
   static Future<bool> subscribeLocation() async {
     final bool result = await _channel.invokeMethod(METHOD_SUBSCRIBE_LOCATION);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
+  /// Subscribe Events
+  /// Use this method to enable subscription to own events
   static Future<bool> subscribeEvents() async {
     final bool result = await _channel.invokeMethod(METHOD_SUBSCRIBE_EVENTS);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
+  /// Subscribe User Location
+  /// Accepts GeoSpark User Id
+  /// Use this method to enable subscription to other user's location updates
   static Future<bool> subscribeUserLocation({
     @required String userId,
   }) async {
@@ -199,12 +211,16 @@ class Roam {
     return result;
   }
 
+  /// Stop Tracking
+  /// Use this method to stop the location tracking
   static Future<bool> stopTracking() async {
     final bool result = await _channel.invokeMethod(METHOD_STOP_TRACKING);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
+  /// Enable Accuracy Engine
+  /// Use this method improve accuracy for location updates
   static Future<bool> enableAccuracyEngine() async {
     final bool result =
         await _channel.invokeMethod(METHOD_ENABLE_ACCURACY_ENGINE);
@@ -212,6 +228,8 @@ class Roam {
     return result;
   }
 
+  /// Enable Accuracy Engine
+  /// Use this method disable accuracy engine for location updates
   static Future<bool> disableAccuracyEngine() async {
     final bool result =
         await _channel.invokeMethod(METHOD_DISABLE_ACCURACY_ENGINE);
