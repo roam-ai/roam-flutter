@@ -1,3 +1,6 @@
+## 0.0.6
+
+* Added Doc comments for methods
 ## 0.0.5
 
 * Added Roam.ai Android SDK support to our flutter plugin
