@@ -5,6 +5,7 @@ import android.content.Context;
 import android.location.Location;
 
 import com.geospark.lib.GeoSpark;
+import com.geospark.lib.GeoSparkPublish;
 import com.geospark.lib.GeoSparkTrackingMode;
 import com.geospark.lib.callback.GeoSparkCallback;
 import com.geospark.lib.callback.GeoSparkCreateTripCallback;
@@ -306,16 +307,40 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            break;
 
          case METHOD_SUBSCRIBE_LOCATION:
-           GeoSpark.subscribeLocation();
+           GeoSpark.getListenerStatus(new GeoSparkCallback() {
+             @Override
+             public void onSuccess(GeoSparkUser geoSparkUser) {
+               String ownUserId = geoSparkUser.getUserId();
+               GeoSpark.subscribe(GeoSpark.Subscribe.LOCATION, ownUserId);
+             }
+
+             @Override
+             public void onFailure(GeoSparkError geoSparkError) {
+               geoSparkError.getMessage();
+               geoSparkError.getCode();
+             }
+           });
            break;
 
          case METHOD_SUBSCRIBE_USER_LOCATION:
            final String otherUserId = call.argument("userId");
-           GeoSpark.subscribeUserLocation(otherUserId);
+           GeoSpark.subscribe(GeoSpark.Subscribe.LOCATION, otherUserId);
            break;
 
          case METHOD_SUBSCRIBE_EVENTS:
-           GeoSpark.subscribeEvents();
+           GeoSpark.getListenerStatus(new GeoSparkCallback() {
+             @Override
+             public void onSuccess(GeoSparkUser geoSparkUser) {
+               String ownUserIdEvents = geoSparkUser.getUserId();
+               GeoSpark.subscribe(GeoSpark.Subscribe.EVENTS, ownUserIdEvents);
+             }
+
+             @Override
+             public void onFailure(GeoSparkError geoSparkError) {
+               geoSparkError.getMessage();
+               geoSparkError.getCode();
+             }
+           });
            break;
 
          case METHOD_ENABLE_ACCURACY_ENGINE:
@@ -335,18 +360,30 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
            switch (trackingMode) {
              case TRACKING_MODE_PASSIVE:
+               GeoSparkPublish geoSparkPublish = new GeoSparkPublish.Builder()
+                       .build();
+               GeoSpark.publishAndSave(geoSparkPublish);
                GeoSpark.startTracking(GeoSparkTrackingMode.PASSIVE);
                break;
 
              case TRACKING_MODE_REACTIVE:
-               GeoSpark.startTracking(GeoSparkTrackingMode.REACTIVE);
+               GeoSparkPublish geoSparkPublishReactive = new GeoSparkPublish.Builder()
+                       .build();
+               GeoSpark.publishAndSave(geoSparkPublishReactive);
+               GeoSpark.startTracking(GeoSparkTrackingMode.BALANCED);
                break;
 
              case TRACKING_MODE_ACTIVE:
+               GeoSparkPublish geoSparkPublishActive = new GeoSparkPublish.Builder()
+                       .build();
+               GeoSpark.publishAndSave(geoSparkPublishActive);
                GeoSpark.startTracking(GeoSparkTrackingMode.ACTIVE);
                break;
 
              case TRACKING_MODE_CUSTOM:
+               GeoSparkPublish geoSparkPublishCustom = new GeoSparkPublish.Builder()
+                       .build();
+               GeoSpark.publishAndSave(geoSparkPublishCustom);
                GeoSparkTrackingMode customTrackingMode;
                final Map customMethods = call.argument("customMethods");
                if(customMethods.containsKey("distanceInterval")){

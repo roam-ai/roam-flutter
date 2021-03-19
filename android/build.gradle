@@ -5,6 +5,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -16,6 +17,9 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
+        maven {
+            url 'https://com-geospark-android.s3.amazonaws.com/'
+        }
     }
 }
 
@@ -33,5 +37,5 @@ android {
 }
 
 dependencies {
-    implementation'com.geospark.android:geospark:3.1.0'
+    implementation'com.geospark.android:geospark:3.1.5'
 }
