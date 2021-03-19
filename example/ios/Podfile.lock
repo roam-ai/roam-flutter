@@ -1,20 +1,20 @@
 PODS:
-  - AWSAuthCore (2.22.2):
-    - AWSCore (= 2.22.2)
-  - AWSCognitoIdentityProvider (2.22.2):
-    - AWSCognitoIdentityProviderASF (= 2.22.2)
-    - AWSCore (= 2.22.2)
-  - AWSCognitoIdentityProviderASF (2.22.2)
-  - AWSCore (2.22.2)
-  - AWSIoT (2.22.2):
-    - AWSCore (= 2.22.2)
-  - AWSMobileClient (2.22.2):
-    - AWSAuthCore (= 2.22.2)
-    - AWSCognitoIdentityProvider (= 2.22.2)
-    - AWSCognitoIdentityProviderASF (= 2.22.2)
-    - AWSCore (= 2.22.2)
+  - AWSAuthCore (2.23.2):
+    - AWSCore (= 2.23.2)
+  - AWSCognitoIdentityProvider (2.23.2):
+    - AWSCognitoIdentityProviderASF (= 2.23.2)
+    - AWSCore (= 2.23.2)
+  - AWSCognitoIdentityProviderASF (2.23.2)
+  - AWSCore (2.23.2)
+  - AWSIoT (2.23.2):
+    - AWSCore (= 2.23.2)
+  - AWSMobileClient (2.23.2):
+    - AWSAuthCore (= 2.23.2)
+    - AWSCognitoIdentityProvider (= 2.23.2)
+    - AWSCognitoIdentityProviderASF (= 2.23.2)
+    - AWSCore (= 2.23.2)
   - Flutter (1.0.0)
-  - GeoSpark (3.1.2):
+  - GeoSpark (3.1.5):
     - AWSIoT
     - AWSMobileClient
   - integration_test (0.0.1):
@@ -23,7 +23,7 @@ PODS:
     - Flutter
   - roam_flutter (0.0.2):
     - Flutter
-    - GeoSpark (~> 3.1.2)
+    - GeoSpark (~> 3.1.5)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -52,17 +52,17 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/roam_flutter/ios"
 
 SPEC CHECKSUMS:
-  AWSAuthCore: 6ebee920932858d8f74092a67734599c7e1d04db
-  AWSCognitoIdentityProvider: 89fd21fdfc22a33ff86520d2905eac9201a55b69
-  AWSCognitoIdentityProviderASF: a5c421ef17e27c226e4d780a24ac3af675cbf57a
-  AWSCore: df612cf038f1230dfae4695feb8497c512f1143a
-  AWSIoT: 87930b426717c05c7938bbc02dfbe2d36467d893
-  AWSMobileClient: fd1b6ee5c6129d0cf891417179c854f8df225235
+  AWSAuthCore: 59770d4c2c1b3dbb183b95d1867e3584b4816e54
+  AWSCognitoIdentityProvider: 5bd6988ea7c8f9ee43151e19bdd8e803558ad45f
+  AWSCognitoIdentityProviderASF: 30ccb19228b6e743805bf15a72278ca9f399bc21
+  AWSCore: 70f79e95ee30f8eefa7122391d76ace516778f22
+  AWSIoT: 90114d327cb086c0322a730c6eca7cf2b3f64a16
+  AWSMobileClient: 54fd215e76e34a8edb3cb1199788a69543cebc95
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
-  GeoSpark: e409452d309c203e99153f54dbde6b0133a4bb11
+  GeoSpark: a5a8a35d3efc3324c773268ce92a4880b0f59bde
   integration_test: 6eb66a19f7104200dcfdd62bc0077e1b09686e4f
   permission_handler: eac8e15b4a1a3fba55b761d19f3f4e6b005d15b6
-  roam_flutter: 90394dd931aa23b3a1e80609ddd8725372d42024
+  roam_flutter: 7dcf96af7f7c33a2bf630ec583ab97e8b50a21e0
 
 PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea
 

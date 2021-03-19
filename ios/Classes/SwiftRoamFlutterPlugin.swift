@@ -128,7 +128,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
         case SwiftRoamFlutterPlugin.METHOD_INITIALIZE:
             let arguments = call.arguments as! [String: Any]
             let publishKey = arguments["publishKey"]  as! String;
-            GeoSpark.intialize(publishKey)
+            GeoSpark.initialize(publishKey)
         case SwiftRoamFlutterPlugin.METHOD_CREATE_USER:
             let arguments = call.arguments as! [String: Any]
             let description = arguments["description"]  as! String;
@@ -262,12 +262,15 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
             switch (trackingMode!) {
             case SwiftRoamFlutterPlugin.TRACKING_MODE_PASSIVE:
                 options = GeoSparkTrackingMode.passive
+                GeoSpark.publishSave()
                 GeoSpark.startTracking(options)
             case SwiftRoamFlutterPlugin.TRACKING_MODE_REACTIVE:
-                options = GeoSparkTrackingMode.reactive
+                options = GeoSparkTrackingMode.balanced
+                GeoSpark.publishSave()
                 GeoSpark.startTracking(options)
             case SwiftRoamFlutterPlugin.TRACKING_MODE_ACTIVE:
                 options = GeoSparkTrackingMode.active
+                GeoSpark.publishSave()
                 GeoSpark.startTracking(options)
             case SwiftRoamFlutterPlugin.TRACKING_MODE_CUSTOM:
                 let options = GeoSparkTrackingCustomMethods.init()
@@ -279,8 +282,11 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
                 options.accuracyFilter = customMethods?["accuracyFilter"] as? Int
                 options.distanceFilter = customMethods?["distanceFilter"] as? CLLocationDistance
                 GeoSpark.startTracking(.custom, options: options)
+                GeoSpark.publishSave()
             default:
                 options = GeoSparkTrackingMode.active
+                GeoSpark.publishSave()
+                GeoSpark.startTracking(options)
             }
             result(true);
         case SwiftRoamFlutterPlugin.METHOD_STOP_TRACKING:
@@ -288,9 +294,15 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
         case SwiftRoamFlutterPlugin.METHOD_LOGOUT_USER:
             GeoSpark.logoutUser()
         case SwiftRoamFlutterPlugin.METHOD_SUBSCRIBE_LOCATION:
-            GeoSpark.subscribeLocation()
+            GeoSpark.getListenerStatus() {(roamUser, error) in
+                let userId = roamUser?.userId
+                GeoSpark.subscribe(GeoSparkSubscribe.Location, userId!)
+            }
         case SwiftRoamFlutterPlugin.METHOD_SUBSCRIBE_EVENTS:
-            GeoSpark.subscribeEvents()
+            GeoSpark.getListenerStatus() {(roamUser, error) in
+                let userId = roamUser?.userId
+                GeoSpark.subscribe(GeoSparkSubscribe.Events, userId!)
+            }
         case SwiftRoamFlutterPlugin.METHOD_ENABLE_ACCURACY_ENGINE:
             GeoSpark.enableAccuracyEngine()
         case SwiftRoamFlutterPlugin.METHOD_DISABLE_ACCURACY_ENGINE:
@@ -298,7 +310,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
         case SwiftRoamFlutterPlugin.METHOD_SUBSCRIBE_USER_LOCATION:
             let arguments = call.arguments as! [String: Any]
             let userId = arguments["userId"]  as! String;
-            GeoSpark.subscribeUserLocation(userId)
+            GeoSpark.subscribe(GeoSparkSubscribe.Location, userId)
         case SwiftRoamFlutterPlugin.METHOD_CREATE_TRIP:
             let arguments = call.arguments as! [String: Any]
             let isOffline = arguments["isOffline"]  as! Bool;

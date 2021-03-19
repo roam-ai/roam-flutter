@@ -1,3 +1,6 @@
+## 0.0.7
+
+* Updated iOS Native SDK.
 ## 0.0.6
 
 * Added Doc comments for methods
