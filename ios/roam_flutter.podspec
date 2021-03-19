@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'GeoSpark', '~> 3.1.2'
+  s.dependency 'GeoSpark', '~> 3.1.5'
   s.static_framework = true
   s.platform = :ios, '10.0'
 
