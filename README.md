@@ -24,7 +24,7 @@ Add following lines to your applications pubspec.yml:
 
 ```dart
 dependencies:
-  roam_flutter: ^0.0.7
+  roam_flutter: ^0.0.8
 ```
 Install the plugin using the following command:
 ```dart
