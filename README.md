@@ -5,7 +5,8 @@
   <br />
 </p>
 
-[![pub package](https://img.shields.io/pub/v/roam_flutter.svg)](https://pub.dartlang.org/packages/roam_flutter)
+[![pub package](https://img.shields.io/pub/v/roam_flutter.svg)](https://pub.dartlang.org/packages/roam_flutter) 
+[![Pub.dev Publish](https://github.com/roam-ai/roam-flutter/actions/workflows/dart.yml/badge.svg?branch=master)](https://github.com/roam-ai/roam-flutter/actions/workflows/dart.yml)
 
 # Official Roam Flutter SDK
 This is the official Roam Flutter SDK developed and maintained by Roam B.V
