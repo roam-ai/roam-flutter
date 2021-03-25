@@ -14,16 +14,16 @@ PODS:
     - AWSCognitoIdentityProviderASF (= 2.23.2)
     - AWSCore (= 2.23.2)
   - Flutter (1.0.0)
-  - GeoSpark (3.1.5):
+  - GeoSpark (3.1.6):
     - AWSIoT
     - AWSMobileClient
   - integration_test (0.0.1):
     - Flutter
   - "permission_handler (5.0.1+1)":
     - Flutter
-  - roam_flutter (0.0.2):
+  - roam_flutter (0.0.9):
     - Flutter
-    - GeoSpark (~> 3.1.5)
+    - GeoSpark (~> 3.1.6)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -59,10 +59,10 @@ SPEC CHECKSUMS:
   AWSIoT: 90114d327cb086c0322a730c6eca7cf2b3f64a16
   AWSMobileClient: 54fd215e76e34a8edb3cb1199788a69543cebc95
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
-  GeoSpark: a5a8a35d3efc3324c773268ce92a4880b0f59bde
+  GeoSpark: 615d95f0c145de9d0005583cf3a850835ac3db6d
   integration_test: 6eb66a19f7104200dcfdd62bc0077e1b09686e4f
   permission_handler: eac8e15b4a1a3fba55b761d19f3f4e6b005d15b6
-  roam_flutter: 7dcf96af7f7c33a2bf630ec583ab97e8b50a21e0
+  roam_flutter: cc8273886c4f57c3ae5a5e8cee142c7994de2882
 
 PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea
 

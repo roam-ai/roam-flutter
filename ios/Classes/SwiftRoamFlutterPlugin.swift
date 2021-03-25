@@ -274,13 +274,14 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
                 GeoSpark.startTracking(options)
             case SwiftRoamFlutterPlugin.TRACKING_MODE_CUSTOM:
                 let options = GeoSparkTrackingCustomMethods.init()
-                options.activityType = self.getActivityType((customMethods?["activityType"] as? String)!)
+                options.activityType = self.getActivityType(((customMethods?["activityType"] as? String ?? "otherNavigation")))
                 options.desiredAccuracy = self.getDesiredAccuracy(((customMethods?["desiredAccuracy"] as? String)!))
                 options.allowBackgroundLocationUpdates = customMethods?["allowBackgroundLocationUpdates"] as? Bool
                 options.pausesLocationUpdatesAutomatically = customMethods?["pausesLocationUpdatesAutomatically"] as? Bool
                 options.showsBackgroundLocationIndicator = customMethods?["showsBackgroundLocationIndicator"] as? Bool
                 options.accuracyFilter = customMethods?["accuracyFilter"] as? Int
                 options.distanceFilter = customMethods?["distanceFilter"] as? CLLocationDistance
+                options.updateInterval = customMethods?["timeInterval"] as? Int
                 GeoSpark.startTracking(.custom, options: options)
                 GeoSpark.publishSave()
             default:
