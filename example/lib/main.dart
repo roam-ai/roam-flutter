@@ -778,8 +778,8 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                 });
               },
               controller: _textFieldController,
-              decoration:
-                  InputDecoration(hintText: "active/passsive/reactive/custom"),
+              decoration: InputDecoration(
+                  hintText: "active/passsive/reactive/custom/time/distance"),
             ),
             actions: <Widget>[
               FlatButton(
@@ -819,6 +819,32 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                           "distanceFilter": 10,
                           "desiredAccuracy": "nearestTenMeters",
                           "distanceInterval": 15
+                        };
+                        Roam.startTracking(
+                            trackingMode: "custom",
+                            customMethods: fitnessTracking);
+                        Navigator.pop(context);
+                        break;
+                      case "time":
+                        Map<String, dynamic> fitnessTracking = {
+                          "showsBackgroundLocationIndicator": true,
+                          "allowBackgroundLocationUpdates": true,
+                          "desiredAccuracy": "kCLLocationAccuracyBest",
+                          "timeInterval": 1
+                        };
+                        Roam.startTracking(
+                            trackingMode: "custom",
+                            customMethods: fitnessTracking);
+                        Navigator.pop(context);
+                        break;
+                      case "distance":
+                        Map<String, dynamic> fitnessTracking = {
+                          "activityType": "fitness",
+                          "showsBackgroundLocationIndicator": true,
+                          "allowBackgroundLocationUpdates": true,
+                          "distanceFilter": 5,
+                          "desiredAccuracy": "nearestTenMeters",
+                          "distanceInterval": 5
                         };
                         Roam.startTracking(
                             trackingMode: "custom",

@@ -381,21 +381,27 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                break;
 
              case TRACKING_MODE_CUSTOM:
-               GeoSparkPublish geoSparkPublishCustom = new GeoSparkPublish.Builder()
-                       .build();
-               GeoSpark.publishAndSave(geoSparkPublishCustom);
                GeoSparkTrackingMode customTrackingMode;
                final Map customMethods = call.argument("customMethods");
                if(customMethods.containsKey("distanceInterval")){
                  final int distanceInterval = (int) customMethods.get("distanceInterval");
                  customTrackingMode = new GeoSparkTrackingMode.Builder(distanceInterval, 30).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.HIGH).build();
+                 GeoSparkPublish geoSparkPublishCustom = new GeoSparkPublish.Builder()
+                         .build();
+                 GeoSpark.publishAndSave(geoSparkPublishCustom);
                  GeoSpark.startTracking(customTrackingMode);
                } else if(customMethods.containsKey("timeInterval")){
                  final int timeInterval = (int) customMethods.get("timeInterval");
                  customTrackingMode = new GeoSparkTrackingMode.Builder(timeInterval).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.HIGH).build();
+                 GeoSparkPublish geoSparkPublishCustom = new GeoSparkPublish.Builder()
+                         .build();
+                 GeoSpark.publishAndSave(geoSparkPublishCustom);
                  GeoSpark.startTracking(customTrackingMode);
                } else {
                  customTrackingMode = new GeoSparkTrackingMode.Builder(15, 30).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.HIGH).build();
+                 GeoSparkPublish geoSparkPublishCustom = new GeoSparkPublish.Builder()
+                         .build();
+                 GeoSpark.publishAndSave(geoSparkPublishCustom);
                  GeoSpark.startTracking(customTrackingMode);
                }
                break;
