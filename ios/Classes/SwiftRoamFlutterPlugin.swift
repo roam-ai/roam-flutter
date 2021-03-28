@@ -4,7 +4,7 @@ import GeoSpark
 import CoreLocation
 
 
-public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, GeoSparkDelegate {
+public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
     private static let METHOD_INITIALIZE = "initialize";
     private static let METHOD_GET_CURRENT_LOCATION = "getCurrentLocation";
     private static let METHOD_CREATE_USER = "createUser";

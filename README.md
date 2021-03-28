@@ -5,7 +5,7 @@
   <br />
 </p>
 
-[![pub package](https://img.shields.io/pub/v/roam_flutter.svg)](https://pub.dartlang.org/packages/roam_flutter) 
+[![pub package](https://img.shields.io/pub/v/roam_flutter.svg)](https://pub.dartlang.org/packages/roam_flutter)
 [![Pub.dev Publish](https://github.com/roam-ai/roam-flutter/actions/workflows/dart.yml/badge.svg?branch=master)](https://github.com/roam-ai/roam-flutter/actions/workflows/dart.yml)
 
 # Official Roam Flutter SDK
@@ -25,7 +25,7 @@ Add following lines to your applications pubspec.yml:
 
 ```dart
 dependencies:
-  roam_flutter: ^0.0.9
+  roam_flutter: ^0.0.10
 ```
 Install the plugin using the following command:
 ```dart

@@ -1,5 +1,8 @@
 ## 0.0.9
 
+* Fix to support iOS simulator.
+## 0.0.9
+
 * Updated iOS Native SDK to latest version.
 ## 0.0.8
 
