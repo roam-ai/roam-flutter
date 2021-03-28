@@ -21,7 +21,7 @@ PODS:
     - Flutter
   - "permission_handler (5.0.1+1)":
     - Flutter
-  - roam_flutter (0.0.9):
+  - roam_flutter (0.0.10):
     - Flutter
     - GeoSpark (~> 3.1.6)
 
@@ -62,7 +62,7 @@ SPEC CHECKSUMS:
   GeoSpark: 615d95f0c145de9d0005583cf3a850835ac3db6d
   integration_test: 6eb66a19f7104200dcfdd62bc0077e1b09686e4f
   permission_handler: eac8e15b4a1a3fba55b761d19f3f4e6b005d15b6
-  roam_flutter: cc8273886c4f57c3ae5a5e8cee142c7994de2882
+  roam_flutter: 637b3297c0076d962a35c6614a9a879d6a867d8e
 
 PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea
 
