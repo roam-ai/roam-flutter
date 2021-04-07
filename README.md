@@ -11,6 +11,8 @@
 # Official Roam Flutter SDK
 This is the official Roam Flutter SDK developed and maintained by Roam B.V
 
+Note: Before you get started [signup to our dashboard](https://roam.ai) to get your API Keys. 
+
 # Quick Start
 The Roam Flutter Plugin makes it quick and easy to build a
 location tracker for your Flutter app. We provide powerful and
