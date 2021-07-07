@@ -1,11 +1,9 @@
 import 'dart:async';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-typedef void RoamCallBack({String location});
-typedef void RoamUserCallBack({String user});
-typedef void RoamTripCallBack({String trip});
+typedef void RoamCallBack({String? location});
+typedef void RoamUserCallBack({String? user});
+typedef void RoamTripCallBack({String? trip});
 
 class Roam {
   static const String METHOD_INITIALIZE = "initialize";
@@ -41,22 +39,20 @@ class Roam {
   static const String TRACKING_MODE_REACTIVE = "reactive";
   static const String TRACKING_MODE_ACTIVE = "active";
 
-  static const String ACTIVITY_TYPE_FITNESS = "fitness";
-
   static const MethodChannel _channel = const MethodChannel('roam_flutter');
-  static RoamCallBack _callBack;
-  static RoamUserCallBack _userCallBack;
-  static RoamTripCallBack _tripCallBack;
+  static late RoamCallBack _callBack;
+  static late RoamUserCallBack _userCallBack;
+  static late RoamTripCallBack _tripCallBack;
 
   /// Initialize SDK
   /// Accepts SDK Key from GeoSpark Playground Project Setting
-  static Future<bool> initialize({
-    @required String publishKey,
+  static Future<bool?> initialize({
+    required String publishKey,
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{
       'publishKey': publishKey
     };
-    final bool result = await _channel.invokeMethod(METHOD_INITIALIZE, params);
+    final bool? result = await _channel.invokeMethod(METHOD_INITIALIZE, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
@@ -65,11 +61,11 @@ class Roam {
   /// Accepts Description in String Format
   /// Returns GeoSpark User
   static Future<void> createUser(
-      {@required String description, RoamUserCallBack callBack}) async {
+      {required String description, required RoamUserCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{
       'description': description
     };
-    final String result =
+    final String? result =
         await _channel.invokeMethod(METHOD_CREATE_USER, params);
     callBack(user: result);
   }
@@ -78,9 +74,9 @@ class Roam {
   /// Accepts GeoSpark User Id in String Format
   /// Returns GeoSpark User
   static Future<void> getUser(
-      {@required String userId, RoamUserCallBack callBack}) async {
+      {required String userId, required RoamUserCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{'userId': userId};
-    final String result = await _channel.invokeMethod(METHOD_GET_USER, params);
+    final String? result = await _channel.invokeMethod(METHOD_GET_USER, params);
     callBack(user: result);
   }
 
@@ -88,14 +84,14 @@ class Roam {
   /// Accepts Boolean values for Events & Locations
   /// Returns GeoSpark User
   static Future<void> toggleListener(
-      {@required bool events,
-      bool locations,
-      RoamUserCallBack callBack}) async {
+      {required bool events,
+      bool? locations,
+      required RoamUserCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{
       'events': events,
       'locations': locations
     };
-    final String result =
+    final String? result =
         await _channel.invokeMethod(METHOD_TOGGLE_LISTENER, params);
     callBack(user: result);
   }
@@ -104,18 +100,18 @@ class Roam {
   /// Accepts Boolean values for Geofence, Trips, Moving Geofence & Location
   /// Returns GeoSpark User
   static Future<void> toggleEvents(
-      {@required bool location,
-      bool geofence,
-      bool trips,
-      bool movingGeofence,
-      RoamUserCallBack callBack}) async {
+      {required bool location,
+      bool? geofence,
+      bool? trips,
+      bool? movingGeofence,
+      required RoamUserCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{
       'geofence': geofence,
       'location': location,
       'trips': trips,
       'movingGeofence': movingGeofence
     };
-    final String result =
+    final String? result =
         await _channel.invokeMethod(METHOD_TOGGLE_EVENTS, params);
     callBack(user: result);
   }
@@ -123,8 +119,9 @@ class Roam {
   /// Get User Listener Status
   /// Accepts GeoSpark User Id in String Format
   /// Returns GeoSpark User
-  static Future<void> getListenerStatus({RoamUserCallBack callBack}) async {
-    final String result =
+  static Future<void> getListenerStatus(
+      {required RoamUserCallBack callBack}) async {
+    final String? result =
         await _channel.invokeMethod(METHOD_GET_LISTENER_STATUS);
     callBack(user: result);
   }
@@ -132,11 +129,11 @@ class Roam {
   /// Update Current Location
   /// Accepts Accuracy Value in Int format
   /// Returns Location
-  static Future<bool> updateCurrentLocation({
-    @required int accuracy,
+  static Future<bool?> updateCurrentLocation({
+    required int accuracy,
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{'accuracy': accuracy};
-    final bool result =
+    final bool? result =
         await _channel.invokeMethod(METHOD_UPDATE_CURRENT_LOCATION, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
@@ -146,28 +143,28 @@ class Roam {
   /// Accepts Accuracy Value in Int format
   /// Returns Location
   static Future<void> getCurrentLocation(
-      {@required int accuracy, RoamCallBack callBack}) async {
+      {required int accuracy, required RoamCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{'accuracy': accuracy};
-    final String result =
+    final String? result =
         await _channel.invokeMethod(METHOD_GET_CURRENT_LOCATION, params);
     callBack(location: result);
   }
 
-  static Future<bool> startTracking(
-      {@required dynamic trackingMode, Map customMethods}) async {
+  static Future<bool?> startTracking(
+      {required dynamic trackingMode, Map? customMethods}) async {
     final Map<String, dynamic> params = <String, dynamic>{
       'trackingMode': trackingMode,
       'customMethods': customMethods
     };
-    final bool result =
+    final bool? result =
         await _channel.invokeMethod(METHOD_START_TRACKING, params);
     return result;
   }
 
   /// Logout User
   /// Use this method to logout current session of the user and before creating/get another user
-  static Future<bool> logoutUser() async {
-    final bool result = await _channel.invokeMethod(METHOD_LOGOUT_USER);
+  static Future<bool?> logoutUser() async {
+    final bool? result = await _channel.invokeMethod(METHOD_LOGOUT_USER);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
@@ -175,8 +172,8 @@ class Roam {
   /// Disable Battery Optimization in Android
   /// This method is only for Android devices to disable all battery optimization settings by OS and allow
   /// the application to track location in background
-  static Future<bool> disableBatteryOptimization() async {
-    final bool result =
+  static Future<bool?> disableBatteryOptimization() async {
+    final bool? result =
         await _channel.invokeMethod(METHOD_DISABLE_BATTERY_OPTIMIZATION);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
@@ -184,16 +181,16 @@ class Roam {
 
   /// Subscribe Location
   /// Use this method to enable subscription to own location updates
-  static Future<bool> subscribeLocation() async {
-    final bool result = await _channel.invokeMethod(METHOD_SUBSCRIBE_LOCATION);
+  static Future<bool?> subscribeLocation() async {
+    final bool? result = await _channel.invokeMethod(METHOD_SUBSCRIBE_LOCATION);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
   /// Subscribe Events
   /// Use this method to enable subscription to own events
-  static Future<bool> subscribeEvents() async {
-    final bool result = await _channel.invokeMethod(METHOD_SUBSCRIBE_EVENTS);
+  static Future<bool?> subscribeEvents() async {
+    final bool? result = await _channel.invokeMethod(METHOD_SUBSCRIBE_EVENTS);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
@@ -201,11 +198,11 @@ class Roam {
   /// Subscribe User Location
   /// Accepts GeoSpark User Id
   /// Use this method to enable subscription to other user's location updates
-  static Future<bool> subscribeUserLocation({
-    @required String userId,
+  static Future<bool?> subscribeUserLocation({
+    required String userId,
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{'userId': userId};
-    final bool result =
+    final bool? result =
         await _channel.invokeMethod(METHOD_SUBSCRIBE_USER_LOCATION, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
@@ -213,16 +210,16 @@ class Roam {
 
   /// Stop Tracking
   /// Use this method to stop the location tracking
-  static Future<bool> stopTracking() async {
-    final bool result = await _channel.invokeMethod(METHOD_STOP_TRACKING);
+  static Future<bool?> stopTracking() async {
+    final bool? result = await _channel.invokeMethod(METHOD_STOP_TRACKING);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
   /// Enable Accuracy Engine
   /// Use this method improve accuracy for location updates
-  static Future<bool> enableAccuracyEngine() async {
-    final bool result =
+  static Future<bool?> enableAccuracyEngine() async {
+    final bool? result =
         await _channel.invokeMethod(METHOD_ENABLE_ACCURACY_ENGINE);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
@@ -230,99 +227,100 @@ class Roam {
 
   /// Enable Accuracy Engine
   /// Use this method disable accuracy engine for location updates
-  static Future<bool> disableAccuracyEngine() async {
-    final bool result =
+  static Future<bool?> disableAccuracyEngine() async {
+    final bool? result =
         await _channel.invokeMethod(METHOD_DISABLE_ACCURACY_ENGINE);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
   static Future<void> createTrip(
-      {@required bool isOffline, RoamTripCallBack callBack}) async {
+      {required bool isOffline, required RoamTripCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{
       'isOffline': isOffline
     };
-    final String result =
+    final String? result =
         await _channel.invokeMethod(METHOD_CREATE_TRIP, params);
     callBack(trip: result);
   }
 
   static Future<void> getTripDetails(
-      {@required String tripId, RoamTripCallBack callBack}) async {
+      {required String tripId, required RoamTripCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
-    final String result =
+    final String? result =
         await _channel.invokeMethod(METHOD_GET_TRIP_DETAILS, params);
     callBack(trip: result);
   }
 
   static Future<void> getTripStatus(
-      {@required String tripId, RoamTripCallBack callBack}) async {
+      {required String tripId, required RoamTripCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
-    final String result =
+    final String? result =
         await _channel.invokeMethod(METHOD_GET_TRIP_STATUS, params);
     callBack(trip: result);
   }
 
-  static Future<void> subscribeTripStatus({
-    @required String tripId,
+  static Future<bool?> subscribeTripStatus({
+    required String tripId,
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
-    final bool result =
+    final bool? result =
         await _channel.invokeMethod(METHOD_SUBSCRIBE_TRIP_STATUS, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
-  static Future<void> ubSubscribeTripStatus({
-    @required String tripId,
+  static Future<bool?> ubSubscribeTripStatus({
+    required String tripId,
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
-    final bool result =
+    final bool? result =
         await _channel.invokeMethod(METHOD_UNSUBSCRIBE_TRIP_STATUS, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
-  static Future<void> startTrip({
-    @required String tripId,
+  static Future<bool?> startTrip({
+    required String tripId,
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
-    final bool result = await _channel.invokeMethod(METHOD_START_TRIP, params);
+    final bool? result = await _channel.invokeMethod(METHOD_START_TRIP, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
-  static Future<void> pauseTrip({
-    @required String tripId,
+  static Future<bool?> pauseTrip({
+    required String tripId,
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
-    final bool result = await _channel.invokeMethod(METHOD_PAUSE_TRIP, params);
+    final bool? result = await _channel.invokeMethod(METHOD_PAUSE_TRIP, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
-  static Future<void> resumeTrip({
-    @required String tripId,
+  static Future<bool?> resumeTrip({
+    required String tripId,
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
-    final bool result = await _channel.invokeMethod(METHOD_RESUME_TRIP, params);
+    final bool? result =
+        await _channel.invokeMethod(METHOD_RESUME_TRIP, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
-  static Future<void> endTrip({
-    @required String tripId,
+  static Future<bool?> endTrip({
+    required String tripId,
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
-    final bool result = await _channel.invokeMethod(METHOD_END_TRIP, params);
+    final bool? result = await _channel.invokeMethod(METHOD_END_TRIP, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
   static Future<void> getTripSummary(
-      {@required String tripId, RoamTripCallBack callBack}) async {
+      {required String tripId, required RoamTripCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
-    final String result =
+    final String? result =
         await _channel.invokeMethod(METHOD_GET_TRIP_SUMMARY, params);
     callBack(trip: result);
   }
@@ -345,8 +343,8 @@ class Roam {
     }
   }
 
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
+  static Future<String?> get platformVersion async {
+    final String? version = await _channel.invokeMethod('getPlatformVersion');
     return version;
   }
 }
