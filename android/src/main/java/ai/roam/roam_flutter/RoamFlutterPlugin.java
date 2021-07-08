@@ -4,23 +4,23 @@ import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 
-import com.geospark.lib.GeoSpark;
-import com.geospark.lib.GeoSparkPublish;
-import com.geospark.lib.GeoSparkTrackingMode;
-import com.geospark.lib.callback.GeoSparkCallback;
-import com.geospark.lib.callback.GeoSparkCreateTripCallback;
-import com.geospark.lib.callback.GeoSparkLocationCallback;
-import com.geospark.lib.callback.GeoSparkLogoutCallback;
-import com.geospark.lib.callback.GeoSparkTripCallback;
-import com.geospark.lib.callback.GeoSparkTripDetailCallback;
-import com.geospark.lib.callback.GeoSparkTripStatusCallback;
-import com.geospark.lib.callback.GeoSparkTripSummaryCallback;
-import com.geospark.lib.models.GeoSparkError;
-import com.geospark.lib.models.GeoSparkTripStatus;
-import com.geospark.lib.models.GeoSparkUser;
-import com.geospark.lib.models.createtrip.GeoSparkCreateTrip;
-import com.geospark.lib.models.gettrip.GeoSparkTripDetail;
-import com.geospark.lib.models.tripsummary.GeoSparkTripSummary;
+import com.roam.sdk.Roam;
+import com.roam.sdk.RoamPublish;
+import com.roam.sdk.RoamTrackingMode;
+import com.roam.sdk.callback.RoamCallback;
+import com.roam.sdk.callback.RoamCreateTripCallback;
+import com.roam.sdk.callback.RoamLocationCallback;
+import com.roam.sdk.callback.RoamLogoutCallback;
+import com.roam.sdk.callback.RoamTripCallback;
+import com.roam.sdk.callback.RoamTripDetailCallback;
+import com.roam.sdk.callback.RoamTripStatusCallback;
+import com.roam.sdk.callback.RoamTripSummaryCallback;
+import com.roam.sdk.models.RoamError;
+import com.roam.sdk.models.RoamTripStatus;
+import com.roam.sdk.models.RoamUser;
+import com.roam.sdk.models.createtrip.RoamCreateTrip;
+import com.roam.sdk.models.gettrip.RoamTripDetail;
+import com.roam.sdk.models.tripsummary.RoamTripSummary;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -129,11 +129,11 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
          case METHOD_INITIALIZE:
            final String publishKey = call.argument("publishKey");
-           GeoSpark.initialize(this.context, publishKey);
+           Roam.initialize(this.context, publishKey);
            break;
          case METHOD_GET_CURRENT_LOCATION:
            final Integer accuracy = call.argument("accuracy");
-           GeoSpark.getCurrentLocation(GeoSparkTrackingMode.DesiredAccuracy.MEDIUM, accuracy, new GeoSparkLocationCallback() {
+           Roam.getCurrentLocation(RoamTrackingMode.DesiredAccuracy.MEDIUM, accuracy, new RoamLocationCallback() {
              @Override
              public void location(Location location) {
                JSONObject coordinates = new JSONObject();
@@ -152,22 +152,22 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getCode();
-               geoSparkError.getMessage();
+             public void onFailure(RoamError roamError) {
+               roamError.getCode();
+               roamError.getMessage();
              }
            });
            break;
 
          case METHOD_CREATE_USER:
            final String description = call.argument("description");
-           GeoSpark.createUser(description, new GeoSparkCallback() {
+           Roam.createUser(description, new RoamCallback() {
              @Override
-             public void onSuccess(GeoSparkUser geoSparkUser) {
+             public void onSuccess(RoamUser roamUser) {
                JSONObject user = new JSONObject();
                try {
-                 user.put("userId", geoSparkUser.getUserId());
-                 user.put("description", geoSparkUser.getDescription());
+                 user.put("userId", roamUser.getUserId());
+                 user.put("description", roamUser.getDescription());
                  String userText = user.toString().substring(1, user.toString().length() - 1);
                  result.success(userText);
                } catch (JSONException e) {
@@ -176,22 +176,22 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
 
          case METHOD_GET_USER:
            final String userId = call.argument("userId");
-           GeoSpark.getUser(userId, new GeoSparkCallback() {
+           Roam.getUser(userId, new RoamCallback() {
              @Override
-             public void onSuccess(GeoSparkUser geoSparkUser) {
+             public void onSuccess(RoamUser roamUser) {
                JSONObject user = new JSONObject();
                try {
-                 user.put("userId", geoSparkUser.getUserId());
-                 user.put("description", geoSparkUser.getDescription());
+                 user.put("userId", roamUser.getUserId());
+                 user.put("description", roamUser.getDescription());
                  String userText = user.toString().substring(1, user.toString().length() - 1);
                  result.success(userText);
                } catch (JSONException e) {
@@ -200,9 +200,9 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
@@ -210,14 +210,14 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
          case METHOD_TOGGLE_LISTENER:
            final Boolean Events = call.argument("events");
            final Boolean Locations = call.argument("locations");
-           GeoSpark.toggleListener(Events, Locations, new GeoSparkCallback() {
+           Roam.toggleListener(Events, Locations, new RoamCallback() {
              @Override
-             public void onSuccess(GeoSparkUser geoSparkUser) {
+             public void onSuccess(RoamUser roamUser) {
                JSONObject user = new JSONObject();
                try {
-                 user.put("userId", geoSparkUser.getUserId());
-                 user.put("events", geoSparkUser.getEventListenerStatus());
-                 user.put("locations", geoSparkUser.getLocationListenerStatus());
+                 user.put("userId", roamUser.getUserId());
+                 user.put("events", roamUser.getEventListenerStatus());
+                 user.put("locations", roamUser.getLocationListenerStatus());
                  String userText = user.toString().substring(1, user.toString().length() - 1);
                  result.success(userText);
                } catch (JSONException e) {
@@ -226,9 +226,9 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
@@ -238,16 +238,16 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            final Boolean Location = call.argument("location");
            final Boolean Trips = call.argument("trips");
            final Boolean MovingGeofence = call.argument("movingGeofence");
-           GeoSpark.toggleEvents(Geofence, Location, Trips, MovingGeofence, new GeoSparkCallback() {
+           Roam.toggleEvents(Geofence, Location, Trips, MovingGeofence, new RoamCallback() {
              @Override
-             public void onSuccess(GeoSparkUser geoSparkUser) {
+             public void onSuccess(RoamUser roamUser) {
                JSONObject user = new JSONObject();
                try {
-                 user.put("userId", geoSparkUser.getUserId());
-                 user.put("locationEvents", geoSparkUser.getLocationEvents());
-                 user.put("geofenceEvents", geoSparkUser.getGeofenceEvents());
-                 user.put("tripsEvents", geoSparkUser.getTripsEvents());
-                 user.put("movingGeofenceEvents", geoSparkUser.getMovingGeofenceEvents());
+                 user.put("userId", roamUser.getUserId());
+                 user.put("locationEvents", roamUser.getLocationEvents());
+                 user.put("geofenceEvents", roamUser.getGeofenceEvents());
+                 user.put("tripsEvents", roamUser.getTripsEvents());
+                 user.put("movingGeofenceEvents", roamUser.getMovingGeofenceEvents());
                  String userText = user.toString().substring(1, user.toString().length() - 1);
                  result.success(userText);
                } catch (JSONException e) {
@@ -256,26 +256,26 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
 
          case METHOD_GET_LISTENER_STATUS:
-           GeoSpark.getListenerStatus(new GeoSparkCallback() {
+           Roam.getListenerStatus(new RoamCallback() {
              @Override
-             public void onSuccess(GeoSparkUser geoSparkUser) {
+             public void onSuccess(RoamUser roamUser) {
                JSONObject user = new JSONObject();
                try {
-                 user.put("userId", geoSparkUser.getUserId());
-                 user.put("events", geoSparkUser.getEventListenerStatus());
-                 user.put("locations", geoSparkUser.getLocationListenerStatus());
-                 user.put("locationEvents", geoSparkUser.getLocationEvents());
-                 user.put("geofenceEvents", geoSparkUser.getGeofenceEvents());
-                 user.put("tripsEvents", geoSparkUser.getTripsEvents());
-                 user.put("movingGeofenceEvents", geoSparkUser.getMovingGeofenceEvents());
+                 user.put("userId", roamUser.getUserId());
+                 user.put("events", roamUser.getEventListenerStatus());
+                 user.put("locations", roamUser.getLocationListenerStatus());
+                 user.put("locationEvents", roamUser.getLocationEvents());
+                 user.put("geofenceEvents", roamUser.getGeofenceEvents());
+                 user.put("tripsEvents", roamUser.getTripsEvents());
+                 user.put("movingGeofenceEvents", roamUser.getMovingGeofenceEvents());
                  String userText = user.toString().substring(1, user.toString().length() - 1);
                  result.success(userText);
                } catch (JSONException e) {
@@ -284,75 +284,75 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
 
          case METHOD_LOGOUT_USER:
-           GeoSpark.logout(new GeoSparkLogoutCallback() {
+           Roam.logout(new RoamLogoutCallback() {
              @Override
              public void onSuccess(String s) {
 
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
 
          case METHOD_SUBSCRIBE_LOCATION:
-           GeoSpark.getListenerStatus(new GeoSparkCallback() {
+           Roam.getListenerStatus(new RoamCallback() {
              @Override
-             public void onSuccess(GeoSparkUser geoSparkUser) {
-               String ownUserId = geoSparkUser.getUserId();
-               GeoSpark.subscribe(GeoSpark.Subscribe.LOCATION, ownUserId);
+             public void onSuccess(RoamUser roamUser) {
+               String ownUserId = roamUser.getUserId();
+               Roam.subscribe(Roam.Subscribe.LOCATION, ownUserId);
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
 
          case METHOD_SUBSCRIBE_USER_LOCATION:
            final String otherUserId = call.argument("userId");
-           GeoSpark.subscribe(GeoSpark.Subscribe.LOCATION, otherUserId);
+           Roam.subscribe(Roam.Subscribe.LOCATION, otherUserId);
            break;
 
          case METHOD_SUBSCRIBE_EVENTS:
-           GeoSpark.getListenerStatus(new GeoSparkCallback() {
+           Roam.getListenerStatus(new RoamCallback() {
              @Override
-             public void onSuccess(GeoSparkUser geoSparkUser) {
-               String ownUserIdEvents = geoSparkUser.getUserId();
-               GeoSpark.subscribe(GeoSpark.Subscribe.EVENTS, ownUserIdEvents);
+             public void onSuccess(RoamUser roamUser) {
+               String ownUserIdEvents = roamUser.getUserId();
+               Roam.subscribe(Roam.Subscribe.EVENTS, ownUserIdEvents);
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
 
          case METHOD_ENABLE_ACCURACY_ENGINE:
-           GeoSpark.enableAccuracyEngine();
+           Roam.enableAccuracyEngine();
            break;
          case METHOD_DISABLE_ACCURACY_ENGINE:
-           GeoSpark.disableAccuracyEngine();
+           Roam.disableAccuracyEngine();
            break;
 
          case METHOD_UPDATE_CURRENT_LOCATION:
            final Integer updateAccuracy = call.argument("accuracy");
-           GeoSpark.updateCurrentLocation(GeoSparkTrackingMode.DesiredAccuracy.MEDIUM, updateAccuracy);
+           Roam.updateCurrentLocation(RoamTrackingMode.DesiredAccuracy.MEDIUM, updateAccuracy);
            break;
 
          case METHOD_START_TRACKING:
@@ -360,49 +360,49 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
            switch (trackingMode) {
              case TRACKING_MODE_PASSIVE:
-               GeoSparkPublish geoSparkPublish = new GeoSparkPublish.Builder()
+               RoamPublish roamPublish = new RoamPublish.Builder()
                        .build();
-               GeoSpark.publishAndSave(geoSparkPublish);
-               GeoSpark.startTracking(GeoSparkTrackingMode.PASSIVE);
+               Roam.publishAndSave(roamPublish);
+               Roam.startTracking(RoamTrackingMode.PASSIVE);
                break;
 
              case TRACKING_MODE_REACTIVE:
-               GeoSparkPublish geoSparkPublishReactive = new GeoSparkPublish.Builder()
+               RoamPublish roamPublishReactive = new RoamPublish.Builder()
                        .build();
-               GeoSpark.publishAndSave(geoSparkPublishReactive);
-               GeoSpark.startTracking(GeoSparkTrackingMode.BALANCED);
+               Roam.publishAndSave(roamPublishReactive);
+               Roam.startTracking(RoamTrackingMode.BALANCED);
                break;
 
              case TRACKING_MODE_ACTIVE:
-               GeoSparkPublish geoSparkPublishActive = new GeoSparkPublish.Builder()
+               RoamPublish roamPublishActive = new RoamPublish.Builder()
                        .build();
-               GeoSpark.publishAndSave(geoSparkPublishActive);
-               GeoSpark.startTracking(GeoSparkTrackingMode.ACTIVE);
+               Roam.publishAndSave(roamPublishActive);
+               Roam.startTracking(RoamTrackingMode.ACTIVE);
                break;
 
              case TRACKING_MODE_CUSTOM:
-               GeoSparkTrackingMode customTrackingMode;
+               RoamTrackingMode customTrackingMode;
                final Map customMethods = call.argument("customMethods");
                if(customMethods.containsKey("distanceInterval")){
                  final int distanceInterval = (int) customMethods.get("distanceInterval");
-                 customTrackingMode = new GeoSparkTrackingMode.Builder(distanceInterval, 30).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.HIGH).build();
-                 GeoSparkPublish geoSparkPublishCustom = new GeoSparkPublish.Builder()
+                 customTrackingMode = new RoamTrackingMode.Builder(distanceInterval, 30).setDesiredAccuracy(RoamTrackingMode.DesiredAccuracy.HIGH).build();
+                 RoamPublish roamPublishCustom = new RoamPublish.Builder()
                          .build();
-                 GeoSpark.publishAndSave(geoSparkPublishCustom);
-                 GeoSpark.startTracking(customTrackingMode);
+                 Roam.publishAndSave(roamPublishCustom);
+                 Roam.startTracking(customTrackingMode);
                } else if(customMethods.containsKey("timeInterval")){
                  final int timeInterval = (int) customMethods.get("timeInterval");
-                 customTrackingMode = new GeoSparkTrackingMode.Builder(timeInterval).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.HIGH).build();
-                 GeoSparkPublish geoSparkPublishCustom = new GeoSparkPublish.Builder()
+                 customTrackingMode = new RoamTrackingMode.Builder(timeInterval).setDesiredAccuracy(RoamTrackingMode.DesiredAccuracy.HIGH).build();
+                 RoamPublish roamPublishCustom = new RoamPublish.Builder()
                          .build();
-                 GeoSpark.publishAndSave(geoSparkPublishCustom);
-                 GeoSpark.startTracking(customTrackingMode);
+                 Roam.publishAndSave(roamPublishCustom);
+                 Roam.startTracking(customTrackingMode);
                } else {
-                 customTrackingMode = new GeoSparkTrackingMode.Builder(15, 30).setDesiredAccuracy(GeoSparkTrackingMode.DesiredAccuracy.HIGH).build();
-                 GeoSparkPublish geoSparkPublishCustom = new GeoSparkPublish.Builder()
+                 customTrackingMode = new RoamTrackingMode.Builder(15, 30).setDesiredAccuracy(RoamTrackingMode.DesiredAccuracy.HIGH).build();
+                 RoamPublish roamPublishCustom = new RoamPublish.Builder()
                          .build();
-                 GeoSpark.publishAndSave(geoSparkPublishCustom);
-                 GeoSpark.startTracking(customTrackingMode);
+                 Roam.publishAndSave(roamPublishCustom);
+                 Roam.startTracking(customTrackingMode);
                }
                break;
 
@@ -412,18 +412,18 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            break;
 
          case METHOD_STOP_TRACKING:
-           GeoSpark.stopTracking();
+           Roam.stopTracking();
            break;
 
          case METHOD_CREATE_TRIP:
            final Boolean isOffline = call.argument("isOffline");
-           GeoSpark.createTrip(null, null, isOffline, new GeoSparkCreateTripCallback() {
+           Roam.createTrip(null, null, isOffline, new RoamCreateTripCallback() {
              @Override
-             public void onSuccess(GeoSparkCreateTrip geoSparkCreateTrip) {
+             public void onSuccess(RoamCreateTrip roamCreateTrip) {
                JSONObject trip = new JSONObject();
                try {
-                 trip.put("userId", geoSparkCreateTrip.getUser_id());
-                 trip.put("tripId", geoSparkCreateTrip.getId());
+                 trip.put("userId", roamCreateTrip.getUser_id());
+                 trip.put("tripId", roamCreateTrip.getId());
 
                  String tripText = trip.toString().substring(1, trip.toString().length() - 1);
                  result.success(tripText);
@@ -433,22 +433,22 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
 
          case METHOD_GET_TRIP_DETAILS:
            final String tripId = call.argument("tripId");
-           GeoSpark.getTripDetails(tripId, new GeoSparkTripDetailCallback() {
+           Roam.getTripDetails(tripId, new RoamTripDetailCallback() {
              @Override
-             public void onSuccess(GeoSparkTripDetail geoSparkTripDetail) {
+             public void onSuccess(RoamTripDetail roamTripDetail) {
                JSONObject trip = new JSONObject();
                try {
-                 trip.put("userId", geoSparkTripDetail.getUser_id());
-                 trip.put("tripId", geoSparkTripDetail.getId());
+                 trip.put("userId", roamTripDetail.getUser_id());
+                 trip.put("tripId", roamTripDetail.getId());
 
                  String tripText = trip.toString().substring(1, trip.toString().length() - 1);
                  result.success(tripText);
@@ -458,24 +458,24 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
 
          case METHOD_GET_TRIP_STATUS:
            final String statusTripId = call.argument("tripId");
-           GeoSpark.getTripStatus(statusTripId, new GeoSparkTripStatusCallback() {
+           Roam.getTripStatus(statusTripId, new RoamTripStatusCallback() {
              @Override
-             public void onSuccess(GeoSparkTripStatus geoSparkTripStatus) {
+             public void onSuccess(RoamTripStatus roamTripStatus) {
                JSONObject trip = new JSONObject();
                try {
-                 trip.put("distance", geoSparkTripStatus.getDistance());
-                 trip.put("speed", geoSparkTripStatus.getSpeed());
-                 trip.put("duration", geoSparkTripStatus.getDuration());
-                 trip.put("tripId", geoSparkTripStatus.getTripId());
+                 trip.put("distance", roamTripStatus.getDistance());
+                 trip.put("speed", roamTripStatus.getSpeed());
+                 trip.put("duration", roamTripStatus.getDuration());
+                 trip.put("tripId", roamTripStatus.getTripId());
 
                  String tripText = trip.toString().substring(1, trip.toString().length() - 1);
                  result.success(tripText);
@@ -485,98 +485,98 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
 
          case METHOD_SUBSCRIBE_TRIP_STATUS:
            final String subscribeTripId = call.argument("tripId");
-           GeoSpark.subscribeTripStatus(subscribeTripId);
+           Roam.subscribeTripStatus(subscribeTripId);
            break;
 
          case METHOD_UNSUBSCRIBE_TRIP_STATUS:
            final String unSubscribeTripId = call.argument("tripId");
-           GeoSpark.unSubscribeTripStatus(unSubscribeTripId);
+           Roam.unSubscribeTripStatus(unSubscribeTripId);
            break;
 
          case METHOD_START_TRIP:
            final String startTripId = call.argument("tripId");
-           GeoSpark.startTrip(startTripId, null, new GeoSparkTripCallback() {
+           Roam.startTrip(startTripId, null, new RoamTripCallback() {
              @Override
              public void onSuccess(String s) {
 
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
 
          case METHOD_PAUSE_TRIP:
            final String pauseTripId = call.argument("tripId");
-           GeoSpark.pauseTrip(pauseTripId, new GeoSparkTripCallback() {
+           Roam.pauseTrip(pauseTripId, new RoamTripCallback() {
              @Override
              public void onSuccess(String s) {
 
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
 
          case METHOD_RESUME_TRIP:
            final String resumeTripId = call.argument("tripId");
-           GeoSpark.resumeTrip(resumeTripId, new GeoSparkTripCallback() {
+           Roam.resumeTrip(resumeTripId, new RoamTripCallback() {
              @Override
              public void onSuccess(String s) {
 
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
 
          case METHOD_END_TRIP:
            final String endTripId = call.argument("tripId");
-           GeoSpark.stopTrip(endTripId, new GeoSparkTripCallback() {
+           Roam.stopTrip(endTripId, new RoamTripCallback() {
              @Override
              public void onSuccess(String s) {
 
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
 
          case METHOD_GET_TRIP_SUMMARY:
            final String summaryTripId = call.argument("tripId");
-           GeoSpark.getTripSummary(summaryTripId, new GeoSparkTripSummaryCallback() {
+           Roam.getTripSummary(summaryTripId, new RoamTripSummaryCallback() {
              @Override
-             public void onSuccess(GeoSparkTripSummary geoSparkTripSummary) {
+             public void onSuccess(RoamTripSummary roamTripSummary) {
                JSONObject trip = new JSONObject();
                try {
-                 trip.put("distance", geoSparkTripSummary.getDistance_covered());
-                 trip.put("duration", geoSparkTripSummary.getDuration());
-                 trip.put("tripId", geoSparkTripSummary.getTrip_id());
-                 trip.put("route", geoSparkTripSummary.getRoute());
+                 trip.put("distance", roamTripSummary.getDistance_covered());
+                 trip.put("duration", roamTripSummary.getDuration());
+                 trip.put("tripId", roamTripSummary.getTrip_id());
+                 trip.put("route", roamTripSummary.getRoute());
 
                  String tripText = trip.toString().substring(1, trip.toString().length() - 1);
                  result.success(tripText);
@@ -586,15 +586,15 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              }
 
              @Override
-             public void onFailure(GeoSparkError geoSparkError) {
-               geoSparkError.getMessage();
-               geoSparkError.getCode();
+             public void onFailure(RoamError roamError) {
+               roamError.getMessage();
+               roamError.getCode();
              }
            });
            break;
 
          case METHOD_DISABLE_BATTERY_OPTIMIZATION:
-           GeoSpark.disableBatteryOptimization();
+           Roam.disableBatteryOptimization();
            break;
 
          default:
