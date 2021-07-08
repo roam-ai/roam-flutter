@@ -36,7 +36,7 @@ class Roam {
       "disableBatteryOptimization";
 
   static const String TRACKING_MODE_PASSIVE = "passive";
-  static const String TRACKING_MODE_REACTIVE = "reactive";
+  static const String TRACKING_MODE_BALANCED = "balanced";
   static const String TRACKING_MODE_ACTIVE = "active";
 
   static const MethodChannel _channel = const MethodChannel('roam_flutter');

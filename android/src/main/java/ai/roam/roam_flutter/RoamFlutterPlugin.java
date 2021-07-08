@@ -75,7 +75,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
   private static final String METHOD_DISABLE_BATTERY_OPTIMIZATION = "disableBatteryOptimization";
 
   private static final String TRACKING_MODE_PASSIVE = "passive";
-  private static final String TRACKING_MODE_REACTIVE = "reactive";
+  private static final String TRACKING_MODE_BALANCED = "balanced";
   private static final String TRACKING_MODE_ACTIVE = "active";
   private static final String TRACKING_MODE_CUSTOM = "custom";
 
@@ -366,10 +366,10 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                Roam.startTracking(RoamTrackingMode.PASSIVE);
                break;
 
-             case TRACKING_MODE_REACTIVE:
-               RoamPublish roamPublishReactive = new RoamPublish.Builder()
+             case TRACKING_MODE_BALANCED:
+               RoamPublish roamPublishBalanced = new RoamPublish.Builder()
                        .build();
-               Roam.publishAndSave(roamPublishReactive);
+               Roam.publishAndSave(roamPublishBalanced);
                Roam.startTracking(RoamTrackingMode.BALANCED);
                break;
 

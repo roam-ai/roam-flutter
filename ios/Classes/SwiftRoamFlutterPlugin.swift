@@ -33,7 +33,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
     private static let METHOD_GET_TRIP_SUMMARY = "getTripSummary";
 
     private static let TRACKING_MODE_PASSIVE = "passive";
-    private static let TRACKING_MODE_REACTIVE = "reactive";
+    private static let TRACKING_MODE_BALANCED = "balanced";
     private static let TRACKING_MODE_ACTIVE = "active";
     private static let TRACKING_MODE_CUSTOM = "custom";
 
@@ -264,7 +264,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
                 options = RoamTrackingMode.passive
                 Roam.publishSave()
                 Roam.startTracking(options)
-            case SwiftRoamFlutterPlugin.TRACKING_MODE_REACTIVE:
+            case SwiftRoamFlutterPlugin.TRACKING_MODE_BALANCED:
                 options = RoamTrackingMode.balanced
                 Roam.publishSave()
                 Roam.startTracking(options)
