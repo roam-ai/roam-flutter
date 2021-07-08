@@ -25,7 +25,7 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
@@ -47,7 +47,7 @@ android {
 }
 dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation'com.geospark.android:geospark:3.1.5'
+    implementation'com.roam.sdk:roam-android:0.0.3'
 }
 
 flutter {

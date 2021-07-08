@@ -64,7 +64,7 @@ class _MyHomePage extends State<MyHomePage> {
     initPlatformState();
     Roam.initialize(
         publishKey:
-            "fd7bd6d1b1ecbfbd456bf9ccd3f4157323eb184d919e5cd341ad0fad216d0b06");
+            "14ea570d8a40782d1595d12e0f73d42544a05f139bf0206396b9efd0ee42f837");
   }
 
   //Native to Flutter Channel
@@ -162,7 +162,7 @@ class _MyHomePage extends State<MyHomePage> {
                   try {
                     await Roam.initialize(
                         publishKey:
-                            'fd7bd6d1b1ecbfbd456bf9ccd3f4157323eb184d919e5cd341ad0fad216d0b06');
+                            '14ea570d8a40782d1595d12e0f73d42544a05f139bf0206396b9efd0ee42f837');
                   } on PlatformException {
                     print('Initialization Error');
                   }

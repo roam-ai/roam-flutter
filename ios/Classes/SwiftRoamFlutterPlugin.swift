@@ -1,6 +1,6 @@
 import Flutter
 import UIKit
-import GeoSpark
+import Roam
 import CoreLocation
 
 
@@ -33,7 +33,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
     private static let METHOD_GET_TRIP_SUMMARY = "getTripSummary";
 
     private static let TRACKING_MODE_PASSIVE = "passive";
-    private static let TRACKING_MODE_REACTIVE = "reactive";
+    private static let TRACKING_MODE_BALANCED = "balanced";
     private static let TRACKING_MODE_ACTIVE = "active";
     private static let TRACKING_MODE_CUSTOM = "custom";
 
@@ -48,7 +48,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
         registrar.addApplicationDelegate(instance)
     }
 
-    public func didUpdateLocation(_ geospark: GeoSparkLocation) {
+    public func didUpdateLocation(_ roam: RoamLocation) {
         debugPrint("Location Received SDK")
     }
 
@@ -128,11 +128,11 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
         case SwiftRoamFlutterPlugin.METHOD_INITIALIZE:
             let arguments = call.arguments as! [String: Any]
             let publishKey = arguments["publishKey"]  as! String;
-            GeoSpark.initialize(publishKey)
+            Roam.initialize(publishKey)
         case SwiftRoamFlutterPlugin.METHOD_CREATE_USER:
             let arguments = call.arguments as! [String: Any]
             let description = arguments["description"]  as! String;
-            GeoSpark.createUser(description) {(roamUser, error) in
+            Roam.createUser(description) {(roamUser, error) in
                 let user: NSDictionary = [
                     "userId": roamUser?.userId as Any,
                     "description":roamUser?.userDescription as Any
@@ -148,10 +148,10 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
             let arguments = call.arguments as! [String: Any]
             let Events = arguments["events"]  as! Bool;
             let Locations = arguments["locations"]  as! Bool;
-            GeoSpark.toggleListener(Events: Events, Locations: Locations) {(roamUser, error) in
+            Roam.toggleListener(Events: Events, Locations: Locations) {(roamUser, error) in
                 let user: NSDictionary = [
-                    "locationListener": roamUser?.locationListener,
-                    "eventsListener":roamUser?.eventsListener
+                    "locationListener": roamUser?.locationListener as Any,
+                    "eventsListener":roamUser?.eventsListener as Any
                 ]
                 if let theJSONData = try? JSONSerialization.data(
                     withJSONObject: user,
@@ -166,12 +166,12 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
             let Location = arguments["location"]  as! Bool;
             let Trips = arguments["trips"]  as! Bool;
             let MovingGeofence = arguments["movingGeofence"]  as! Bool;
-            GeoSpark.toggleEvents(Geofence: Geofence, Trip: Trips, Location: Location, MovingGeofence: MovingGeofence) {(roamUser, error) in
+            Roam.toggleEvents(Geofence: Geofence, Trip: Trips, Location: Location, MovingGeofence: MovingGeofence) {(roamUser, error) in
                 let user: NSDictionary = [
-                    "locationEvents": roamUser?.locationEvents,
-                    "geofenceEvents":roamUser?.geofenceEvents,
-                    "tripsEvents":roamUser?.tripsEvents,
-                    "movingGeofenceEvents":roamUser?.nearbyEvents,
+                    "locationEvents": roamUser?.locationEvents as Any,
+                    "geofenceEvents":roamUser?.geofenceEvents as Any,
+                    "tripsEvents":roamUser?.tripsEvents as Any,
+                    "movingGeofenceEvents":roamUser?.nearbyEvents as Any,
                 ]
                 if let theJSONData = try? JSONSerialization.data(
                     withJSONObject: user,
@@ -181,10 +181,10 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
                 }
             }
         case SwiftRoamFlutterPlugin.METHOD_GET_LISTENER_STATUS:
-            GeoSpark.getListenerStatus() {(roamUser, error) in
+            Roam.getListenerStatus() {(roamUser, error) in
                 let user: NSDictionary = [
-                    "locationListener": roamUser?.locationListener,
-                    "eventsListener":roamUser?.eventsListener
+                    "locationListener": roamUser?.locationListener as Any,
+                    "eventsListener":roamUser?.eventsListener as Any
                 ]
                 if let theJSONData = try? JSONSerialization.data(
                     withJSONObject: user,
@@ -196,7 +196,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
         case SwiftRoamFlutterPlugin.METHOD_GET_USER:
             let arguments = call.arguments as! [String: Any]
             let userId = arguments["userId"]  as! String;
-            GeoSpark.getUser(userId) {(roamUser, error) in
+            Roam.getUser(userId) {(roamUser, error) in
                 let user: NSDictionary = [
                     "userId": roamUser?.userId as Any,
                     "description":roamUser?.userDescription as Any
@@ -211,11 +211,11 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
         case SwiftRoamFlutterPlugin.METHOD_UPDATE_CURRENT_LOCATION:
             let arguments = call.arguments as! [String: Any]
             let accuracy = arguments["accuracy"]  as! Int;
-            GeoSpark.updateCurrentLocation(accuracy)
+            Roam.updateCurrentLocation(accuracy)
         case SwiftRoamFlutterPlugin.METHOD_GET_CURRENT_LOCATION:
             let arguments = call.arguments as! [String: Any]
             let accuracy = arguments["accuracy"]  as! Int;
-            GeoSpark.getCurrentLocation(accuracy) { (location, error) in
+            Roam.getCurrentLocation(accuracy) { (location, error) in
                 if  error == nil{
                     let coordinates: NSDictionary = [
                         "latitude": location?.coordinate.latitude as Any,
@@ -253,7 +253,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
             let arguments = call.arguments as! [String: Any]
             let trackingMode = arguments["trackingMode"]  as? String;
             let customMethods = arguments["customMethods"]  as? NSDictionary;
-            var options = GeoSparkTrackingMode.active
+            var options = RoamTrackingMode.active
             // guard let localtrackingMode = trackingMode else {
             //   GeoSpark.startTracking(trackingMode as GeoSparkTrackingMode);
             //   result(true);
@@ -261,19 +261,19 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
             //   }
             switch (trackingMode!) {
             case SwiftRoamFlutterPlugin.TRACKING_MODE_PASSIVE:
-                options = GeoSparkTrackingMode.passive
-                GeoSpark.publishSave()
-                GeoSpark.startTracking(options)
-            case SwiftRoamFlutterPlugin.TRACKING_MODE_REACTIVE:
-                options = GeoSparkTrackingMode.balanced
-                GeoSpark.publishSave()
-                GeoSpark.startTracking(options)
+                options = RoamTrackingMode.passive
+                Roam.publishSave()
+                Roam.startTracking(options)
+            case SwiftRoamFlutterPlugin.TRACKING_MODE_BALANCED:
+                options = RoamTrackingMode.balanced
+                Roam.publishSave()
+                Roam.startTracking(options)
             case SwiftRoamFlutterPlugin.TRACKING_MODE_ACTIVE:
-                options = GeoSparkTrackingMode.active
-                GeoSpark.publishSave()
-                GeoSpark.startTracking(options)
+                options = RoamTrackingMode.active
+                Roam.publishSave()
+                Roam.startTracking(options)
             case SwiftRoamFlutterPlugin.TRACKING_MODE_CUSTOM:
-                let options = GeoSparkTrackingCustomMethods.init()
+                let options = RoamTrackingCustomMethods.init()
                 options.activityType = self.getActivityType(((customMethods?["activityType"] as? String ?? "otherNavigation")))
                 options.desiredAccuracy = self.getDesiredAccuracy(((customMethods?["desiredAccuracy"] as? String)!))
                 options.allowBackgroundLocationUpdates = customMethods?["allowBackgroundLocationUpdates"] as? Bool
@@ -282,40 +282,40 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
                 options.accuracyFilter = customMethods?["accuracyFilter"] as? Int
                 options.distanceFilter = customMethods?["distanceFilter"] as? CLLocationDistance
                 options.updateInterval = customMethods?["timeInterval"] as? Int
-                GeoSpark.startTracking(.custom, options: options)
-                GeoSpark.publishSave()
+                Roam.startTracking(.custom, options: options)
+                Roam.publishSave()
             default:
-                options = GeoSparkTrackingMode.active
-                GeoSpark.publishSave()
-                GeoSpark.startTracking(options)
+                options = RoamTrackingMode.active
+                Roam.publishSave()
+                Roam.startTracking(options)
             }
             result(true);
         case SwiftRoamFlutterPlugin.METHOD_STOP_TRACKING:
-            GeoSpark.stopTracking()
+            Roam.stopTracking()
         case SwiftRoamFlutterPlugin.METHOD_LOGOUT_USER:
-            GeoSpark.logoutUser()
+            Roam.logoutUser()
         case SwiftRoamFlutterPlugin.METHOD_SUBSCRIBE_LOCATION:
-            GeoSpark.getListenerStatus() {(roamUser, error) in
+            Roam.getListenerStatus() {(roamUser, error) in
                 let userId = roamUser?.userId
-                GeoSpark.subscribe(GeoSparkSubscribe.Location, userId!)
+                Roam.subscribe(RoamSubscribe.Location, userId!)
             }
         case SwiftRoamFlutterPlugin.METHOD_SUBSCRIBE_EVENTS:
-            GeoSpark.getListenerStatus() {(roamUser, error) in
+            Roam.getListenerStatus() {(roamUser, error) in
                 let userId = roamUser?.userId
-                GeoSpark.subscribe(GeoSparkSubscribe.Events, userId!)
+                Roam.subscribe(RoamSubscribe.Events, userId!)
             }
         case SwiftRoamFlutterPlugin.METHOD_ENABLE_ACCURACY_ENGINE:
-            GeoSpark.enableAccuracyEngine()
+            Roam.enableAccuracyEngine()
         case SwiftRoamFlutterPlugin.METHOD_DISABLE_ACCURACY_ENGINE:
-            GeoSpark.disableAccuracyEngine()
+            Roam.disableAccuracyEngine()
         case SwiftRoamFlutterPlugin.METHOD_SUBSCRIBE_USER_LOCATION:
             let arguments = call.arguments as! [String: Any]
             let userId = arguments["userId"]  as! String;
-            GeoSpark.subscribe(GeoSparkSubscribe.Location, userId)
+            Roam.subscribe(RoamSubscribe.Location, userId)
         case SwiftRoamFlutterPlugin.METHOD_CREATE_TRIP:
             let arguments = call.arguments as! [String: Any]
             let isOffline = arguments["isOffline"]  as! Bool;
-            GeoSpark.createTrip(isOffline, nil) {(roamTrip, error) in
+            Roam.createTrip(isOffline, nil) {(roamTrip, error) in
                 let trip: NSDictionary = [
                     "userId": roamTrip?.userId as Any,
                     "tripId": roamTrip?.tripId as Any
@@ -330,7 +330,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
         case SwiftRoamFlutterPlugin.METHOD_GET_TRIP_DETAILS:
             let arguments = call.arguments as! [String: Any]
             let tripId = arguments["tripId"]  as! String;
-            GeoSpark.getTripDetails(tripId) {(roamTrip, error) in
+            Roam.getTripDetails(tripId) {(roamTrip, error) in
                 let trip: NSDictionary = [
                     "userId": roamTrip?.userId as Any,
                     "tripId": roamTrip?.tripId as Any
@@ -345,7 +345,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
         case SwiftRoamFlutterPlugin.METHOD_GET_TRIP_STATUS:
             let arguments = call.arguments as! [String: Any]
             let tripId = arguments["tripId"]  as! String;
-            GeoSpark.getTripStatus(tripId) {(roamTrip, error) in
+            Roam.getTripStatus(tripId) {(roamTrip, error) in
                 let trip: NSDictionary = [
                     "distance": roamTrip?.distance as Any,
                     "speed": roamTrip?.speed as Any,
@@ -362,31 +362,31 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
         case SwiftRoamFlutterPlugin.METHOD_SUBSCRIBE_TRIP_STATUS:
             let arguments = call.arguments as! [String: Any]
             let tripId = arguments["tripId"]  as! String;
-            GeoSpark.subscribeTripStatus(tripId)
+            Roam.subscribeTripStatus(tripId)
         case SwiftRoamFlutterPlugin.METHOD_UNSUBSCRIBE_TRIP_STATUS:
             let arguments = call.arguments as! [String: Any]
             let tripId = arguments["tripId"]  as! String;
-            GeoSpark.unsubscribeTripStatus(tripId)
+            Roam.unsubscribeTripStatus(tripId)
         case SwiftRoamFlutterPlugin.METHOD_START_TRIP:
             let arguments = call.arguments as! [String: Any]
             let tripId = arguments["tripId"]  as! String;
-            GeoSpark.startTrip(tripId)
+            Roam.startTrip(tripId)
         case SwiftRoamFlutterPlugin.METHOD_PAUSE_TRIP:
             let arguments = call.arguments as! [String: Any]
             let tripId = arguments["tripId"]  as! String;
-            GeoSpark.pauseTrip(tripId)
+            Roam.pauseTrip(tripId)
         case SwiftRoamFlutterPlugin.METHOD_RESUME_TRIP:
             let arguments = call.arguments as! [String: Any]
             let tripId = arguments["tripId"]  as! String;
-            GeoSpark.resumeTrip(tripId)
+            Roam.resumeTrip(tripId)
         case SwiftRoamFlutterPlugin.METHOD_END_TRIP:
             let arguments = call.arguments as! [String: Any]
             let tripId = arguments["tripId"]  as! String;
-            GeoSpark.stopTrip(tripId)
+            Roam.stopTrip(tripId)
         case SwiftRoamFlutterPlugin.METHOD_GET_TRIP_SUMMARY:
             let arguments = call.arguments as! [String: Any]
             let tripId = arguments["tripId"]  as! String;
-            GeoSpark.getTripSummary(tripId) {(roamTrip, error) in
+            Roam.getTripSummary(tripId) {(roamTrip, error) in
 
                 roamTrip?.route.forEach({ (route) in
                     let coordinates: NSDictionary = [
@@ -395,7 +395,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
                     ]
                     let route: NSDictionary = [
                         "activity": route.activity!,
-                        "altitude":route.altitude!,
+                        "altitude":route.altitude,
                         "recordedAt": route.recordedAt!,
                         "coordinates": coordinates
                     ]

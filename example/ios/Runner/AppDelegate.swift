@@ -1,20 +1,20 @@
 import UIKit
 import Flutter
-import GeoSpark
+import Roam
 
 @UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate, GeoSparkDelegate {
+@objc class AppDelegate: FlutterAppDelegate, RoamDelegate {
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
-    GeoSpark.delegate = self
-    GeoSpark.initialize("fd7bd6d1b1ecbfbd456bf9ccd3f4157323eb184d919e5cd341ad0fad216d0b06")
+    Roam.delegate = self
+    Roam.initialize("fd7bd6d1b1ecbfbd456bf9ccd3f4157323eb184d919e5cd341ad0fad216d0b06")
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
     //Native to Flutter Channel
-    func didUpdateLocation(_ location: GeoSparkLocation) {
+    func didUpdateLocation(_ location: RoamLocation) {
         let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
         let myChannel = FlutterMethodChannel(name: "myChannel", binaryMessenger: controller.binaryMessenger)
         let coordinates: NSDictionary = [

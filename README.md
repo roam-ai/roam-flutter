@@ -11,7 +11,7 @@
 # Official Roam Flutter SDK
 This is the official Roam Flutter SDK developed and maintained by Roam B.V
 
-Note: Before you get started [signup to our dashboard](https://roam.ai) to get your API Keys. 
+Note: Before you get started [signup to our dashboard](https://roam.ai) to get your API Keys.
 
 # Quick Start
 The Roam Flutter Plugin makes it quick and easy to build a
@@ -27,7 +27,7 @@ Add following lines to your applications pubspec.yml:
 
 ```dart
 dependencies:
-  roam_flutter: ^0.0.10
+  roam_flutter: ^0.0.11
 ```
 Install the plugin using the following command:
 ```dart
@@ -85,8 +85,8 @@ Roam.initialize(publishKey:'YOUR-SDK-KEY');
 
 Once the SDK is initialized, we need to *create* or *get a user* to
 start the tracking and use other methods. Every user created will have a
-unique GeoSpark identifier which will be used later to login and access
-developer APIs. We can call it as GeoSpark userId.
+unique Roam identifier which will be used later to login and access
+developer APIs. We can call it as Roam userId.
 
 ``` dart
 Roam.createUser(description:'Joe',callBack: ({user}) {
@@ -106,7 +106,7 @@ code.
 Roam.setDescription(description:'Joe');
 ```
 
-If you already have a GeoSpark userID which you would like to reuse
+If you already have a Roam userID which you would like to reuse
 instead of creating a new user, use the below to get user session.
 
 ``` dart
@@ -159,7 +159,7 @@ consumption.
 | -------- | ----------------- | ------------------ | ------------------------------ |
 | **Mode** | **Battery usage** | **Updates every ** | **Optimised for/advised for ** |
 | Active   | 6% - 12%          | 25 ~ 250 meters    | Ride Hailing / Sharing         |
-| Reactive | 3% - 6%           | 50 ~ 500 meters    | On Demand Services             |
+| Balanced | 3% - 6%           | 50 ~ 500 meters    | On Demand Services             |
 | Passive  | 0% - 1%           | 100 ~ 1000 meters  | Social Apps                    |
 
 </div>

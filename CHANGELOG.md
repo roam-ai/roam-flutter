@@ -1,4 +1,11 @@
-## 0.0.9
+## 0.0.11
+
+* Migrated package to support null safety
+* Updated to latest native Roam SDK versions. Android v0.0.3 and iOS v0.0.7
+* Changed tracking mode naming for REACTIVE to BALANCED
+* Updated the Readme.md docs with latest quickstart guides
+* In order to support Apple Silicon M1 Macs, we added arm64 to iOS simulator builds.
+## 0.0.10
 
 * Fix to support iOS simulator.
 ## 0.0.9
