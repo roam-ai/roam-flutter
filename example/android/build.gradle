@@ -15,7 +15,7 @@ allprojects {
         google()
         jcenter()
         maven {
-            url 'https://com-geospark-android.s3.amazonaws.com/'
+            url 'https://com-roam-android.s3.amazonaws.com/'
         }
     }
 }

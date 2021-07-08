@@ -3,14 +3,14 @@ package ai.roam.roam_flutter_example;
 import android.content.Context;
 import android.util.Log;
 
-import com.geospark.lib.models.GeoSparkLocation;
-import com.geospark.lib.service.GeoSparkReceiver;
+import com.roam.sdk.models.RoamLocation;
+import com.roam.sdk.service.RoamReceiver;
 
-public class MyGeoSparkReceiver extends GeoSparkReceiver {
+public class MyGeoSparkReceiver extends RoamReceiver {
     @Override
-    public void onLocationUpdated(Context context, GeoSparkLocation geosparkLocation) {
+    public void onLocationUpdated(Context context, RoamLocation roamLocation) {
         // receive own location updates here
         // do something with location data using location test
-        Log.d("trackingMode", geosparkLocation.getUserId());
+        Log.d("trackingMode", roamLocation.getUserId());
     }
 }
