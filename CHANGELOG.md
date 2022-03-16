@@ -1,3 +1,6 @@
+## 0.0.12
+* Fixed string output for all the methods in a proper json output.
+
 ## 0.0.11
 
 * Migrated package to support null safety
