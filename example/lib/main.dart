@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -64,7 +66,7 @@ class _MyHomePage extends State<MyHomePage> {
     initPlatformState();
     Roam.initialize(
         publishKey:
-            "14ea570d8a40782d1595d12e0f73d42544a05f139bf0206396b9efd0ee42f837");
+            "fe6fea32b743ff7847c0a9338c2f17125deffcbdd9f779242132caf6ebfe9703");
   }
 
   //Native to Flutter Channel
@@ -220,6 +222,7 @@ class MyItemsPage extends StatefulWidget {
 class _MyItemsPageState extends State<MyItemsPage> {
   String myTrip;
   String tripId;
+
 
   TextEditingController _textFieldController = TextEditingController();
 

@@ -1,4 +1,4 @@
-package ai.roam.roam_flutter_example;
+package ai.roam.example;
 
 import android.content.Intent;
 

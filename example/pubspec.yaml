@@ -1,4 +1,4 @@
-name: roam_flutter_example
+name: example
 description: Demonstrates how to use the roam_flutter plugin.
 
 # The following line prevents the package from being accidentally published to
@@ -9,7 +9,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  permission_handler: ^8.1.2
+  permission_handler: ^9.2.0
   flutter:
     sdk: flutter
 

@@ -1,4 +1,4 @@
-package ai.roam.roam_flutter_example;
+package ai.roam.example;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -13,7 +13,7 @@ import androidx.annotation.RequiresApi;
 public class NotificationHelper {
     public static final int NOTIFICATION_ID = 102;
     private static final int PENDING_INTENT_REQUEST_CODE = 103;
-    private static final String ANDROID_CHANNEL_ID = "ai.roam.roam_flutter_example";
+    private static final String ANDROID_CHANNEL_ID = "ai.roam.example";
     private static final String ANDROID_CHANNEL_NAME = "roam";
 
     @RequiresApi(api = Build.VERSION_CODES.O)
