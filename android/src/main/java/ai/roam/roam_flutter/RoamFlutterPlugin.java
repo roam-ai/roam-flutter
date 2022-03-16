@@ -144,7 +144,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                  roamLocation.put("coordinate", coordinates);
                  roamLocation.put("altitude", location.getAltitude());
                  roamLocation.put("accuracy", location.getAccuracy());
-                 String locationText = roamLocation.toString().substring(1, roamLocation.toString().length() - 1);
+                 String locationText = roamLocation.toString();
                  result.success(locationText);
                } catch (JSONException e) {
                  e.printStackTrace();
@@ -168,7 +168,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                try {
                  user.put("userId", roamUser.getUserId());
                  user.put("description", roamUser.getDescription());
-                 String userText = user.toString().substring(1, user.toString().length() - 1);
+                 String userText = user.toString();
                  result.success(userText);
                } catch (JSONException e) {
                  e.printStackTrace();
@@ -192,7 +192,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                try {
                  user.put("userId", roamUser.getUserId());
                  user.put("description", roamUser.getDescription());
-                 String userText = user.toString().substring(1, user.toString().length() - 1);
+                 String userText = user.toString();
                  result.success(userText);
                } catch (JSONException e) {
                  e.printStackTrace();
@@ -218,7 +218,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                  user.put("userId", roamUser.getUserId());
                  user.put("events", roamUser.getEventListenerStatus());
                  user.put("locations", roamUser.getLocationListenerStatus());
-                 String userText = user.toString().substring(1, user.toString().length() - 1);
+                 String userText = user.toString();
                  result.success(userText);
                } catch (JSONException e) {
                  e.printStackTrace();
@@ -248,7 +248,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                  user.put("geofenceEvents", roamUser.getGeofenceEvents());
                  user.put("tripsEvents", roamUser.getTripsEvents());
                  user.put("movingGeofenceEvents", roamUser.getMovingGeofenceEvents());
-                 String userText = user.toString().substring(1, user.toString().length() - 1);
+                 String userText = user.toString();
                  result.success(userText);
                } catch (JSONException e) {
                  e.printStackTrace();
@@ -276,7 +276,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                  user.put("geofenceEvents", roamUser.getGeofenceEvents());
                  user.put("tripsEvents", roamUser.getTripsEvents());
                  user.put("movingGeofenceEvents", roamUser.getMovingGeofenceEvents());
-                 String userText = user.toString().substring(1, user.toString().length() - 1);
+                 String userText = user.toString();
                  result.success(userText);
                } catch (JSONException e) {
                  e.printStackTrace();
@@ -425,7 +425,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                  trip.put("userId", roamCreateTrip.getUser_id());
                  trip.put("tripId", roamCreateTrip.getId());
 
-                 String tripText = trip.toString().substring(1, trip.toString().length() - 1);
+                 String tripText = trip.toString();
                  result.success(tripText);
                } catch (JSONException e) {
                  e.printStackTrace();
@@ -450,7 +450,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                  trip.put("userId", roamTripDetail.getUser_id());
                  trip.put("tripId", roamTripDetail.getId());
 
-                 String tripText = trip.toString().substring(1, trip.toString().length() - 1);
+                 String tripText = trip.toString();
                  result.success(tripText);
                } catch (JSONException e) {
                  e.printStackTrace();
@@ -477,7 +477,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                  trip.put("duration", roamTripStatus.getDuration());
                  trip.put("tripId", roamTripStatus.getTripId());
 
-                 String tripText = trip.toString().substring(1, trip.toString().length() - 1);
+                 String tripText = trip.toString();
                  result.success(tripText);
                } catch (JSONException e) {
                  e.printStackTrace();
@@ -578,7 +578,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                  trip.put("tripId", roamTripSummary.getTrip_id());
                  trip.put("route", roamTripSummary.getRoute());
 
-                 String tripText = trip.toString().substring(1, trip.toString().length() - 1);
+                 String tripText = trip.toString();
                  result.success(tripText);
                } catch (JSONException e) {
                  e.printStackTrace();
