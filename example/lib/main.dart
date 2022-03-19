@@ -66,7 +66,7 @@ class _MyHomePage extends State<MyHomePage> {
     initPlatformState();
     Roam.initialize(
         publishKey:
-            "fe6fea32b743ff7847c0a9338c2f17125deffcbdd9f779242132caf6ebfe9703");
+            "411076002016f3a85d9299806df465f24fe49feea904eb75076bbf0d8e8d5834");
   }
 
   //Native to Flutter Channel
@@ -124,7 +124,7 @@ class _MyHomePage extends State<MyHomePage> {
                 child: Text('Request Location Permissions'),
                 onPressed: () async {
                   try {
-                    await Permission.locationAlways.request();
+                    await Permission.locationWhenInUse.request();
                   } on PlatformException {
                     print('Error getting location permissions');
                   }
@@ -164,7 +164,7 @@ class _MyHomePage extends State<MyHomePage> {
                   try {
                     await Roam.initialize(
                         publishKey:
-                            '14ea570d8a40782d1595d12e0f73d42544a05f139bf0206396b9efd0ee42f837');
+                            '411076002016f3a85d9299806df465f24fe49feea904eb75076bbf0d8e8d5834');
                   } on PlatformException {
                     print('Initialization Error');
                   }
@@ -782,7 +782,7 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
               },
               controller: _textFieldController,
               decoration: InputDecoration(
-                  hintText: "active/passsive/reactive/custom/time/distance"),
+                  hintText: "active/passsive/balanced/custom/time/distance"),
             ),
             actions: <Widget>[
               FlatButton(
@@ -804,15 +804,15 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                     switch (valueText) {
                       case "active":
                         Roam.startTracking(trackingMode: "active");
-                        Navigator.pop(context);
+                        //Navigator.pop(context);
                         break;
-                      case "reactive":
-                        Roam.startTracking(trackingMode: "reactive");
-                        Navigator.pop(context);
+                      case "balanced":
+                        Roam.startTracking(trackingMode: "balanced");
+                        //Navigator.pop(context);
                         break;
                       case "passive":
                         Roam.startTracking(trackingMode: "passive");
-                        Navigator.pop(context);
+                        //Navigator.pop(context);
                         break;
                       case "custom":
                         Map<String, dynamic> fitnessTracking = {
@@ -826,7 +826,7 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                         Roam.startTracking(
                             trackingMode: "custom",
                             customMethods: fitnessTracking);
-                        Navigator.pop(context);
+                        //Navigator.pop(context);
                         break;
                       case "time":
                         Map<String, dynamic> fitnessTracking = {
@@ -838,7 +838,7 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                         Roam.startTracking(
                             trackingMode: "custom",
                             customMethods: fitnessTracking);
-                        Navigator.pop(context);
+                        //Navigator.pop(context);
                         break;
                       case "distance":
                         Map<String, dynamic> fitnessTracking = {
@@ -852,7 +852,7 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                         Roam.startTracking(
                             trackingMode: "custom",
                             customMethods: fitnessTracking);
-                        Navigator.pop(context);
+                        //Navigator.pop(context);
                         break;
                       default:
                         Navigator.pop(context);
@@ -883,7 +883,10 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                 child: Text('Update Current Location'),
                 onPressed: () async {
                   try {
-                    await Roam.updateCurrentLocation(accuracy: 100);
+                    Map<String, dynamic> testMetaData = Map();
+                    testMetaData['param1'] = "value";
+                    testMetaData['param2'] = 123;
+                    await Roam.updateCurrentLocation(accuracy: 100, jsonObject: testMetaData);
                   } on PlatformException {
                     print('Update Current Location Error');
                   }

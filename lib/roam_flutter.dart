@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/services.dart';
 
 typedef void RoamCallBack({String? location});
@@ -131,8 +132,10 @@ class Roam {
   /// Returns Location
   static Future<bool?> updateCurrentLocation({
     required int accuracy,
+    Map<String, dynamic>? jsonObject
   }) async {
-    final Map<String, dynamic> params = <String, dynamic>{'accuracy': accuracy};
+    String jsonString = (jsonObject == null) ? "" : jsonEncode(jsonObject);
+    final Map<String, dynamic> params = <String, dynamic>{'accuracy': accuracy, 'jsonObject': jsonString};
     final bool? result =
         await _channel.invokeMethod(METHOD_UPDATE_CURRENT_LOCATION, params);
     _channel.setMethodCallHandler(_methodCallHandler);

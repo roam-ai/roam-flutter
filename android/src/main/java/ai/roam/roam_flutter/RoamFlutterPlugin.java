@@ -161,7 +161,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
          case METHOD_CREATE_USER:
            final String description = call.argument("description");
-           Roam.createUser(description, new RoamCallback() {
+           Roam.createUser(description, null, new RoamCallback() {
              @Override
              public void onSuccess(RoamUser roamUser) {
                JSONObject user = new JSONObject();
@@ -352,7 +352,18 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
          case METHOD_UPDATE_CURRENT_LOCATION:
            final Integer updateAccuracy = call.argument("accuracy");
-           Roam.updateCurrentLocation(RoamTrackingMode.DesiredAccuracy.MEDIUM, updateAccuracy);
+           final String jsonString = call.argument("jsonObject");
+           if (!jsonString.equals("")){
+             try{
+               final JSONObject jsonObject = new JSONObject(jsonString);
+               RoamPublish roamPublish = new RoamPublish.Builder()
+                       .metadata(jsonObject)
+                       .build();
+               Roam.updateCurrentLocation(RoamTrackingMode.DesiredAccuracy.MEDIUM, updateAccuracy, roamPublish);
+             }catch (Exception e){
+               e.printStackTrace();
+             }
+           }
            break;
 
          case METHOD_START_TRACKING:
@@ -417,7 +428,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
          case METHOD_CREATE_TRIP:
            final Boolean isOffline = call.argument("isOffline");
-           Roam.createTrip(null, null, isOffline, new RoamCreateTripCallback() {
+           Roam.createTrip(null, null, isOffline, null, new RoamCreateTripCallback() {
              @Override
              public void onSuccess(RoamCreateTrip roamCreateTrip) {
                JSONObject trip = new JSONObject();
