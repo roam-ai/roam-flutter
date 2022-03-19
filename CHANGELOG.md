@@ -1,3 +1,7 @@
+## 0.0.13
+* Updated to latest native Roam SDK versions. Android v0.0.17
+* Update `Roam.updateCurrentLocation()` with meta-data support for updating location.
+
 ## 0.0.12
 * Fixed string output for all the methods in a proper json output.
 
