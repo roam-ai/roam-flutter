@@ -353,16 +353,17 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
          case METHOD_UPDATE_CURRENT_LOCATION:
            final Integer updateAccuracy = call.argument("accuracy");
            final String jsonString = call.argument("jsonObject");
-           RoamPublish.Builder roamLocationPublish = new RoamPublish.Builder();
            if (!jsonString.equals("")){
              try{
                final JSONObject jsonObject = new JSONObject(jsonString);
-               roamLocationPublish.metadata(jsonObject);
+               RoamPublish roamPublish = new RoamPublish.Builder()
+                       .metadata(jsonObject)
+                       .build();
+               Roam.updateCurrentLocation(RoamTrackingMode.DesiredAccuracy.MEDIUM, updateAccuracy, roamPublish);
              }catch (Exception e){
                e.printStackTrace();
              }
            }
-           Roam.updateCurrentLocation(RoamTrackingMode.DesiredAccuracy.MEDIUM, updateAccuracy, roamLocationPublish.build());
            break;
 
          case METHOD_START_TRACKING:

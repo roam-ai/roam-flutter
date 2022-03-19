@@ -124,7 +124,7 @@ class _MyHomePage extends State<MyHomePage> {
                 child: Text('Request Location Permissions'),
                 onPressed: () async {
                   try {
-                    await Permission.locationAlways.request();
+                    await Permission.locationWhenInUse.request();
                   } on PlatformException {
                     print('Error getting location permissions');
                   }
@@ -164,7 +164,7 @@ class _MyHomePage extends State<MyHomePage> {
                   try {
                     await Roam.initialize(
                         publishKey:
-                            '14ea570d8a40782d1595d12e0f73d42544a05f139bf0206396b9efd0ee42f837');
+                            '411076002016f3a85d9299806df465f24fe49feea904eb75076bbf0d8e8d5834');
                   } on PlatformException {
                     print('Initialization Error');
                   }
