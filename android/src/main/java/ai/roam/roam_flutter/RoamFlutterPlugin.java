@@ -11,23 +11,50 @@ import com.roam.sdk.callback.RoamCallback;
 import com.roam.sdk.callback.RoamCreateTripCallback;
 import com.roam.sdk.callback.RoamLocationCallback;
 import com.roam.sdk.callback.RoamLogoutCallback;
-import com.roam.sdk.callback.RoamTripCallback;
+
 import com.roam.sdk.callback.RoamTripDetailCallback;
 import com.roam.sdk.callback.RoamTripStatusCallback;
 import com.roam.sdk.callback.RoamTripSummaryCallback;
 import com.roam.sdk.models.RoamError;
 import com.roam.sdk.models.RoamTripStatus;
+import com.roam.sdk.models.RoamTripsStatus;
 import com.roam.sdk.models.RoamUser;
 import com.roam.sdk.models.createtrip.RoamCreateTrip;
 import com.roam.sdk.models.gettrip.RoamTripDetail;
 import com.roam.sdk.models.tripsummary.RoamTripSummary;
+import com.roam.sdk.trips_v2.RoamTrip;
+import com.roam.sdk.trips_v2.callback.RoamActiveTripsCallback;
+import com.roam.sdk.trips_v2.callback.RoamDeleteTripCallback;
+import com.roam.sdk.trips_v2.callback.RoamSyncTripCallback;
+import com.roam.sdk.trips_v2.callback.RoamTripCallback;
+import com.roam.sdk.trips_v2.models.EndLocation;
+import com.roam.sdk.trips_v2.models.Error;
+import com.roam.sdk.trips_v2.models.Errors;
+import com.roam.sdk.trips_v2.models.Events;
+import com.roam.sdk.trips_v2.models.RoamActiveTripsResponse;
+import com.roam.sdk.trips_v2.models.RoamDeleteTripResponse;
+import com.roam.sdk.trips_v2.models.RoamSyncTripResponse;
+import com.roam.sdk.trips_v2.models.RoamTripResponse;
+import com.roam.sdk.trips_v2.models.Route;
+import com.roam.sdk.trips_v2.models.Routes;
+import com.roam.sdk.trips_v2.models.StartLocation;
+import com.roam.sdk.trips_v2.models.Stop;
+import com.roam.sdk.trips_v2.models.User;
+import com.roam.sdk.trips_v2.request.RoamTripStops;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
+
+import ai.roam.roam_flutter.json.JsonDecoder;
+import ai.roam.roam_flutter.json.JsonEncoder;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -63,14 +90,22 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
   private static final String METHOD_ENABLE_ACCURACY_ENGINE = "enableAccuracyEngine";
   private static final String METHOD_DISABLE_ACCURACY_ENGINE = "disableAccuracyEngine";
   private static final String METHOD_CREATE_TRIP = "createTrip";
+  private static final String METHOD_UPDATE_TRIP = "updateTrip";
   private static final String METHOD_GET_TRIP_DETAILS = "getTripDetails";
   private static final String METHOD_GET_TRIP_STATUS = "getTripStatus";
   private static final String METHOD_SUBSCRIBE_TRIP_STATUS = "subscribeTripStatus";
   private static final String METHOD_UNSUBSCRIBE_TRIP_STATUS = "unSubscribeTripStatus";
   private static final String METHOD_START_TRIP = "startTrip";
+  private static final String METHOD_START_QUICK_TRIP = "startQuickTrip";
   private static final String METHOD_PAUSE_TRIP = "pauseTrip";
   private static final String METHOD_RESUME_TRIP = "resumeTrip";
   private static final String METHOD_END_TRIP = "endTrip";
+  private static final String METHOD_DELETE_TRIP = "deleteTrip";
+  private static final String METHOD_GET_TRIP = "getTrip";
+  private static final String METHOD_SYNC_TRIP = "syncTrip";
+  static final String METHOD_SUBSCRIBE_TRIP = "subscribeTrip";
+  static final String METHOD_UNSUBSCRIBE_TRIP = "unsubscribeTrip";
+  private static final String METHOD_GET_ACTIVE_TRIPS = "getActiveTrips";
   private static final String METHOD_GET_TRIP_SUMMARY = "getTripSummary";
   private static final String METHOD_DISABLE_BATTERY_OPTIMIZATION = "disableBatteryOptimization";
 
@@ -131,6 +166,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            final String publishKey = call.argument("publishKey");
            Roam.initialize(this.context, publishKey);
            break;
+
          case METHOD_GET_CURRENT_LOCATION:
            final Integer accuracy = call.argument("accuracy");
            Roam.getCurrentLocation(RoamTrackingMode.DesiredAccuracy.MEDIUM, accuracy, new RoamLocationCallback() {
@@ -353,14 +389,14 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
          case METHOD_UPDATE_CURRENT_LOCATION:
            final Integer updateAccuracy = call.argument("accuracy");
            final String jsonString = call.argument("jsonObject");
-           if (!jsonString.equals("")){
-             try{
+           if (!jsonString.equals("")) {
+             try {
                final JSONObject jsonObject = new JSONObject(jsonString);
                RoamPublish roamPublish = new RoamPublish.Builder()
                        .metadata(jsonObject)
                        .build();
                Roam.updateCurrentLocation(RoamTrackingMode.DesiredAccuracy.MEDIUM, updateAccuracy, roamPublish);
-             }catch (Exception e){
+             } catch (Exception e) {
                e.printStackTrace();
              }
            }
@@ -394,14 +430,14 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              case TRACKING_MODE_CUSTOM:
                RoamTrackingMode customTrackingMode;
                final Map customMethods = call.argument("customMethods");
-               if(customMethods.containsKey("distanceInterval")){
+               if (customMethods.containsKey("distanceInterval")) {
                  final int distanceInterval = (int) customMethods.get("distanceInterval");
                  customTrackingMode = new RoamTrackingMode.Builder(distanceInterval, 30).setDesiredAccuracy(RoamTrackingMode.DesiredAccuracy.HIGH).build();
                  RoamPublish roamPublishCustom = new RoamPublish.Builder()
                          .build();
                  Roam.publishAndSave(roamPublishCustom);
                  Roam.startTracking(customTrackingMode);
-               } else if(customMethods.containsKey("timeInterval")){
+               } else if (customMethods.containsKey("timeInterval")) {
                  final int timeInterval = (int) customMethods.get("timeInterval");
                  customTrackingMode = new RoamTrackingMode.Builder(timeInterval).setDesiredAccuracy(RoamTrackingMode.DesiredAccuracy.HIGH).build();
                  RoamPublish roamPublishCustom = new RoamPublish.Builder()
@@ -427,200 +463,456 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            break;
 
          case METHOD_CREATE_TRIP:
-           final Boolean isOffline = call.argument("isOffline");
-           Roam.createTrip(null, null, isOffline, null, new RoamCreateTripCallback() {
-             @Override
-             public void onSuccess(RoamCreateTrip roamCreateTrip) {
-               JSONObject trip = new JSONObject();
-               try {
-                 trip.put("userId", roamCreateTrip.getUser_id());
-                 trip.put("tripId", roamCreateTrip.getId());
+           final String roamTripString = call.argument("roamTrip");
+           if (roamTripString != null && !roamTripString.equals("")) {
+             JSONObject roamTripJSON = new JSONObject(roamTripString);
 
-                 String tripText = trip.toString();
-                 result.success(tripText);
+             //RoamTrip trip = JsonDecoder.decodeRoamTrip(roamTripJSON);
+
+
+             //metadata
+             JSONObject metadata = new JSONObject();
+             try {
+               metadata.put("Key1", "value1");
+             } catch (Exception e) {
+             }
+
+             List<Double> geometry =new ArrayList<>();
+             geometry.add(85.30614739); //lon
+             geometry.add(23.5155215); //lat
+
+
+
+             //stop1
+             RoamTripStops stop1 =new RoamTripStops();
+             stop1.setStopId("");
+             stop1.setMetadata(metadata);
+             stop1.setStopDescription("tea break");
+             stop1.setStopName("STOP 1");
+             stop1.setAddress("Bangalore");
+             stop1.setGeometryRadius(600.0);
+             stop1.setGeometry(geometry);
+
+
+
+             //stop2
+             RoamTripStops stop2 =new RoamTripStops();
+             stop2.setStopId("");
+             stop2.setMetadata(metadata);
+             stop2.setStopDescription("tea break");
+             stop2.setStopName("STOP 2");
+             stop2.setAddress("Bangalore");
+             stop2.setGeometryRadius(600.0);
+             stop2.setGeometry(geometry);
+
+             //List of stop point
+             List<RoamTripStops> stop = new ArrayList<>();
+             stop.add(stop1);
+             // stop.add(stop2);
+
+             //builder
+             RoamTrip trip = new RoamTrip.Builder()
+                     .setUserId("")
+                     .setTripDescription("trip description")
+                     .setTripName("trip name")
+                     .setIsLocal(false)
+                     .setStop(stop)
+                     .setMetadata(metadata)
+                     .build();
+
+             Roam.createTrip(trip, new RoamTripCallback() {
+               @Override
+               public void onSuccess(RoamTripResponse roamTripResponse) {
+
+                 JSONObject json = JsonEncoder.encodeRoamTripResponse(roamTripResponse);
+                 result.success(json.toString());
+               }
+
+               @Override
+               public void onError(Error error) {
+                 JSONObject json = new JSONObject();
+                 try {
+                   json.put("error", JsonEncoder.encodeError(error));
+                   result.success(json.toString());
+                 } catch (JSONException e) {
+                   e.printStackTrace();
+                 }
+               }
+             });
+           }
+
+           break;
+
+
+         case METHOD_UPDATE_TRIP:
+
+           final String roamTripUpdateString = call.argument("roamTrip");
+           if (roamTripUpdateString != null && !roamTripUpdateString.equals("")) {
+             JSONObject roamTripJSON = new JSONObject(roamTripUpdateString);
+             RoamTrip trip = JsonDecoder.decodeRoamTrip(roamTripJSON);
+
+               Roam.updateTrip(trip, new RoamTripCallback() {
+                 @Override
+                 public void onSuccess(RoamTripResponse roamTripResponse) {
+                   JSONObject json = JsonEncoder.encodeRoamTripResponse(roamTripResponse);
+                   result.success(json.toString());
+                 }
+
+                 @Override
+                 public void onError(Error error) {
+                   JSONObject json = new JSONObject();
+                   try {
+                     json.put("error", JsonEncoder.encodeError(error));
+                     result.success(json.toString());
+                   } catch (JSONException e) {
+                     e.printStackTrace();
+                   }
+                 }
+               });
+
+             }
+
+             break;
+
+
+         case METHOD_GET_TRIP:
+
+           final String getTripId = call.argument("tripId");
+
+           Roam.getTrip(getTripId, new RoamTripCallback() {
+             @Override
+             public void onSuccess(RoamTripResponse roamTripResponse) {
+               JSONObject json = JsonEncoder.encodeRoamTripResponse(roamTripResponse);
+               result.success(json.toString());
+             }
+
+             @Override
+             public void onError(Error error) {
+               JSONObject json = new JSONObject();
+               try {
+                 json.put("error", JsonEncoder.encodeError(error));
+                 result.success(json.toString());
                } catch (JSONException e) {
                  e.printStackTrace();
                }
              }
-
-             @Override
-             public void onFailure(RoamError roamError) {
-               roamError.getMessage();
-               roamError.getCode();
-             }
            });
            break;
 
-         case METHOD_GET_TRIP_DETAILS:
-           final String tripId = call.argument("tripId");
-           Roam.getTripDetails(tripId, new RoamTripDetailCallback() {
-             @Override
-             public void onSuccess(RoamTripDetail roamTripDetail) {
-               JSONObject trip = new JSONObject();
-               try {
-                 trip.put("userId", roamTripDetail.getUser_id());
-                 trip.put("tripId", roamTripDetail.getId());
 
-                 String tripText = trip.toString();
-                 result.success(tripText);
+
+
+             case METHOD_GET_TRIP_STATUS:
+               final String statusTripId = call.argument("tripId");
+               Roam.getTripStatus(statusTripId, new RoamTripStatusCallback() {
+
+                 @Override
+                 public void onSuccess(RoamTripsStatus roamTripsStatus) {
+                   JSONObject trip = new JSONObject();
+                   try {
+                     trip.put("distance", roamTripsStatus.getDistance());
+                     trip.put("speed", roamTripsStatus.getSpeed());
+                     trip.put("duration", roamTripsStatus.getDuration());
+                     trip.put("tripId", roamTripsStatus.getTripId());
+
+                     String tripText = trip.toString();
+                     result.success(tripText);
+                   } catch (JSONException e) {
+                     e.printStackTrace();
+                   }
+                 }
+
+                 @Override
+                 public void onFailure(RoamError roamError) {
+                   roamError.getMessage();
+                   roamError.getCode();
+                 }
+               });
+               break;
+
+
+
+
+             case METHOD_START_TRIP:
+               final String startTripId = call.argument("tripId");
+               Roam.startTrip(startTripId, new RoamTripCallback() {
+                 @Override
+                 public void onSuccess(RoamTripResponse roamTripResponse) {
+                   JSONObject json = JsonEncoder.encodeRoamTripResponse(roamTripResponse);
+                   result.success(json.toString());
+                 }
+
+                 @Override
+                 public void onError(Error error) {
+                   JSONObject json = new JSONObject();
+                   try {
+                     json.put("error", JsonEncoder.encodeError(error));
+                     result.success(json.toString());
+                   } catch (JSONException e) {
+                     e.printStackTrace();
+                   }
+                 }
+               });
+               break;
+
+
+         case METHOD_START_QUICK_TRIP:
+
+           final String roamTripJSONString = call.argument("roamTrip");
+           final String roamTrackingModeString = call.argument("roamTrackingMode");
+
+             JSONObject roamTripJSON = new JSONObject(roamTripJSONString);
+             RoamTrip roamTrip = JsonDecoder.decodeRoamTrip(roamTripJSON);
+
+             JSONObject roamTrackingModeJSON = new JSONObject(roamTrackingModeString);
+             RoamTrackingMode roamTrackingMode = JsonDecoder.decodeRoamTrackingMode(roamTrackingModeJSON);
+
+             Roam.startTrip(roamTrip, roamTrackingMode, new RoamTripCallback() {
+               @Override
+               public void onSuccess(RoamTripResponse roamTripResponse) {
+                 JSONObject json = JsonEncoder.encodeRoamTripResponse(roamTripResponse);
+                 result.success(json.toString());
+               }
+
+               @Override
+               public void onError(Error error) {
+                 JSONObject json = new JSONObject();
+                 try {
+                   json.put("error", JsonEncoder.encodeError(error));
+                   result.success(json.toString());
+                 } catch (JSONException e) {
+                   e.printStackTrace();
+                 }
+               }
+             });
+
+           break;
+
+
+         case METHOD_SUBSCRIBE_TRIP:
+
+           final String subTripId = call.argument("tripId");
+           Roam.subscribeTrip(subTripId);
+
+           break;
+
+         case METHOD_UNSUBSCRIBE_TRIP:
+           final String unsubTripId = call.argument("tripId");
+           Roam.unSubscribeTrip(unsubTripId);
+           break;
+
+             case METHOD_PAUSE_TRIP:
+               final String pauseTripId = call.argument("tripId");
+               Roam.pauseTrip(pauseTripId, new RoamTripCallback() {
+                 @Override
+                 public void onSuccess(RoamTripResponse roamTripResponse) {
+                   JSONObject json = JsonEncoder.encodeRoamTripResponse(roamTripResponse);
+                   result.success(json.toString());
+                 }
+
+                 @Override
+                 public void onError(Error error) {
+                   JSONObject json = new JSONObject();
+                   try {
+                     json.put("error", JsonEncoder.encodeError(error));
+                     result.success(json.toString());
+                   } catch (JSONException e) {
+                     e.printStackTrace();
+                   }
+                 }
+               });
+               break;
+
+
+
+             case METHOD_RESUME_TRIP:
+               final String resumeTripId = call.argument("tripId");
+               Roam.resumeTrip(resumeTripId, new RoamTripCallback() {
+                 @Override
+                 public void onSuccess(RoamTripResponse roamTripResponse) {
+                   JSONObject json = JsonEncoder.encodeRoamTripResponse(roamTripResponse);
+                   result.success(json.toString());
+                 }
+
+                 @Override
+                 public void onError(Error error) {
+                   JSONObject json = new JSONObject();
+                   try {
+                     json.put("error", JsonEncoder.encodeError(error));
+                     result.success(json.toString());
+                   } catch (JSONException e) {
+                     e.printStackTrace();
+                   }
+                 }
+               });
+               break;
+
+
+
+             case METHOD_END_TRIP:
+               final String endTripId = call.argument("tripId");
+               Boolean stopTracking = call.argument("stopTracking");
+
+               if (stopTracking == null){
+                 stopTracking = false;
+               }
+
+               Roam.endTrip(endTripId, stopTracking, new RoamTripCallback() {
+                 @Override
+                 public void onSuccess(RoamTripResponse roamTripResponse) {
+                   JSONObject json = JsonEncoder.encodeRoamTripResponse(roamTripResponse);
+                   result.success(json.toString());
+                 }
+
+                 @Override
+                 public void onError(Error error) {
+                   JSONObject json = new JSONObject();
+                   try {
+                     json.put("error", JsonEncoder.encodeError(error));
+                     result.success(json.toString());
+                   } catch (JSONException e) {
+                     e.printStackTrace();
+                   }
+                 }
+               });
+
+               break;
+
+
+         case METHOD_DELETE_TRIP:
+
+           final String deleteTripId = call.argument("tripId");
+
+           Roam.deleteTrip(deleteTripId, new RoamDeleteTripCallback() {
+             @Override
+             public void onSuccess(RoamDeleteTripResponse roamDeleteTripResponse) {
+               JSONObject json = JsonEncoder.encodeRoamDeleteTripResponse(roamDeleteTripResponse);
+               result.success(json.toString());
+             }
+
+             @Override
+             public void onError(Error error) {
+               JSONObject json = new JSONObject();
+               try {
+                 json.put("error", JsonEncoder.encodeError(error));
+                 result.success(json.toString());
                } catch (JSONException e) {
                  e.printStackTrace();
                }
              }
-
-             @Override
-             public void onFailure(RoamError roamError) {
-               roamError.getMessage();
-               roamError.getCode();
-             }
            });
-           break;
 
-         case METHOD_GET_TRIP_STATUS:
-           final String statusTripId = call.argument("tripId");
-           Roam.getTripStatus(statusTripId, new RoamTripStatusCallback() {
+           return;
+
+
+         case METHOD_SYNC_TRIP:
+
+           final String syncTripId = call.argument("tripId");
+
+           Roam.syncTrip(syncTripId, new RoamSyncTripCallback() {
              @Override
-             public void onSuccess(RoamTripStatus roamTripStatus) {
-               JSONObject trip = new JSONObject();
-               try {
-                 trip.put("distance", roamTripStatus.getDistance());
-                 trip.put("speed", roamTripStatus.getSpeed());
-                 trip.put("duration", roamTripStatus.getDuration());
-                 trip.put("tripId", roamTripStatus.getTripId());
+             public void onSuccess(RoamSyncTripResponse roamSyncTripResponse) {
+               JSONObject json = JsonEncoder.encodeRoamSyncTripResponse(roamSyncTripResponse);
+               result.success(json.toString());
+             }
 
-                 String tripText = trip.toString();
-                 result.success(tripText);
+             @Override
+             public void onError(Error error) {
+               JSONObject json = new JSONObject();
+               try {
+                 json.put("error", JsonEncoder.encodeError(error));
+                 result.success(json.toString());
                } catch (JSONException e) {
                  e.printStackTrace();
                }
              }
-
-             @Override
-             public void onFailure(RoamError roamError) {
-               roamError.getMessage();
-               roamError.getCode();
-             }
            });
+
            break;
 
-         case METHOD_SUBSCRIBE_TRIP_STATUS:
-           final String subscribeTripId = call.argument("tripId");
-           Roam.subscribeTripStatus(subscribeTripId);
-           break;
 
-         case METHOD_UNSUBSCRIBE_TRIP_STATUS:
-           final String unSubscribeTripId = call.argument("tripId");
-           Roam.unSubscribeTripStatus(unSubscribeTripId);
-           break;
+         case METHOD_GET_ACTIVE_TRIPS:
 
-         case METHOD_START_TRIP:
-           final String startTripId = call.argument("tripId");
-           Roam.startTrip(startTripId, null, new RoamTripCallback() {
+           Boolean isLocal = call.argument("isLocal");
+
+           if (isLocal == null){
+             isLocal = false;
+           }
+
+           Roam.getActiveTrips(isLocal, new RoamActiveTripsCallback() {
              @Override
-             public void onSuccess(String s) {
-
+             public void onSuccess(RoamActiveTripsResponse roamActiveTripsResponse) {
+               JSONObject json = JsonEncoder.encodeRoamActiveTripsResponse(roamActiveTripsResponse);
+               result.success(json.toString());
              }
 
              @Override
-             public void onFailure(RoamError roamError) {
-               roamError.getMessage();
-               roamError.getCode();
-             }
-           });
-           break;
-
-         case METHOD_PAUSE_TRIP:
-           final String pauseTripId = call.argument("tripId");
-           Roam.pauseTrip(pauseTripId, new RoamTripCallback() {
-             @Override
-             public void onSuccess(String s) {
-
-             }
-
-             @Override
-             public void onFailure(RoamError roamError) {
-               roamError.getMessage();
-               roamError.getCode();
-             }
-           });
-           break;
-
-         case METHOD_RESUME_TRIP:
-           final String resumeTripId = call.argument("tripId");
-           Roam.resumeTrip(resumeTripId, new RoamTripCallback() {
-             @Override
-             public void onSuccess(String s) {
-
-             }
-
-             @Override
-             public void onFailure(RoamError roamError) {
-               roamError.getMessage();
-               roamError.getCode();
-             }
-           });
-           break;
-
-         case METHOD_END_TRIP:
-           final String endTripId = call.argument("tripId");
-           Roam.stopTrip(endTripId, new RoamTripCallback() {
-             @Override
-             public void onSuccess(String s) {
-
-             }
-
-             @Override
-             public void onFailure(RoamError roamError) {
-               roamError.getMessage();
-               roamError.getCode();
-             }
-           });
-           break;
-
-         case METHOD_GET_TRIP_SUMMARY:
-           final String summaryTripId = call.argument("tripId");
-           Roam.getTripSummary(summaryTripId, new RoamTripSummaryCallback() {
-             @Override
-             public void onSuccess(RoamTripSummary roamTripSummary) {
-               JSONObject trip = new JSONObject();
+             public void onError(Error error) {
+               JSONObject json = new JSONObject();
                try {
-                 trip.put("distance", roamTripSummary.getDistance_covered());
-                 trip.put("duration", roamTripSummary.getDuration());
-                 trip.put("tripId", roamTripSummary.getTrip_id());
-                 trip.put("route", roamTripSummary.getRoute());
-
-                 String tripText = trip.toString();
-                 result.success(tripText);
+                 json.put("error", JsonEncoder.encodeError(error));
+                 result.success(json.toString());
                } catch (JSONException e) {
                  e.printStackTrace();
                }
              }
-
-             @Override
-             public void onFailure(RoamError roamError) {
-               roamError.getMessage();
-               roamError.getCode();
-             }
            });
+
            break;
 
-         case METHOD_DISABLE_BATTERY_OPTIMIZATION:
-           Roam.disableBatteryOptimization();
-           break;
 
-         default:
-           result.notImplemented();
-           break;
-       }
 
-     } catch (Error e) {
-       result.error(e.toString(), e.getMessage(), e.getCause());
+
+
+
+             case METHOD_GET_TRIP_SUMMARY:
+               final String summaryTripId = call.argument("tripId");
+               Roam.getTripSummary(summaryTripId, new RoamTripCallback() {
+                 @Override
+                 public void onSuccess(RoamTripResponse roamTripResponse) {
+                   JSONObject json = JsonEncoder.encodeRoamTripResponse(roamTripResponse);
+                   result.success(json.toString());
+                 }
+
+                 @Override
+                 public void onError(Error error) {
+                   JSONObject json = new JSONObject();
+                   try {
+                     json.put("error", JsonEncoder.encodeError(error));
+                     result.success(json.toString());
+                   } catch (JSONException e) {
+                     e.printStackTrace();
+                   }
+                 }
+               });
+               break;
+
+             case METHOD_DISABLE_BATTERY_OPTIMIZATION:
+               Roam.disableBatteryOptimization();
+               break;
+
+             default:
+               result.notImplemented();
+               break;
+           }
+
+
+     } catch (Exception e) {
+       e.printStackTrace();
      }
   }
 
-  @Override
+    @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     this.context = null;
     channel.setMethodCallHandler(null);
   }
+
+
+
+
+
+
+
+
 }

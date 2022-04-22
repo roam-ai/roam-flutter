@@ -1,14 +1,19 @@
 import 'dart:convert';
 
+import 'package:example/logger.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:roam_flutter/RoamTrackingMode.dart';
 import 'package:roam_flutter/roam_flutter.dart';
 
 import 'package:permission_handler/permission_handler.dart';
+import 'package:roam_flutter/trips_v2/RoamTrip.dart';
 
-void main() {
+Future<void> main() async {
+
+
   runApp(MyApp());
 }
 
@@ -66,7 +71,7 @@ class _MyHomePage extends State<MyHomePage> {
     initPlatformState();
     Roam.initialize(
         publishKey:
-            "411076002016f3a85d9299806df465f24fe49feea904eb75076bbf0d8e8d5834");
+            "63a9ceb83843c7e0259468664153ceb8da34f6407c6bbe8bf67fb919ad2e9ef2");
   }
 
   //Native to Flutter Channel
@@ -164,7 +169,7 @@ class _MyHomePage extends State<MyHomePage> {
                   try {
                     await Roam.initialize(
                         publishKey:
-                            '411076002016f3a85d9299806df465f24fe49feea904eb75076bbf0d8e8d5834');
+                            '63a9ceb83843c7e0259468664153ceb8da34f6407c6bbe8bf67fb919ad2e9ef2');
                   } on PlatformException {
                     print('Initialization Error');
                   }
@@ -260,27 +265,33 @@ class _MyItemsPageState extends State<MyItemsPage> {
                 onPressed: () async {
                   try {
                     switch (type) {
-                      case "getTripStatus":
-                        Roam.getTripStatus(
-                            tripId: tripId,
-                            callBack: ({trip}) {
-                              setState(() {
-                                myTrip = trip;
-                              });
-                              print(trip);
-                            });
+                      // case "getTripStatus":
+                      //   Roam.getTripStatus(
+                      //       tripId: tripId,
+                      //       callBack: ({trip}) {
+                      //         setState(() {
+                      //           myTrip = trip;
+                      //         });
+                      //         print(trip);
+                      //       });
+                      //   break;
+                      //
+                      case "getTrip":
+                        Roam.getTrip(tripId, ({roamTripResponse}) {
+                          String responseString = jsonEncode(roamTripResponse?.toJson());
+                          print('Update trip response: $responseString');
+                          CustomLogger.writeLog(responseString);
+                          setState(() {
+                            tripId = roamTripResponse?.tripDetails?.id;
+                          });
+                        }, ({error}) {
+                          String errorString = jsonEncode(error?.toJson());
+                          print('Error: $errorString');
+                          CustomLogger.writeLog(errorString);
+                        });
                         break;
-                      case "getTripDetails":
-                        Roam.getTripDetails(
-                            tripId: tripId,
-                            callBack: ({trip}) {
-                              setState(() {
-                                myTrip = trip;
-                              });
-                              print(trip);
-                            });
-                        break;
-                      case "subscribeTripStatus":
+
+                      case "subscribeTrip":
                         Roam.subscribeTripStatus(
                           tripId: tripId,
                         );
@@ -292,35 +303,152 @@ class _MyItemsPageState extends State<MyItemsPage> {
                         );
                         break;
                       case "startTrip":
-                        Roam.startTrip(
-                          tripId: tripId,
-                        );
+                        Roam.startTrip(({roamTripResponse}) {
+                          String responseString = jsonEncode(roamTripResponse?.toJson());
+                          print('Start trip response: $responseString');
+                          CustomLogger.writeLog(responseString);
+                          setState(() {
+                            tripId = roamTripResponse?.tripDetails?.id;
+                          });
+                        }, ({error}) {
+                          String errorString = jsonEncode(error?.toJson());
+                          print('Error: $errorString');
+                          CustomLogger.writeLog(errorString);
+                        }, tripId: tripId);
                         break;
+
+                      case "quickTrip":
+                        RoamTrip quickTrip = RoamTrip(true);
+                        Roam.startTrip(({roamTripResponse}) {
+                          String responseString = jsonEncode(roamTripResponse?.toJson());
+                          print('Start trip response: $responseString');
+                          CustomLogger.writeLog(responseString);
+                          setState(() {
+                            tripId = roamTripResponse?.tripDetails?.id;
+                          });
+                        }, ({error}) {
+                          String errorString = jsonEncode(error?.toJson());
+                          print('Error: $errorString');
+                          CustomLogger.writeLog(errorString);
+                        }, roamTrip: quickTrip, roamTrackingMode: RoamTrackingMode.time(5, desiredAccuracy: DesiredAccuracy.HIGH));
+                        break;
+
+                      case "updateTrip":
+                        RoamTrip updateTrip = RoamTrip(false);
+                        updateTrip.description = "test description";
+                        Roam.updateTrip(updateTrip, ({roamTripResponse}) {
+                          String responseString = jsonEncode(roamTripResponse?.toJson());
+                          print('Update trip response: $responseString');
+                          CustomLogger.writeLog(responseString);
+                          setState(() {
+                            tripId = roamTripResponse?.tripDetails?.id;
+                          });
+                        }, ({error}) {
+                          String errorString = jsonEncode(error?.toJson());
+                          print('Error: $errorString');
+                          CustomLogger.writeLog(errorString);
+                        });
+                        break;
+
                       case "pauseTrip":
-                        Roam.pauseTrip(
-                          tripId: tripId,
-                        );
+                        Roam.pauseTrip(tripId, ({roamTripResponse}) {
+                          String responseString = jsonEncode(roamTripResponse?.toJson());
+                          print('Pause trip response: $responseString');
+                          CustomLogger.writeLog(responseString);
+                          setState(() {
+                            tripId = roamTripResponse?.tripDetails?.id;
+                          });
+                        }, ({error}) {
+                          String errorString = jsonEncode(error?.toJson());
+                          print('Error: $errorString');
+                          CustomLogger.writeLog(errorString);
+                        });
                         break;
+
                       case "resumeTrip":
-                        Roam.resumeTrip(
-                          tripId: tripId,
-                        );
+                        Roam.resumeTrip(tripId, ({roamTripResponse}) {
+                          String responseString = jsonEncode(roamTripResponse?.toJson());
+                          print('Resume trip response: $responseString');
+                          CustomLogger.writeLog(responseString);
+                          setState(() {
+                            tripId = roamTripResponse?.tripDetails?.id;
+                          });
+                        }, ({error}) {
+                          String errorString = jsonEncode(error?.toJson());
+                          print('Error: $errorString');
+                          CustomLogger.writeLog(errorString);
+                        });
                         break;
+
                       case "endTrip":
-                        Roam.endTrip(
-                          tripId: tripId,
-                        );
+                        Roam.endTrip(tripId, false, ({roamTripResponse}) {
+                          String responseString = jsonEncode(roamTripResponse?.toJson());
+                          print('End trip response: $responseString');
+                          CustomLogger.writeLog(responseString);
+                          setState(() {
+                            tripId = roamTripResponse?.tripDetails?.id;
+                          });
+                        }, ({error}) {
+                          String errorString = jsonEncode(error?.toJson());
+                          print('Error: $errorString');
+                          CustomLogger.writeLog(errorString);
+                        });
                         break;
+
+                      case "syncTrip":
+                        Roam.syncTrip(tripId, ({roamSyncTripResponse}) {
+                          String responseString = jsonEncode(roamSyncTripResponse?.toJson());
+                          print('End trip response: $responseString');
+                          CustomLogger.writeLog(responseString);
+                        }, ({error}) {
+                          String errorString = jsonEncode(error?.toJson());
+                          print('Error: $errorString');
+                          CustomLogger.writeLog(errorString);
+                        });
+                        break;
+
+                      case "deleteTrip":
+                        Roam.deleteTrip(tripId, ({roamDeleteTripResponse}) {
+                          String responseString = jsonEncode(roamDeleteTripResponse?.toJson());
+                          print('Delete trip response: $responseString}');
+                          CustomLogger.writeLog(responseString);
+                          setState(() {
+                            tripId = roamDeleteTripResponse?.trip?.id;
+                          });
+                        }, ({error}) {
+                          String errorString = jsonEncode(error?.toJson());
+                          print('Error: $errorString');
+                          CustomLogger.writeLog(errorString);
+                        });
+                        break;
+
                       case "getTripSummary":
-                        Roam.getTripSummary(
-                            tripId: tripId,
-                            callBack: ({trip}) {
-                              setState(() {
-                                myTrip = trip;
-                              });
-                              print(trip);
-                            });
+                        Roam.getTripSummary(tripId, ({roamTripResponse}) {
+                          String responseString = jsonEncode(roamTripResponse?.toJson());
+                          print('End trip response: $responseString');
+                          CustomLogger.writeLog(responseString);
+                          setState(() {
+                            tripId = roamTripResponse?.tripDetails?.id;
+                          });
+                        }, ({error}) {
+                          String errorString = jsonEncode(error?.toJson());
+                          print('Error: $errorString');
+                          CustomLogger.writeLog(errorString);
+                        });
                         break;
+
+                      case "getActiveTrips":
+                        Roam.getActiveTrips(false, ({roamActiveTripResponse}) {
+                          String responseString = jsonEncode(roamActiveTripResponse?.toJson());
+                          print('Get active trips response: $responseString}');
+                          CustomLogger.writeLog(responseString);
+                        }, ({error}) {
+                          String errorString = jsonEncode(error?.toJson());
+                          print('Error: $errorString');
+                          CustomLogger.writeLog(errorString);
+                        });
+                        break;
+
                       default:
                         print("default");
                         Navigator.pop(context);
@@ -357,52 +485,53 @@ class _MyItemsPageState extends State<MyItemsPage> {
                     myTrip = "creating trip..";
                   });
                   try {
-                    await Roam.createTrip(
-                        isOffline: false,
-                        callBack: ({trip}) {
-                          setState(() {
-                            myTrip = trip;
-                          });
-                          print(trip);
-                        });
+                    RoamTrip roamTrip = RoamTrip(false);
+                    Roam.createTrip(roamTrip, ({roamTripResponse}) {
+                      String responseString = jsonEncode(roamTripResponse?.toJson());
+                      print('Create trip response: $responseString');
+                      CustomLogger.writeLog(responseString);
+                      setState(() {
+                        myTrip = roamTripResponse.tripDetails.id;
+                      });
+                    }, ({error}) {
+                      String errorString = jsonEncode(error?.toJson());
+                      print(errorString);
+                      CustomLogger.writeLog(errorString);
+                    });
+
                   } on PlatformException {
                     print('Create Trip Error');
                   }
                 }),
             ElevatedButton(
-                child: Text('Get Trip Details'),
+                child: Text('Get Trip'),
                 onPressed: () async {
-                  _displayTripsInputDialog(context, "getTripDetails");
+                  _displayTripsInputDialog(context, "getTrip");
                 }),
-            ElevatedButton(
-                child: Text('Get Trip Status'),
-                onPressed: () async {
-                  _displayTripsInputDialog(context, "getTripStatus");
-                }),
-            ElevatedButton(
-                child: Text('Subscribe Trip Status'),
-                onPressed: () async {
-                  setState(() {
-                    myTrip = 'trip subscribed';
-                  });
-                  try {
-                    _displayTripsInputDialog(context, "subscribeTripStatus");
-                  } on PlatformException {
-                    print('Subscribe Trip Status Error');
-                  }
-                }),
-            ElevatedButton(
-                child: Text('Unsubscribe Trip Status'),
-                onPressed: () async {
-                  setState(() {
-                    myTrip = 'trip unsubscribed';
-                  });
-                  try {
-                    _displayTripsInputDialog(context, "unSubscribeTripStatus");
-                  } on PlatformException {
-                    print('Unsubscribe Trip Status Error');
-                  }
-                }),
+            // ElevatedButton(
+            //     child: Text('Subscribe Trip Status'),
+            //     onPressed: () async {
+            //       setState(() {
+            //         myTrip = 'trip subscribed';
+            //       });
+            //       try {
+            //         _displayTripsInputDialog(context, "subscribeTrip");
+            //       } on PlatformException {
+            //         print('Subscribe Trip Status Error');
+            //       }
+            //     }),
+            // ElevatedButton(
+            //     child: Text('Unsubscribe Trip Status'),
+            //     onPressed: () async {
+            //       setState(() {
+            //         myTrip = 'trip unsubscribed';
+            //       });
+            //       try {
+            //         _displayTripsInputDialog(context, "unSubscribeTripStatus");
+            //       } on PlatformException {
+            //         print('Unsubscribe Trip Status Error');
+            //       }
+            //     }),
             ElevatedButton(
                 child: Text('Start Trip'),
                 onPressed: () async {
@@ -410,6 +539,24 @@ class _MyItemsPageState extends State<MyItemsPage> {
                     _displayTripsInputDialog(context, "startTrip");
                   } on PlatformException {
                     print('Start Trip Error');
+                  }
+                }),
+            ElevatedButton(
+                child: Text('Offline Quick Trip'),
+                onPressed: () async {
+                  try {
+                    _displayTripsInputDialog(context, "quickTrip");
+                  } on PlatformException {
+                    print('Quick Trip Error');
+                  }
+                }),
+            ElevatedButton(
+                child: Text('Update Trip'),
+                onPressed: () async {
+                  try {
+                    _displayTripsInputDialog(context, "updateTrip");
+                  } on PlatformException {
+                    print('Update Trip Error');
                   }
                 }),
             ElevatedButton(
@@ -437,6 +584,33 @@ class _MyItemsPageState extends State<MyItemsPage> {
                     _displayTripsInputDialog(context, "endTrip");
                   } on PlatformException {
                     print('End Trip Error');
+                  }
+                }),
+            ElevatedButton(
+                child: Text('Sync Trip'),
+                onPressed: () async {
+                  try {
+                    _displayTripsInputDialog(context, "syncTrip");
+                  } on PlatformException {
+                    print('Sync Trip Error');
+                  }
+                }),
+            ElevatedButton(
+                child: Text('Delete Trip'),
+                onPressed: () async {
+                  try {
+                    _displayTripsInputDialog(context, "deleteTrip");
+                  } on PlatformException {
+                    print('Delete Trip Error');
+                  }
+                }),
+            ElevatedButton(
+                child: Text('Get Active Trips'),
+                onPressed: () async {
+                  try {
+                    _displayTripsInputDialog(context, "getActiveTrips");
+                  } on PlatformException {
+                    print('Get Active Trips Error');
                   }
                 }),
             ElevatedButton(

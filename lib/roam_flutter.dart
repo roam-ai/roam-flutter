@@ -1,6 +1,21 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:core';
+import 'dart:core';
+import 'dart:developer';
 import 'package:flutter/services.dart';
+import 'package:roam_flutter/json/JsonDecoder.dart';
+import 'package:roam_flutter/RoamTrackingMode.dart';
+import 'package:roam_flutter/json/JsonEncoder.dart';
+import 'package:roam_flutter/trips_v2/RoamTrip.dart';
+import 'package:roam_flutter/trips_v2/callback/ErrorCallback.dart';
+import 'package:roam_flutter/trips_v2/callback/RoamActiveTripsCallback.dart';
+import 'package:roam_flutter/trips_v2/callback/RoamDeleteTripCallback.dart';
+import 'package:roam_flutter/trips_v2/callback/RoamSyncTripCallback.dart';
+import 'package:roam_flutter/trips_v2/callback/RoamTripCallback.dart';
+import 'package:roam_flutter/trips_v2/models/Error.dart';
+import 'package:roam_flutter/trips_v2/models/RoamActiveTripsResponse.dart';
+import 'package:roam_flutter/trips_v2/request/RoamTripStops.dart';
 
 typedef void RoamCallBack({String? location});
 typedef void RoamUserCallBack({String? user});
@@ -24,14 +39,21 @@ class Roam {
   static const String METHOD_ENABLE_ACCURACY_ENGINE = "enableAccuracyEngine";
   static const String METHOD_DISABLE_ACCURACY_ENGINE = "disableAccuracyEngine";
   static const String METHOD_CREATE_TRIP = "createTrip";
+  static const String METHOD_UPDATE_TRIP = "updateTrip";
+  static const String METHOD_GET_TRIP = "getTrip";
   static const String METHOD_GET_TRIP_DETAILS = "getTripDetails";
   static const String METHOD_GET_TRIP_STATUS = "getTripStatus";
   static const String METHOD_SUBSCRIBE_TRIP_STATUS = "subscribeTripStatus";
   static const String METHOD_UNSUBSCRIBE_TRIP_STATUS = "unSubscribeTripStatus";
   static const String METHOD_START_TRIP = "startTrip";
+  static const String METHOD_START_QUICK_TRIP = "startQuickTrip";
   static const String METHOD_PAUSE_TRIP = "pauseTrip";
   static const String METHOD_RESUME_TRIP = "resumeTrip";
   static const String METHOD_END_TRIP = "endTrip";
+  static const String METHOD_SYNC_TRIP = "syncTrip";
+  static const String METHOD_SUBSCRIBE_TRIP = "subscribeTrip";
+  static const String METHOD_DELETE_TRIP = "deleteTrip";
+  static const String METHOD_GET_ACTIVE_TRIPS = "getActiveTrips";
   static const String METHOD_GET_TRIP_SUMMARY = "getTripSummary";
   static const String METHOD_DISABLE_BATTERY_OPTIMIZATION =
       "disableBatteryOptimization";
@@ -237,15 +259,67 @@ class Roam {
     return result;
   }
 
+
   static Future<void> createTrip(
-      {required bool isOffline, required RoamTripCallBack callBack}) async {
-    final Map<String, dynamic> params = <String, dynamic>{
-      'isOffline': isOffline
-    };
-    final String? result =
-        await _channel.invokeMethod(METHOD_CREATE_TRIP, params);
-    callBack(trip: result);
+    RoamTrip roamTrip,
+    RoamTripCallback roamTripCallback,
+      ErrorCallback errorCallback
+  ) async {
+
+    Map<String, dynamic> json = JsonEncoder.encodeRoamTrip(roamTrip);
+
+    final String? result = await _channel.invokeMethod(METHOD_CREATE_TRIP, {'roamTrip': jsonEncode(json)});
+
+    if(result == null){
+      log("Create trip result null!");
+      return;
+    }
+
+    try{
+      Map<String, dynamic> json = jsonDecode(result);
+      if(json.containsKey("error")){
+        log('error');
+        errorCallback(error: JsonDecoder.decodeError(json['error']));
+      } else {
+        roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+      }
+    } catch (exception){
+      log('response error: '+exception.toString());
+    }
   }
+
+
+  static Future<void> updateTrip(
+    RoamTrip roamTrip,
+    RoamTripCallback roamTripCallback,
+    ErrorCallback errorCallback
+) async {
+
+    Map<String, dynamic> json = JsonEncoder.encodeRoamTrip(roamTrip);
+
+    final String? result = await _channel.invokeMethod(METHOD_UPDATE_TRIP, {'roamTrip': jsonEncode(json)});
+
+    if(result == null){
+      log("Update trip result null!");
+      return;
+    }
+
+    try{
+      Map<String, dynamic> json = jsonDecode(result);
+      if(json.containsKey("error")){
+        errorCallback(error: JsonDecoder.decodeError(json['error']));
+      } else {
+        roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+      }
+    } catch (exception){
+      log(exception.toString());
+    }
+
+  }
+
+
+
+
 
   static Future<void> getTripDetails(
       {required String tripId, required RoamTripCallBack callBack}) async {
@@ -283,50 +357,305 @@ class Roam {
     return result;
   }
 
-  static Future<bool?> startTrip({
-    required String tripId,
-  }) async {
-    final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
-    final bool? result = await _channel.invokeMethod(METHOD_START_TRIP, params);
-    _channel.setMethodCallHandler(_methodCallHandler);
-    return result;
+
+  static Future<void> startTrip(
+    RoamTripCallback roamTripCallback,
+      ErrorCallback errorCallback,
+    {
+      String? tripId,
+      RoamTrip? roamTrip,
+      RoamTrackingMode? roamTrackingMode,
+    }
+    ) async {
+
+    if(roamTrip != null){
+      //start quick trip
+
+      if(roamTrackingMode == null){
+        roamTrackingMode = RoamTrackingMode.ACTIVE;
+      }
+
+      Map<String, dynamic> json = Map();
+
+      Map<String, dynamic> roamTripJson = JsonEncoder.encodeRoamTrip(roamTrip);
+      json['roamTrip'] = jsonEncode(roamTripJson);
+
+      json['roamTrackingMode'] = jsonEncode(JsonEncoder.encodeRoamTrackingMode(roamTrackingMode));
+
+      final String? result = await _channel.invokeMethod(METHOD_START_QUICK_TRIP, json);
+
+      if(result == null){
+        log("Update trip result null!");
+        return;
+      }
+
+      try{
+        Map<String, dynamic> json = jsonDecode(result);
+        if(json.containsKey("error")){
+          errorCallback(error: JsonDecoder.decodeError(json['error']));
+        } else {
+          roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+        }
+      } catch (exception){
+        log(exception.toString());
+      }
+
+
+    } else {
+      //start planned trip
+
+      final String? result = await _channel.invokeMethod(METHOD_START_TRIP, {'tripId' : tripId});
+
+      if(result == null){
+        log("Start trip result null!");
+        return;
+      }
+
+      try{
+        Map<String, dynamic> json = jsonDecode(result);
+        if(json.containsKey("error")){
+          errorCallback(error: JsonDecoder.decodeError(json['error']));
+        } else {
+          roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+        }
+      } catch (exception){
+        log(exception.toString());
+      }
+
+
+    }
+
   }
 
-  static Future<bool?> pauseTrip({
-    required String tripId,
-  }) async {
-    final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
-    final bool? result = await _channel.invokeMethod(METHOD_PAUSE_TRIP, params);
-    _channel.setMethodCallHandler(_methodCallHandler);
-    return result;
+
+  static Future<void> pauseTrip(
+      String tripId,
+      RoamTripCallback roamTripCallback,
+      ErrorCallback errorCallback
+      ) async {
+
+    final String? result = await _channel.invokeMethod(METHOD_PAUSE_TRIP, {'tripId' : tripId});
+
+    if(result == null){
+      log("Pause trip result null!");
+      return;
+    }
+
+    try{
+      Map<String, dynamic> json = jsonDecode(result);
+      if(json.containsKey("error")){
+        errorCallback(error: JsonDecoder.decodeError(json['error']));
+      } else {
+        roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+      }
+    } catch (exception){
+      log(exception.toString());
+    }
+
   }
 
-  static Future<bool?> resumeTrip({
-    required String tripId,
-  }) async {
-    final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
-    final bool? result =
-        await _channel.invokeMethod(METHOD_RESUME_TRIP, params);
-    _channel.setMethodCallHandler(_methodCallHandler);
-    return result;
+
+  static Future<void> resumeTrip(
+      String tripId,
+      RoamTripCallback roamTripCallback,
+      ErrorCallback errorCallback
+      ) async {
+
+    final String? result = await _channel.invokeMethod(METHOD_RESUME_TRIP, {'tripId' : tripId});
+
+    if(result == null){
+      log("Resume trip result null!");
+      return;
+    }
+
+    try{
+      Map<String, dynamic> json = jsonDecode(result);
+      if(json.containsKey("error")){
+        errorCallback(error: JsonDecoder.decodeError(json['error']));
+      } else {
+        roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+      }
+    } catch (exception){
+      log(exception.toString());
+    }
+
   }
 
-  static Future<bool?> endTrip({
-    required String tripId,
-  }) async {
-    final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
-    final bool? result = await _channel.invokeMethod(METHOD_END_TRIP, params);
-    _channel.setMethodCallHandler(_methodCallHandler);
-    return result;
+
+
+
+
+  static Future<void> endTrip(
+      String tripId,
+      bool stopTracking,
+      RoamTripCallback roamTripCallback,
+      ErrorCallback errorCallback
+      ) async {
+
+    Map<String, dynamic> json = Map();
+    json['tripId'] = tripId;
+    json['stopTracking'] = stopTracking;
+
+
+    final String? result = await _channel.invokeMethod(METHOD_END_TRIP, json);
+
+    if(result == null){
+      log("End trip result null!");
+      return;
+    }
+
+    try{
+      Map<String, dynamic> json = jsonDecode(result);
+      if(json.containsKey("error")){
+        errorCallback(error: JsonDecoder.decodeError(json['error']));
+      } else {
+        roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+      }
+    } catch (exception){
+      log(exception.toString());
+    }
+
   }
+
+
+  static Future<void> deleteTrip(
+      String tripId,
+      RoamDeleteTripCallback roamDeleteTripCallback,
+      ErrorCallback errorCallback
+      ) async {
+
+    final String? result = await _channel.invokeMethod(METHOD_END_TRIP, {'tripId': tripId});
+
+    if(result == null){
+      log("Delete trip result null!");
+      return;
+    }
+
+    try{
+      Map<String, dynamic> json = jsonDecode(result);
+      if(json.containsKey("error")){
+        errorCallback(error: JsonDecoder.decodeError(json['error']));
+      } else {
+        roamDeleteTripCallback(roamDeleteTripResponse: JsonDecoder.decodeRoamDeleteTripResponse(json));
+      }
+    } catch (exception){
+      log(exception.toString());
+    }
+  }
+
+
+  static void subscribeTrip(String tripId){
+    _channel.invokeMethod(METHOD_SYNC_TRIP, {'tripId': tripId});
+  }
+
+
+  static Future<void> getTrip(
+      String tripId,
+      RoamTripCallback roamTripCallback,
+      ErrorCallback errorCallback
+      ) async {
+    final String? result = await _channel.invokeMethod(METHOD_GET_TRIP, {'tripId': tripId});
+
+    if(result == null){
+      log("Get trip result null!");
+      return;
+    }
+
+    try{
+      Map<String, dynamic> json = jsonDecode(result);
+      if(json.containsKey("error")){
+        errorCallback(error: JsonDecoder.decodeError(json['error']));
+      } else {
+        roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+      }
+    } catch (exception){
+      log(exception.toString());
+    }
+  }
+
+
+  static Future<void> syncTrip(
+      String tripId,
+      RoamSyncTripCallback roamSyncTripCallback,
+      ErrorCallback errorCallback
+      ) async {
+
+    final String? result = await _channel.invokeMethod(METHOD_SYNC_TRIP, {'tripId': tripId});
+
+    if(result == null){
+      log("Sync trip result null!");
+      return;
+    }
+
+    try{
+      Map<String, dynamic> json = jsonDecode(result);
+      if(json.containsKey("error")){
+        errorCallback(error: JsonDecoder.decodeError(json['error']));
+      } else {
+        roamSyncTripCallback(roamSyncTripResponse: JsonDecoder.decodeRoamSyncTripResponse(json));
+      }
+    } catch (exception){
+      log(exception.toString());
+    }
+
+  }
+
+
+
+  static Future<void> getActiveTrips(
+      bool isLocal,
+      RoamActiveTripsCallback roamActiveTripsCallback,
+      ErrorCallback errorCallback
+      ) async {
+
+    final String? result = await _channel.invokeMethod(METHOD_GET_ACTIVE_TRIPS, {'isLocal': isLocal});
+
+    if(result == null){
+      log("Active trip result null!");
+      return;
+    }
+
+    try{
+      Map<String, dynamic> json = jsonDecode(result);
+      if(json.containsKey("error")){
+        errorCallback(error: JsonDecoder.decodeError(json['error']));
+      } else {
+        roamActiveTripsCallback(roamActiveTripResponse: JsonDecoder.decodeRoamActiveTripResopnse(json));
+      }
+    } catch (exception){
+      log(exception.toString());
+    }
+
+
+  }
+
 
   static Future<void> getTripSummary(
-      {required String tripId, required RoamTripCallBack callBack}) async {
-    final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
-    final String? result =
-        await _channel.invokeMethod(METHOD_GET_TRIP_SUMMARY, params);
-    callBack(trip: result);
+      String tripId,
+      RoamTripCallback roamTripCallback,
+      ErrorCallback errorCallback
+      ) async {
+    final String? result = await _channel.invokeMethod(METHOD_GET_TRIP_SUMMARY, {'tripId': tripId});
+
+    if(result == null){
+      log("Get trip result null!");
+      return;
+    }
+
+    try{
+      Map<String, dynamic> json = jsonDecode(result);
+      if(json.containsKey("error")){
+        errorCallback(error: JsonDecoder.decodeError(json['error']));
+      } else {
+        roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+      }
+    } catch (exception){
+      log(exception.toString());
+    }
   }
+
+
+
 
   static Future<void> _methodCallHandler(MethodCall call) async {
     switch (call.method) {
@@ -350,4 +679,7 @@ class Roam {
     final String? version = await _channel.invokeMethod('getPlatformVersion');
     return version;
   }
+
+
+
 }
