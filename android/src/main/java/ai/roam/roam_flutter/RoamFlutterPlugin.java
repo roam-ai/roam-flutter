@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -467,6 +468,8 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            if (roamTripString != null && !roamTripString.equals("")) {
              JSONObject roamTripJSON = new JSONObject(roamTripString);
 
+             Log.e("TAG", "creating trip");
+
              //RoamTrip trip = JsonDecoder.decodeRoamTrip(roamTripJSON);
 
 
@@ -515,10 +518,12 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                      .setUserId("")
                      .setTripDescription("trip description")
                      .setTripName("trip name")
+                     //.setIsLocal(ckOffline.isChecked())
                      .setIsLocal(false)
                      .setStop(stop)
                      .setMetadata(metadata)
                      .build();
+
 
              Roam.createTrip(trip, new RoamTripCallback() {
                @Override

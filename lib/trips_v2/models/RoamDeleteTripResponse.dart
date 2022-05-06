@@ -4,7 +4,7 @@ class RoamDeleteTripResponse{
 
   String? message;
   String? description;
-  int? code;
+  var code;
   Trip? trip;
 
   RoamDeleteTripResponse(this.message, this.description, this.code, this.trip);

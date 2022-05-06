@@ -5,6 +5,14 @@ class RoamTrackingMode {
   int stopDuration = 0;
   int updateInterval = 0;
   TrackingOptions _trackingOptions = TrackingOptions.CUSTOM;
+  ActivityType activityType = ActivityType.fitness;
+  DesiredAccuracyIOS desiredAccuracyIOS = DesiredAccuracyIOS.best;
+  bool pausesLocationUpdatesAutomatically = false;
+  bool showsBackgroundLocationIndicator = true;
+  bool allowBackgroundLocationUpdates = true;
+  int accuracyFilter = 50;
+
+
 
   RoamTrackingMode._(
   this._trackingOptions,
@@ -15,6 +23,17 @@ class RoamTrackingMode {
     required this.updateInterval
   }
   );
+
+  RoamTrackingMode.customIOS(
+      this.activityType,
+      this.desiredAccuracyIOS,
+      this.allowBackgroundLocationUpdates,
+      this.pausesLocationUpdatesAutomatically,
+      this.showsBackgroundLocationIndicator,
+      this.accuracyFilter,
+      this.distanceFilter,
+      this.updateInterval
+      );
 
 
 
@@ -113,6 +132,68 @@ extension TrackingOptionsExtension on TrackingOptions{
 
       case TrackingOptions.CUSTOM:
         return 3;
+    }
+  }
+}
+
+enum ActivityType {
+  fitness,
+  airborne,
+  automotiveNavigation,
+  other,
+  otherNavigation
+}
+
+extension ActivityTypeExtension on ActivityType{
+  String get value {
+    switch(this){
+      case ActivityType.fitness:
+        return "fitness";
+
+      case ActivityType.airborne:
+        return "airborne";
+
+      case ActivityType.automotiveNavigation:
+        return "automotiveNavigation";
+
+      case ActivityType.other:
+        return "other";
+
+      case ActivityType.otherNavigation:
+        return "otherNavigation";
+    }
+  }
+}
+
+enum DesiredAccuracyIOS {
+  best,
+  bestForNavigation,
+  hundredMetres,
+  kilometers,
+  nearestTenMeters,
+  threeKilometers
+}
+
+extension DesiredAccuracyIOSExtension on DesiredAccuracyIOS{
+  String get value{
+    switch(this){
+      case DesiredAccuracyIOS.best:
+        return "best";
+
+      case DesiredAccuracyIOS.bestForNavigation:
+        return "bestForNavigation";
+
+      case DesiredAccuracyIOS.hundredMetres:
+        return "hundredMetres";
+
+      case DesiredAccuracyIOS.kilometers:
+        return "kilometers";
+
+      case DesiredAccuracyIOS.nearestTenMeters:
+        return "nearestTenMeters";
+
+      case DesiredAccuracyIOS.threeKilometers:
+        return "threeKilometers";
     }
   }
 }

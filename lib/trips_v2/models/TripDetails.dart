@@ -14,7 +14,7 @@ class TripDetails{
   late var totalDistance;
   late var totalDuration;
   late var totalElevationGain;
-  late Map<String, dynamic>? metadata;
+  late Map? metadata;
   late StartLocation? startLocation;
   late EndLocation? endLocation;
   late User? user;
@@ -27,7 +27,7 @@ class TripDetails{
   List<Stop?> stops = List.empty(growable: true);
   List<Events?> events = List.empty(growable: true);
   List<Routes?> route = List.empty(growable: true);
-  Map<String, dynamic>? routeIndex;
+  Map? routeIndex;
 
 
 

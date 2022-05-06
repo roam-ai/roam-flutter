@@ -3,7 +3,7 @@ import 'package:roam_flutter/trips_v2/models/Trips.dart';
 
 class RoamActiveTripResponse{
 
-  int? code;
+  var code;
   String? message;
   String? description;
   bool? hasMore;

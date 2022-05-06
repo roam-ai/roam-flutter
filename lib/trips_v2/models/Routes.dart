@@ -2,13 +2,13 @@ import 'package:roam_flutter/models/Coordinates.dart';
 
 class Routes{
 
-  late Map<String, dynamic>? metadata;
+  late Map? metadata;
   late String? activity;
-  double? speed = 0;
-  double? altitude = 0;
-  double? distance = 0;
-  double? duration = 0;
-  double? elevationGain = 0;
+  var speed = 0;
+  var altitude = 0;
+  var distance = 0;
+  var duration = 0;
+  var elevationGain = 0;
   late Coordinates? coordinates;
   late String? recordedAt;
   late String? locationId;
@@ -31,11 +31,11 @@ class Routes{
   Routes({
       this.metadata,
       this.activity,
-      this.speed,
-      this.altitude,
-      this.distance,
-      this.duration,
-      this.elevationGain,
+      required this.speed,
+      required this.altitude,
+      required this.distance,
+      required this.duration,
+      required this.elevationGain,
       this.coordinates,
       this.recordedAt,
       this.locationId});

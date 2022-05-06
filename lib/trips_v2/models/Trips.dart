@@ -6,9 +6,9 @@ class Trips{
 
   String? id;
   String? tripState;
-  double? totalDistance;
-  double? totalDuration;
-  double? totalElevation_gain;
+  var totalDistance;
+  var totalDuration;
+  var totalElevation_gain;
   Map? metadata;
   User? user;
   String? startedAt;

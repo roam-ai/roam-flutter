@@ -13,6 +13,7 @@ class JsonEncoder{
     json['metadata'] = roamTrip.metadata;
     json['description'] = roamTrip.description ?? "";
     json['name'] = roamTrip.name ?? "";
+    json['tripId'] = roamTrip.tripId ?? "";
 
     List<Map<String, dynamic>> stops = List.empty(growable: true);
     roamTrip.stop?.forEach((stop) {
@@ -22,6 +23,7 @@ class JsonEncoder{
 
     return json;
   }
+
 
 
   static Map<String, dynamic> encodeRoamTripStops(RoamTripStops stop){
@@ -47,6 +49,13 @@ class JsonEncoder{
     map['stopDuration'] = roamTrackingMode.stopDuration;
     map['updateInterval'] = roamTrackingMode.updateInterval;
     map['trackingOptions'] = roamTrackingMode.trackingOptions.value;
+    map['activityType'] = roamTrackingMode.activityType.value;
+    map['desiredAccuracyIOS'] = roamTrackingMode.desiredAccuracyIOS.value;
+    map["allowBackgroundLocationUpdates"] = roamTrackingMode.allowBackgroundLocationUpdates;
+    map["pausesLocationUpdatesAutomatically"] = roamTrackingMode.pausesLocationUpdatesAutomatically;
+    map["showsBackgroundLocationIndicator"] = roamTrackingMode.showsBackgroundLocationIndicator;
+    map["accuracyFilter"] = roamTrackingMode.accuracyFilter;
+
 
     return map;
   }

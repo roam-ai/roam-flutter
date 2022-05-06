@@ -52,6 +52,7 @@ class Roam {
   static const String METHOD_END_TRIP = "endTrip";
   static const String METHOD_SYNC_TRIP = "syncTrip";
   static const String METHOD_SUBSCRIBE_TRIP = "subscribeTrip";
+  static const String METHOD_UNSUBSCRIBE_TRIP = "unsubscribeTrip";
   static const String METHOD_DELETE_TRIP = "deleteTrip";
   static const String METHOD_GET_ACTIVE_TRIPS = "getActiveTrips";
   static const String METHOD_GET_TRIP_SUMMARY = "getTripSummary";
@@ -198,10 +199,14 @@ class Roam {
   /// This method is only for Android devices to disable all battery optimization settings by OS and allow
   /// the application to track location in background
   static Future<bool?> disableBatteryOptimization() async {
-    final bool? result =
-        await _channel.invokeMethod(METHOD_DISABLE_BATTERY_OPTIMIZATION);
-    _channel.setMethodCallHandler(_methodCallHandler);
-    return result;
+    try {
+      final bool? result =
+      await _channel.invokeMethod(METHOD_DISABLE_BATTERY_OPTIMIZATION);
+      _channel.setMethodCallHandler(_methodCallHandler);
+      return result;
+    } catch (error){
+      print(error);
+    }
   }
 
   /// Subscribe Location
@@ -276,7 +281,7 @@ class Roam {
     }
 
     try{
-      Map<String, dynamic> json = jsonDecode(result);
+      Map json = jsonDecode(result);
       if(json.containsKey("error")){
         log('error');
         errorCallback(error: JsonDecoder.decodeError(json['error']));
@@ -305,7 +310,7 @@ class Roam {
     }
 
     try{
-      Map<String, dynamic> json = jsonDecode(result);
+      Map json = jsonDecode(result);
       if(json.containsKey("error")){
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
@@ -390,7 +395,7 @@ class Roam {
       }
 
       try{
-        Map<String, dynamic> json = jsonDecode(result);
+        Map json = jsonDecode(result);
         if(json.containsKey("error")){
           errorCallback(error: JsonDecoder.decodeError(json['error']));
         } else {
@@ -412,7 +417,7 @@ class Roam {
       }
 
       try{
-        Map<String, dynamic> json = jsonDecode(result);
+        Map json = jsonDecode(result);
         if(json.containsKey("error")){
           errorCallback(error: JsonDecoder.decodeError(json['error']));
         } else {
@@ -442,7 +447,7 @@ class Roam {
     }
 
     try{
-      Map<String, dynamic> json = jsonDecode(result);
+      Map json = jsonDecode(result);
       if(json.containsKey("error")){
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
@@ -469,7 +474,7 @@ class Roam {
     }
 
     try{
-      Map<String, dynamic> json = jsonDecode(result);
+      Map json = jsonDecode(result);
       if(json.containsKey("error")){
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
@@ -505,7 +510,7 @@ class Roam {
     }
 
     try{
-      Map<String, dynamic> json = jsonDecode(result);
+      Map json = jsonDecode(result);
       if(json.containsKey("error")){
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
@@ -532,7 +537,7 @@ class Roam {
     }
 
     try{
-      Map<String, dynamic> json = jsonDecode(result);
+      Map json = jsonDecode(result);
       if(json.containsKey("error")){
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
@@ -545,8 +550,14 @@ class Roam {
 
 
   static void subscribeTrip(String tripId){
-    _channel.invokeMethod(METHOD_SYNC_TRIP, {'tripId': tripId});
+    _channel.invokeMethod(METHOD_SUBSCRIBE_TRIP, {'tripId': tripId});
   }
+
+  static void unsubscribeTrip(String tripId){
+    _channel.invokeMethod(METHOD_UNSUBSCRIBE_TRIP, {'tripId': tripId});
+  }
+
+
 
 
   static Future<void> getTrip(
@@ -562,7 +573,7 @@ class Roam {
     }
 
     try{
-      Map<String, dynamic> json = jsonDecode(result);
+      Map json = jsonDecode(result);
       if(json.containsKey("error")){
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
@@ -588,7 +599,7 @@ class Roam {
     }
 
     try{
-      Map<String, dynamic> json = jsonDecode(result);
+      Map json = jsonDecode(result);
       if(json.containsKey("error")){
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
@@ -616,7 +627,7 @@ class Roam {
     }
 
     try{
-      Map<String, dynamic> json = jsonDecode(result);
+      Map json = jsonDecode(result);
       if(json.containsKey("error")){
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
@@ -643,7 +654,7 @@ class Roam {
     }
 
     try{
-      Map<String, dynamic> json = jsonDecode(result);
+      Map json = jsonDecode(result);
       if(json.containsKey("error")){
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {

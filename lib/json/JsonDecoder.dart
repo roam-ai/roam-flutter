@@ -23,18 +23,18 @@ import 'package:roam_flutter/trips_v2/models/User.dart';
 
 class JsonDecoder{
 
-  static RoamTripResponse? decodeRoamTripResponse(Map<String, dynamic> json){
+  static RoamTripResponse? decodeRoamTripResponse(Map json){
 
     if(!json.containsKey("trip")){
       return null;
     }
 
+
     var code = json['code'];
+    print("roamtripresponse code");
     String? message = json['message'];
     String? description = json['description'];
-
-    Map<String, dynamic> tripDetailsMap = json['trip'];
-    TripDetails? tripDetails = JsonDecoder.decodeTripDetails(tripDetailsMap);
+    TripDetails? tripDetails = (json['trip'] == "") ? null : JsonDecoder.decodeTripDetails(json['trip']);
 
     RoamTripResponse roamTripResponse = RoamTripResponse(
       code: code,
@@ -47,11 +47,13 @@ class JsonDecoder{
 
 
 
-  static TripDetails? decodeTripDetails(Map<String, dynamic>? map){
+  static TripDetails? decodeTripDetails(Object? mapInput){
 
-    if(map == null){
+    if(mapInput == null || !(mapInput is Map?)){
       return null;
     }
+
+    Map map = mapInput as Map;
 
     String? id = map['id'];
     String? name = map['name'];
@@ -60,8 +62,9 @@ class JsonDecoder{
     var totalDistance = map['total_distance'];
     var totalDuration = map['total_duration'];
     var totalElevationGain = map['total_elevation_gain'];
-    Map<String, dynamic>? metadata = map['metadata'];
+    Map? metadata = map['metadata'];
     StartLocation? startLocation = JsonDecoder.decodeStartLocation(map['start_location']);
+
     EndLocation? endLocation = JsonDecoder.decodeEndLocation(map['end_location']);
     User? user = JsonDecoder.decodeUser(map['user']);
     String? startedAt = map['started_at'];
@@ -92,7 +95,7 @@ class JsonDecoder{
       routesList.add(routes);
     });
 
-    Map<String, dynamic>? routeIndex = map['routeIndex'];
+    Map? routeIndex = map['routeIndex'];
 
     TripDetails tripDetails = TripDetails(
       id: id,
@@ -124,11 +127,13 @@ class JsonDecoder{
 
 
 
-  static StartLocation? decodeStartLocation(Map<String, dynamic>? map){
+  static StartLocation? decodeStartLocation(Object? mapInput){
 
-    if(map == null){
+    if(mapInput == null || !(mapInput is Map?)){
       return null;
     }
+
+    Map map = mapInput as Map;
 
     String? id = map['id'];
     String? name = map['name'];
@@ -154,11 +159,13 @@ class JsonDecoder{
     return startLocation;
   }
 
-  static EndLocation? decodeEndLocation(Map<String, dynamic>? map){
+  static EndLocation? decodeEndLocation(Object? mapInput){
 
-    if(map == null){
+    if(mapInput == null || !(mapInput is Map?)){
       return null;
     }
+
+    Map map = mapInput as Map;
 
     String? id = map['id'];
     String? name = map['name'];
@@ -185,11 +192,13 @@ class JsonDecoder{
   }
 
 
-  static User? decodeUser(Map<String, dynamic>? map){
+  static User? decodeUser(Object? mapInput){
 
-    if(map == null){
+    if(mapInput == null || !(mapInput is Map?)){
       return null;
     }
+
+    Map map = mapInput as Map;
 
     String? name = map['name'];
     String? description = map['description'];
@@ -205,28 +214,32 @@ class JsonDecoder{
   }
 
 
-  static Stop? decodeStop(Map<String, dynamic>? map){
+  static Stop? decodeStop(Object? mapInput){
 
-    if(map == null){
+    if(mapInput == null || !(mapInput is Map?)){
       return null;
     }
+
+    Map map = mapInput as Map;
 
     String? id = map['id'];
     String? name = map['name'];
     String? description = map['description'];
     String? address = map['address'];
-    Map<String, dynamic>? metadata = map['metadata'];
-    double? geometryRadius = map['geometry_radius'];
+    Map? metadata = map['metadata'];
+    var geometryRadius = map['geometry_radius'];
     String? createdAt = map['created_at'];
     String? updatedAt = map['updated_at'];
     String? arrivedAt = map['arrived_at'];
     String? departedAt = map['departed_at'];
 
-    Map<String, dynamic>? geometryMap = map['geometry'];
+
+    Map? geometryMap = map['geometry'];
     String? type = geometryMap?['type'];
     List? coordinates = geometryMap?['coordinates'];
 
     Geometry geometry = Geometry(type: type, coordinates: coordinates);
+
     Stop stop = Stop(
         id: id,
         name: name,
@@ -245,11 +258,13 @@ class JsonDecoder{
 
 
 
-  static Events? decodeEvents(Map<String, dynamic>? map){
+  static Events? decodeEvents(Object? mapInput){
 
-    if(map == null){
+    if(mapInput == null || !(mapInput is Map?)){
       return null;
     }
+
+    Map map = mapInput as Map;
 
     String? id = map['id'];
     String? tripId = map['trip_id'];
@@ -275,21 +290,23 @@ class JsonDecoder{
 
 
 
-  static Routes? decodeRoutes(Map<String, dynamic>? map){
+  static Routes? decodeRoutes(Object? mapInput){
 
-    if(map == null){
+    if(mapInput == null || !(mapInput is Map?)){
       return null;
     }
 
-    Map<String, dynamic> metadata = map['metadata'];
-    String? activity = map['activity'];
-    double? speed = map['speed'];
-    double? altitude = map['altitude'];
-    double? distance = map['distance'];
-    double? duration = map['duration'];
-    double? elevationGain = map['elevation_gain'];
+    Map map = mapInput as Map;
 
-    Map<String, dynamic>? coordinatesMap = map['coordinates'];
+    Map? metadata = map['metadata'];
+    String? activity = map['activity'];
+    var speed = map['speed'];
+    var altitude = map['altitude'];
+    var distance = map['distance'];
+    var duration = map['duration'];
+    var elevationGain = map['elevation_gain'];
+
+    Map? coordinatesMap = map['coordinates'];
     String? type = coordinatesMap?['type'];
     List? coordinatesList = coordinatesMap?['coordinates'];
 
@@ -318,13 +335,15 @@ class JsonDecoder{
   }
 
 
-  static Error? decodeError(Map<String, dynamic>? map){
+  static Error? decodeError(Object? mapInput){
 
-    if(map == null){
+    if(mapInput == null || !(mapInput is Map?)){
       return null;
     }
 
-    int? errorCode = map['errorCode'];
+    Map map = mapInput as Map;
+
+    var errorCode = map['errorCode'];
     String? errorMessage = map['errorMessage'];
     String? errorDescription = map['errorDescription'];
 
@@ -350,15 +369,11 @@ class JsonDecoder{
   }
 
 
-  static RoamDeleteTripResponse? decodeRoamDeleteTripResponse(Map<String, dynamic>? map){
-
-    if(map == null){
-      return null;
-    }
+  static RoamDeleteTripResponse? decodeRoamDeleteTripResponse(Map map){
 
     String? message = map['message'];
     String? description = map['description'];
-    int? code = map['code'];
+    var code = map['code'];
 
     Map<String, dynamic> tripMap = map['trip'];
     String? id = tripMap['id'];
@@ -371,13 +386,10 @@ class JsonDecoder{
 
 
 
-  static RoamActiveTripResponse? decodeRoamActiveTripResopnse(Map<String, dynamic>? map){
+  static RoamActiveTripResponse? decodeRoamActiveTripResopnse(Map map){
 
-    if(map == null){
-      return null;
-    }
 
-    int? code = map['code'];
+    var code = map['code'];
     String? message = map['message'];
     String? description = map['description'];
     bool? hasMore = map['hasMore'];
@@ -393,11 +405,13 @@ class JsonDecoder{
   }
 
 
-  static Trips? decodeTrips(Map<String, dynamic>? map){
+  static Trips? decodeTrips(Object? mapInput){
 
-    if(map == null){
+    if(mapInput == null || !(mapInput is Map?)){
       return null;
     }
+
+    Map map = mapInput as Map;
 
     String? id = map['id'];
     String? trip_state = map['trip_state'];
@@ -417,7 +431,7 @@ class JsonDecoder{
       events.add(JsonDecoder.decodeEvents(map));
     });
 
-    List<Map<String, dynamic>?>? stopsMapList = map['stops'];
+    List? stopsMapList = map['stops'];
     List<Stop?>? stops = List.empty(growable: true);
     stopsMapList?.forEach((map) {
       stops.add(JsonDecoder.decodeStop(map));
@@ -428,6 +442,7 @@ class JsonDecoder{
     bool? isStarted = map['isStarted'];
     bool? isEnded = map['isEnded'];
     bool? isResumed = map['isResumed'];
+
 
     Trips? trips = Trips();
 
@@ -450,31 +465,31 @@ class JsonDecoder{
     trips.isEnded = isEnded;
     trips.isResumed = isResumed;
 
+
     return trips;
   }
 
 
 
-  static RoamSyncTripResponse? decodeRoamSyncTripResponse(Map<String, dynamic>? map){
+  static RoamSyncTripResponse? decodeRoamSyncTripResponse(Map map){
 
-    if(map == null){
-      return null;
-    }
 
     String? msg = map['msg'];
     String? description = map['description'];
-    int? code = map['code'];
+    var code = map['code'];
     Data? data = JsonDecoder.decodeData(map['data']);
 
     return RoamSyncTripResponse(msg, description, code, data);
 
   }
 
-  static Data? decodeData(Map<String, dynamic>? map){
+  static Data? decodeData(Object? mapInput){
 
-    if(map == null){
+    if(mapInput == null || !(mapInput is Map?)){
       return null;
     }
+
+    Map map = mapInput as Map;
 
     String? trip_id = map['trip_id'];
     bool? is_synced = map['is_synced'];

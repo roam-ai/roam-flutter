@@ -4,7 +4,7 @@ class RoamSyncTripResponse{
 
   String? msg;
   String? description;
-  int? code;
+  var code;
   Data? data;
 
   RoamSyncTripResponse(this.msg, this.description, this.code, this.data);

@@ -2,7 +2,7 @@ import 'package:roam_flutter/trips_v2/models/Errors.dart';
 
 class Error{
 
-  late int? errorCode;
+  late var errorCode;
   late String? errorMessage;
   late String? errorDescription;
   late List<Errors> errors = List.empty(growable: true);

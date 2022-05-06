@@ -6,20 +6,19 @@ class RoamTrip{
   String? description;
   String? name;
   List<RoamTripStops>? stop;
-  late bool isLocal;
+  bool? isLocal = false;
   String? tripId;
   String? userId;
 
   RoamTrip(
-    this.isLocal,
     {
+      this.isLocal,
       this.metadata,
       this.description,
       this.name,
-      this.stop,
       this.tripId,
-      this.userId
-  });
+      this.userId,
+  }) : stop = [];
 
 
 

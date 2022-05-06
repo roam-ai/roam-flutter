@@ -22,31 +22,29 @@ public class JsonDecoder {
 
         final Boolean isLocal = (roamTripJSON.has("isLocal")) ? roamTripJSON.getBoolean("isLocal") : null;
         final String userIdString = (roamTripJSON.has("userId")) ? roamTripJSON.getString("userId") : null;
-        final String metadataString = (roamTripJSON.has("metadata")) ? roamTripJSON.getString("metadata") : null;
         final String tripDescription = (roamTripJSON.has("description")) ? roamTripJSON.getString("description") : null;
         final String tripName = (roamTripJSON.has("name")) ? roamTripJSON.getString("name") : null;
-        final String stopListString = (roamTripJSON.has("stops")) ? roamTripJSON.getString("stops") : null;
 
         JSONObject tripMetadata = null;
-        if (metadataString != null && !metadataString.equals("")) {
             try {
-                tripMetadata = new JSONObject(metadataString);
+                tripMetadata = (roamTripJSON.has("metadata")) ? roamTripJSON.getJSONObject("metadata") : null;
             }catch (Exception e){
                 Log.e("TAG", "metadata null");
             }
-        }
 
         JSONArray stopsJSON = null;
         List<RoamTripStops> stopsList = null;
 
-        if (stopListString != null && !stopListString.equals("")) {
-            stopsJSON = new JSONArray(stopListString);
+        try {
+            stopsJSON = (roamTripJSON.has("stops")) ? roamTripJSON.getJSONArray("stops") : null;
             stopsList = new ArrayList<>();
 
             for (int i = 0; i < stopsJSON.length(); i++) {
                 JSONObject stopObject = stopsJSON.getJSONObject(i);
                 stopsList.add(JsonDecoder.decodeRoamTripStops(stopObject));
             }
+        } catch(Exception e){
+            e.printStackTrace();
         }
 
         Log.e("TAG", userIdString);

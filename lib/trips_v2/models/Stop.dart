@@ -6,8 +6,8 @@ class Stop{
   late String? name;
   late String? description;
   late String? address;
-  late Map<String, dynamic>? metadata;
-  late double? geometryRadius;
+  late Map? metadata;
+  late var geometryRadius;
   late String? createdAt;
   late String? updatedAt;
   late String? arrivedAt;
