@@ -37,8 +37,10 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
     private static let METHOD_GET_TRIP = "getTrip";
     private static let METHOD_GET_TRIP_SUMMARY = "getTripSummary";
     private static let METHOD_SYNC_TRIP = "syncTrip";
-    private static let METHOD_SUBSCRIBE_TRIP = "subscribeTrip"
-    private static let METHOD_UNSUBSCRIBE_TRIP = "unsubscribeTrip"
+    private static let METHOD_SUBSCRIBE_TRIP = "subscribeTrip";
+    private static let METHOD_UNSUBSCRIBE_TRIP = "unsubscribeTrip";
+    
+    private static let METHOD_OFFLINE_TRACKING = "offlineTracking";
 
     private static let TRACKING_MODE_PASSIVE = "passive";
     private static let TRACKING_MODE_BALANCED = "balanced";
@@ -355,6 +357,13 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
                 }
             }
             
+            
+        case SwiftRoamFlutterPlugin.METHOD_OFFLINE_TRACKING:
+            let arguments = call.arguments as! [String: Any]
+            let offlineTracking = arguments["offlineTracking"] as! Bool
+            Roam.offlineLocationTracking(offlineTracking)
+            
+            
         case SwiftRoamFlutterPlugin.METHOD_UPDATE_TRIP:
             let arguments = call.arguments as! [String: Any]
             let roamTripString = arguments["roamTrip"]  as! String;
@@ -431,6 +440,8 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
             let tripId = arguments["tripId"]  as! String;
             print(tripId)
             Roam.startTrip(tripId){response, error in
+                print(response)
+                print(error)
                 do{
                     if(response != nil){
                         let jsonResponse = try JSONSerialization.data(withJSONObject: SwiftRoamFlutterPlugin.encodeRoamTripResponse(response: response!), options: [])
@@ -477,6 +488,8 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
                             customTrackingOptions = SwiftRoamFlutterPlugin.decodeRoamTrackingCustomMethods(trackingModeDisctionary: roamTrackingModeDictionary)
                         }
                         Roam.startTrip(roamTrip, roamTrackingMode, customTrackingOptions){response, error in
+                            print(response)
+                            print(error)
                             do{
                                 if(response != nil){
                                     let jsonResponse = try JSONSerialization.data(withJSONObject: SwiftRoamFlutterPlugin.encodeRoamTripResponse(response: response!), options: [])
@@ -505,6 +518,8 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
             let arguments = call.arguments as! [String: Any]
             let tripId = arguments["tripId"]  as! String;
             Roam.pauseTrip(tripId){response, error in
+                print(response)
+                print(error)
                 do{
                     if(response != nil){
                         let jsonResponse = try JSONSerialization.data(withJSONObject: SwiftRoamFlutterPlugin.encodeRoamTripResponse(response: response!), options: [])
@@ -526,6 +541,8 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
             let arguments = call.arguments as! [String: Any]
             let tripId = arguments["tripId"]  as! String;
             Roam.resumeTrip(tripId){response, error in
+                print(response)
+                print(error)
                 do{
                     if(response != nil){
                         let jsonResponse = try JSONSerialization.data(withJSONObject: SwiftRoamFlutterPlugin.encodeRoamTripResponse(response: response!), options: [])
@@ -549,6 +566,8 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
             let tripId = arguments["tripId"]  as! String;
             let forceStopTracking = arguments["stopTracking"] as! Bool
             Roam.endTrip(tripId, forceStopTracking){response, error in
+                print(response)
+                print(error)
                 do{
                     if(response != nil){
                         let jsonResponse = try JSONSerialization.data(withJSONObject: SwiftRoamFlutterPlugin.encodeRoamTripResponse(response: response!), options: [])
@@ -615,6 +634,8 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
             let arguments = call.arguments as! [String: Any]
             let tripId = arguments["tripId"]  as! String;
             Roam.getTrip(tripId){response, error in
+                print(response)
+                print(error)
                 do{
                     if(response != nil){
                         let jsonResponse = try JSONSerialization.data(withJSONObject: SwiftRoamFlutterPlugin.encodeRoamTripResponse(response: response!), options: [])
@@ -661,6 +682,8 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
             let arguments = call.arguments as! [String: Any]
             let tripId = arguments["tripId"]  as! String;
             Roam.syncTrip(tripId){response, error in
+                print(response)
+                print(error)
                 do{
                     if(response != nil){
                         let jsonResponse = try JSONSerialization.data(withJSONObject: SwiftRoamFlutterPlugin.encodeRoamSyncTripResponse(response: response!), options: [])
@@ -743,7 +766,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
             "name": (user?.userName ?? "") as String,
             "description" : (user?.userDescription ?? "") as String,
             "id": (user?.userId ?? "") as String,
-            "metadata": user?.metadata as [String: Any]
+            "metadata": (user?.metadata ?? [:]) as [String: Any]
         ]
         return userDictionary
     }
@@ -899,25 +922,36 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
     
     //JSON Decode
     public static func decodeRoamTrip(tripDictionary: [String: Any]) -> RoamTrip {
-        
-        let isLocal: Bool = tripDictionary["isLocal"] as? Bool ?? false
-        //let userId: String = tripDictionary["userId"] as? String ?? ""
-        let metadata: [String: Any] = tripDictionary["metadata"] as? [String: Any] ?? [:]
-        let description: String = tripDictionary["description"] as? String ?? ""
-        let name: String = tripDictionary["name"] as? String ?? ""
-        let stops = tripDictionary["stops"] as? [[String: Any]] ?? [[:]]
-        let tripId: String = tripDictionary["tripId"] as? String ?? ""
-        
+       
         let roamTrip = RoamTrip()
-        roamTrip.tripId = tripId
-        roamTrip.isLocal = isLocal
-        roamTrip.metadata = metadata
-        roamTrip.tripDescription = description
-        roamTrip.tripName = name
-        roamTrip.stops = decodeRoamTripStopList(stopsDictionary: stops)
+        
+        if(tripDictionary["isLocal"] != nil){
+            roamTrip.isLocal = tripDictionary["isLocal"] as? Bool ?? false
+        }
+        
+        if(tripDictionary["description"] != nil){
+            roamTrip.tripDescription = tripDictionary["description"] as? String ?? ""
+        }
+        
+        if(tripDictionary["name"] != nil){
+            roamTrip.tripName = tripDictionary["name"] as? String ?? ""
+        }
+        
+        if(tripDictionary["stops"] != nil){
+            roamTrip.stops = decodeRoamTripStopList(stopsDictionary: tripDictionary["stops"] as? [[String: Any]] ?? [[:]])
+        }
+        
+        if(tripDictionary["tripId"] != nil){
+            roamTrip.tripId = tripDictionary["tripId"] as? String ?? ""
+        }
+        
+        if(tripDictionary["metadata"] != nil){
+            roamTrip.metadata = tripDictionary["metadata"] as? [String: Any] ?? [:]
+        }
         
         return roamTrip
     }
+    
     
     
     public static func decodeRoamTripStopList(stopsDictionary: [[String: Any]]) -> [RoamTripStop] {

@@ -10,7 +10,7 @@ import Roam
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
     Roam.delegate = self
-    Roam.initialize("fd7bd6d1b1ecbfbd456bf9ccd3f4157323eb184d919e5cd341ad0fad216d0b06")
+    //Roam.initialize("fd7bd6d1b1ecbfbd456bf9ccd3f4157323eb184d919e5cd341ad0fad216d0b06")
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
     //Native to Flutter Channel

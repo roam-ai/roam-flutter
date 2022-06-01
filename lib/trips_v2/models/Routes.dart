@@ -2,16 +2,16 @@ import 'package:roam_flutter/models/Coordinates.dart';
 
 class Routes{
 
-  late Map? metadata;
-  late String? activity;
-  var speed = 0;
-  var altitude = 0;
-  var distance = 0;
-  var duration = 0;
-  var elevationGain = 0;
+  late var metadata;
+  late var activity;
+  var speed;
+  var altitude;
+  var distance;
+  var duration;
+  var elevationGain;
   late Coordinates? coordinates;
-  late String? recordedAt;
-  late String? locationId;
+  late var recordedAt;
+  late var locationId;
 
 
   Map toJson () => {

@@ -6,7 +6,7 @@ class RoamTrip{
   String? description;
   String? name;
   List<RoamTripStops>? stop;
-  bool? isLocal = false;
+  bool? isLocal;
   String? tripId;
   String? userId;
 

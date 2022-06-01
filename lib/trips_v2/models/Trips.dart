@@ -9,7 +9,7 @@ class Trips{
   var totalDistance;
   var totalDuration;
   var totalElevation_gain;
-  Map? metadata;
+  var metadata;
   User? user;
   String? startedAt;
   String? endedAt;

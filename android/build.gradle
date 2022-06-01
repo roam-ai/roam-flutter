@@ -6,10 +6,11 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath 'com.android.tools.build:gradle:3.5.4'
     }
 }
 
@@ -17,9 +18,14 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
+        maven { url 'https://jitpack.io' }
         maven {
             url 'https://com-roam-android.s3.amazonaws.com/'
         }
+//        flatDir {
+//            dirs '../../../android/libs' //this way we can find the .aar file in libs folder
+//        }
+
     }
 }
 
@@ -37,5 +43,23 @@ android {
 }
 
 dependencies {
-    implementation 'com.roam.sdk:roam-android:0.1.0'
+
+    implementation 'com.roam.sdk:roam-android:0.1.1'
+
+
+    //implementation 'com.github.sahil-roam:test-sdk:0.0.11'
+
+
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.4'
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+
+
+    //implementation project(path: ':roam')
+
+    //implementation fileTree(dir: 'libs', include: ['*.aar'])
+    //implementation files('/Users/sahilsaini/StudioProjects/roam-android-core/roam/build/outputs/aar/roam-debug.aar')
+    //implementation files('/Users/sahilsaini/StudioProjects/roam-flutter/android/libs/roam.aar')
 }

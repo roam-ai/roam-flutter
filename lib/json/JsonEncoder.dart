@@ -8,18 +8,35 @@ class JsonEncoder{
   static Map<String, dynamic> encodeRoamTrip(RoamTrip roamTrip){
 
     Map<String, dynamic> json = Map();
-    json['isLocal'] = roamTrip.isLocal;
-    json['userId'] = roamTrip.userId ?? "";
-    json['metadata'] = roamTrip.metadata;
-    json['description'] = roamTrip.description ?? "";
-    json['name'] = roamTrip.name ?? "";
-    json['tripId'] = roamTrip.tripId ?? "";
 
     List<Map<String, dynamic>> stops = List.empty(growable: true);
     roamTrip.stop?.forEach((stop) {
       stops.add(JsonEncoder.encodeRoamTripStops(stop));
     });
-    json['stops'] = stops;
+    if(roamTrip.stop != null){
+      json['stops'] = stops;
+    }
+    if(roamTrip.tripId != null){
+      json['tripId'] = roamTrip.tripId;
+    }
+    if(roamTrip.isLocal != null){
+      json['isLocal'] = roamTrip.isLocal;
+    }
+    if(roamTrip.userId != null){
+      json['userId'] = roamTrip.userId;
+    }
+    if(roamTrip.metadata != null){
+      json['metadata'] = roamTrip.metadata;
+    }
+    if(roamTrip.description != null){
+      json['description'] = roamTrip.description;
+    }
+    if(roamTrip.name != null){
+      json['name'] = roamTrip.name;
+    }
+    if(roamTrip.tripId != null){
+      json['tripId'] = roamTrip.tripId;
+    }
 
     return json;
   }

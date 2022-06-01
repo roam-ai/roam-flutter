@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 
+
+import com.google.gson.Gson;
 import com.roam.sdk.Roam;
 import com.roam.sdk.RoamPublish;
 import com.roam.sdk.RoamTrackingMode;
@@ -109,6 +111,8 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
   private static final String METHOD_GET_ACTIVE_TRIPS = "getActiveTrips";
   private static final String METHOD_GET_TRIP_SUMMARY = "getTripSummary";
   private static final String METHOD_DISABLE_BATTERY_OPTIMIZATION = "disableBatteryOptimization";
+  private static final String METHOD_OFFLINE_TRACKING = "offlineTracking";
+  private static final String METHOD_ALLOW_MOCK_LOCATION = "allowMockLocation";
 
   private static final String TRACKING_MODE_PASSIVE = "passive";
   private static final String TRACKING_MODE_BALANCED = "balanced";
@@ -166,6 +170,13 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
          case METHOD_INITIALIZE:
            final String publishKey = call.argument("publishKey");
            Roam.initialize(this.context, publishKey);
+           break;
+
+         case METHOD_ALLOW_MOCK_LOCATION:
+           final Boolean allow = call.argument("allowMockLocation");
+           if(allow != null){
+             Roam.allowMockLocation(allow);
+           }
            break;
 
          case METHOD_GET_CURRENT_LOCATION:
@@ -463,6 +474,13 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            Roam.stopTracking();
            break;
 
+
+         case METHOD_OFFLINE_TRACKING:
+           final boolean offlineTracking = call.argument("offlineTracking");
+           Roam.offlineLocationTracking(offlineTracking);
+           break;
+
+
          case METHOD_CREATE_TRIP:
            final String roamTripString = call.argument("roamTrip");
            if (roamTripString != null && !roamTripString.equals("")) {
@@ -470,64 +488,15 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
              Log.e("TAG", "creating trip");
 
-             //RoamTrip trip = JsonDecoder.decodeRoamTrip(roamTripJSON);
+             RoamTrip trip = JsonDecoder.decodeRoamTrip(roamTripJSON);
 
-
-             //metadata
-             JSONObject metadata = new JSONObject();
-             try {
-               metadata.put("Key1", "value1");
-             } catch (Exception e) {
-             }
-
-             List<Double> geometry =new ArrayList<>();
-             geometry.add(85.30614739); //lon
-             geometry.add(23.5155215); //lat
-
-
-
-             //stop1
-             RoamTripStops stop1 =new RoamTripStops();
-             stop1.setStopId("");
-             stop1.setMetadata(metadata);
-             stop1.setStopDescription("tea break");
-             stop1.setStopName("STOP 1");
-             stop1.setAddress("Bangalore");
-             stop1.setGeometryRadius(600.0);
-             stop1.setGeometry(geometry);
-
-
-
-             //stop2
-             RoamTripStops stop2 =new RoamTripStops();
-             stop2.setStopId("");
-             stop2.setMetadata(metadata);
-             stop2.setStopDescription("tea break");
-             stop2.setStopName("STOP 2");
-             stop2.setAddress("Bangalore");
-             stop2.setGeometryRadius(600.0);
-             stop2.setGeometry(geometry);
-
-             //List of stop point
-             List<RoamTripStops> stop = new ArrayList<>();
-             stop.add(stop1);
-             // stop.add(stop2);
-
-             //builder
-             RoamTrip trip = new RoamTrip.Builder()
-                     .setUserId("")
-                     .setTripDescription("trip description")
-                     .setTripName("trip name")
-                     //.setIsLocal(ckOffline.isChecked())
-                     .setIsLocal(false)
-                     .setStop(stop)
-                     .setMetadata(metadata)
-                     .build();
+             Log.e("TEST", "roam trip: " + new Gson().toJson(trip));
 
 
              Roam.createTrip(trip, new RoamTripCallback() {
                @Override
                public void onSuccess(RoamTripResponse roamTripResponse) {
+                 Log.e("TEST", "create trip gson: " + new Gson().toJson(roamTripResponse));
 
                  JSONObject json = JsonEncoder.encodeRoamTripResponse(roamTripResponse);
                  result.success(json.toString());
@@ -553,8 +522,11 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
            final String roamTripUpdateString = call.argument("roamTrip");
            if (roamTripUpdateString != null && !roamTripUpdateString.equals("")) {
+             Log.e("TEST", roamTripUpdateString);
              JSONObject roamTripJSON = new JSONObject(roamTripUpdateString);
              RoamTrip trip = JsonDecoder.decodeRoamTrip(roamTripJSON);
+
+             Log.e("TEST", "update trip: " + new Gson().toJson(trip));
 
                Roam.updateTrip(trip, new RoamTripCallback() {
                  @Override
@@ -603,6 +575,9 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              }
            });
            break;
+
+
+
 
 
 
@@ -672,15 +647,18 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              JSONObject roamTrackingModeJSON = new JSONObject(roamTrackingModeString);
              RoamTrackingMode roamTrackingMode = JsonDecoder.decodeRoamTrackingMode(roamTrackingModeJSON);
 
+
              Roam.startTrip(roamTrip, roamTrackingMode, new RoamTripCallback() {
                @Override
                public void onSuccess(RoamTripResponse roamTripResponse) {
+                 Log.e("TEST", "offline trip response: " + new Gson().toJson(roamTripResponse));
                  JSONObject json = JsonEncoder.encodeRoamTripResponse(roamTripResponse);
                  result.success(json.toString());
                }
 
                @Override
                public void onError(Error error) {
+                 Log.e("TEST", "offline quick trip: " + new Gson().toJson(error));
                  JSONObject json = new JSONObject();
                  try {
                    json.put("error", JsonEncoder.encodeError(error));
@@ -847,6 +825,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            Roam.getActiveTrips(isLocal, new RoamActiveTripsCallback() {
              @Override
              public void onSuccess(RoamActiveTripsResponse roamActiveTripsResponse) {
+               Log.e("ROAM", "active trips response: " +new Gson().toJson(roamActiveTripsResponse));
                JSONObject json = JsonEncoder.encodeRoamActiveTripsResponse(roamActiveTripsResponse);
                result.success(json.toString());
              }

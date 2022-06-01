@@ -39,12 +39,12 @@ public class GeoSparkForegroundService extends Service {
         mLocationReceiver = new MyGeoSparkReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("com.roam.android.RECEIVED");
-        registerReceiver(mLocationReceiver, intentFilter);
+       // registerReceiver(mLocationReceiver, intentFilter);
     }
 
     private void unRegister() {
         if (mLocationReceiver != null) {
-            unregisterReceiver(mLocationReceiver);
+           // unregisterReceiver(mLocationReceiver);
         }
     }
 }

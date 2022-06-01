@@ -38,6 +38,7 @@ class Roam {
   static const String METHOD_SUBSCRIBE_EVENTS = "subscribeEvents";
   static const String METHOD_ENABLE_ACCURACY_ENGINE = "enableAccuracyEngine";
   static const String METHOD_DISABLE_ACCURACY_ENGINE = "disableAccuracyEngine";
+  static const String METHOD_OFFLINE_TRACKING = "offlineTracking";
   static const String METHOD_CREATE_TRIP = "createTrip";
   static const String METHOD_UPDATE_TRIP = "updateTrip";
   static const String METHOD_GET_TRIP = "getTrip";
@@ -58,6 +59,7 @@ class Roam {
   static const String METHOD_GET_TRIP_SUMMARY = "getTripSummary";
   static const String METHOD_DISABLE_BATTERY_OPTIMIZATION =
       "disableBatteryOptimization";
+  static const String METHOD_ALLOW_MOCK_LOCATION = "allowMockLocation";
 
   static const String TRACKING_MODE_PASSIVE = "passive";
   static const String TRACKING_MODE_BALANCED = "balanced";
@@ -185,6 +187,10 @@ class Roam {
     final bool? result =
         await _channel.invokeMethod(METHOD_START_TRACKING, params);
     return result;
+  }
+
+  static Future<void> offlineTracking(bool enabled) async {
+    await _channel.invokeMethod(METHOD_OFFLINE_TRACKING, {'offlineTracking': enabled});
   }
 
   /// Logout User
@@ -362,6 +368,12 @@ class Roam {
     return result;
   }
 
+  static Future<void> allowMockLocation({
+  required bool allow
+})async {
+    await _channel.invokeMethod(METHOD_ALLOW_MOCK_LOCATION, {'allowMockLocation': allow});
+  }
+
 
   static Future<void> startTrip(
     RoamTripCallback roamTripCallback,
@@ -415,6 +427,8 @@ class Roam {
         log("Start trip result null!");
         return;
       }
+
+      print(result);
 
       try{
         Map json = jsonDecode(result);
@@ -529,7 +543,7 @@ class Roam {
       ErrorCallback errorCallback
       ) async {
 
-    final String? result = await _channel.invokeMethod(METHOD_END_TRIP, {'tripId': tripId});
+    final String? result = await _channel.invokeMethod(METHOD_DELETE_TRIP, {'tripId': tripId});
 
     if(result == null){
       log("Delete trip result null!");
@@ -565,6 +579,7 @@ class Roam {
       RoamTripCallback roamTripCallback,
       ErrorCallback errorCallback
       ) async {
+    print('get trip id: ' + tripId);
     final String? result = await _channel.invokeMethod(METHOD_GET_TRIP, {'tripId': tripId});
 
     if(result == null){
@@ -648,10 +663,13 @@ class Roam {
       ) async {
     final String? result = await _channel.invokeMethod(METHOD_GET_TRIP_SUMMARY, {'tripId': tripId});
 
+
     if(result == null){
       log("Get trip result null!");
       return;
     }
+
+    print('summary: '+result);
 
     try{
       Map json = jsonDecode(result);

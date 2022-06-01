@@ -71,7 +71,7 @@ class _MyHomePage extends State<MyHomePage> {
     initPlatformState();
     Roam.initialize(
         publishKey:
-            "af5c9b160ed4ec872d8f31f308775622cc91c88c30c0c07a5485d85a06769d72");
+            "bbbf78b0184d74b026437d4bb51df89798ba4c015b3d39dae8c6d3a8fcc0222d");
   }
 
   //Native to Flutter Channel
@@ -169,7 +169,7 @@ class _MyHomePage extends State<MyHomePage> {
                   try {
                     await Roam.initialize(
                         publishKey:
-                            'af5c9b160ed4ec872d8f31f308775622cc91c88c30c0c07a5485d85a06769d72');
+                            'bbbf78b0184d74b026437d4bb51df89798ba4c015b3d39dae8c6d3a8fcc0222d');
                   } on PlatformException {
                     print('Initialization Error');
                   }
@@ -495,27 +495,13 @@ class _MyItemsPageState extends State<MyItemsPage> {
                   textAlign: TextAlign.center,
                 ),
                 ElevatedButton(
-                    child: Text('Create Trip'),
+                    child: Text('Create Online Trip'),
                     onPressed: () async {
                       setState(() {
-                        tripId = "creating trip..";
+                        response = "creating trip..";
                       });
                       try {
-                        // List<Double> geometry =new ArrayList<>();
-                        // geometry.add(85.30614739); //lon
-                        // geometry.add(23.5155215); //lat
-                        //
-                        //
-                        //
-                        // //stop1
-                        // RoamTripStops stop1 =new RoamTripStops();
-                        // stop1.setStopId("");
-                        // stop1.setMetadata(metadata);
-                        // stop1.setStopDescription("tea break");
-                        // stop1.setStopName("STOP 1");
-                        // stop1.setAddress("Bangalore");
-                        // stop1.setGeometryRadius(600.0);
-                        // stop1.setGeometry(geometry);
+
 
                         RoamTripStops stop =
                             RoamTripStops(600, [85.30614739, 23.5155215]);
@@ -524,12 +510,48 @@ class _MyItemsPageState extends State<MyItemsPage> {
                         Roam.createTrip(roamTrip, ({roamTripResponse}) {
                           String responseString =
                               jsonEncode(roamTripResponse?.toJson());
-                          print('Create trip response: $responseString');
+                          print('Create online trip response: $responseString');
                           CustomLogger.writeLog(
-                              'Create trip response: $responseString');
+                              'Create online trip response: $responseString');
                           setState(() {
                             tripId = roamTripResponse.tripDetails.id;
-                            response = 'Create trip response: $responseString';
+                            response = 'Create online trip response: $responseString';
+                            print(jsonEncode(roamTripResponse?.toJson()));
+                          });
+                        }, ({error}) {
+                          String errorString = jsonEncode(error?.toJson());
+                          print(errorString);
+                          setState(() {
+                            response = errorString;
+                          });
+                          CustomLogger.writeLog(errorString);
+                        });
+                      } on PlatformException {
+                        print('Create Trip Error');
+                      }
+                    }),
+                ElevatedButton(
+                    child: Text('Create Offline Trip'),
+                    onPressed: () async {
+                      setState(() {
+                        response = "creating trip..";
+                      });
+                      try {
+
+
+                        RoamTripStops stop =
+                        RoamTripStops(600, [85.30614739, 23.5155215]);
+                        RoamTrip roamTrip = RoamTrip(isLocal: true);
+                        roamTrip.stop.add(stop);
+                        Roam.createTrip(roamTrip, ({roamTripResponse}) {
+                          String responseString =
+                          jsonEncode(roamTripResponse?.toJson());
+                          print('Create offline trip response: $responseString');
+                          CustomLogger.writeLog(
+                              'Create offline trip response: $responseString');
+                          setState(() {
+                            tripId = roamTripResponse.tripDetails.id;
+                            response = 'Create offline trip response: $responseString';
                             print(jsonEncode(roamTripResponse?.toJson()));
                           });
                         }, ({error}) {
@@ -555,7 +577,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                           CustomLogger.writeLog(
                               'Get trip response: $responseString');
                           setState(() {
-                            tripId = roamTripResponse?.tripDetails?.id;
+                            //tripId = roamTripResponse?.tripDetails?.id;
                             response = 'Get trip response: $responseString';
                           });
                         }, ({error}) {
@@ -607,7 +629,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                           CustomLogger.writeLog(
                               'Start trip response: $responseString');
                           setState(() {
-                            tripId = roamTripResponse?.tripDetails?.id;
+                            //tripId = roamTripResponse?.tripDetails?.id;
                             response = 'Start trip response: $responseString';
                           });
                         }, ({error}) {
@@ -623,21 +645,24 @@ class _MyItemsPageState extends State<MyItemsPage> {
                       }
                     }),
                 ElevatedButton(
-                    child: Text('Start Quick Trip'),
+                    child: Text('Start Online Quick Trip'),
                     onPressed: () async {
                       try {
 
                         // _displayTripsInputDialog(context, "quickTrip");
                         RoamTrip quickTrip = RoamTrip(isLocal: false);
+                        RoamTripStops stop =
+                        RoamTripStops(600, [85.30614739, 23.5155215]);
+                        quickTrip.stop.add(stop);
                         Roam.startTrip(({roamTripResponse}) {
                           String responseString =
                               jsonEncode(roamTripResponse?.toJson());
-                          print('Quick trip response: $responseString');
+                          print('Online Quick trip response: $responseString');
                           CustomLogger.writeLog(
-                              'Quick trip response: $responseString');
+                              'Online Quick trip response: $responseString');
                           setState(() {
                             tripId = roamTripResponse?.tripDetails?.id;
-                            response = 'Quick trip response: $responseString';
+                            response = 'Online Quick trip response: $responseString';
                           });
                         }, ({error}) {
                           String errorString = jsonEncode(error?.toJson());
@@ -655,14 +680,82 @@ class _MyItemsPageState extends State<MyItemsPage> {
                       }
                     }),
                 ElevatedButton(
-                    child: Text('Update Trip'),
+                    child: Text('Start Offline Quick Trip'),
                     onPressed: () async {
                       try {
+
+                        // _displayTripsInputDialog(context, "quickTrip");
+                        RoamTrip quickTrip = RoamTrip(isLocal: true);
+                        RoamTripStops stop =
+                        RoamTripStops(600, [85.30614739, 23.5155215]);
+                        quickTrip.stop.add(stop);
+                        Roam.startTrip(({roamTripResponse}) {
+                          String responseString =
+                          jsonEncode(roamTripResponse?.toJson());
+                          print('Offline Quick trip response: $responseString');
+                          CustomLogger.writeLog(
+                              'Offline Quick trip response: $responseString');
+                          setState(() {
+                            tripId = roamTripResponse?.tripDetails?.id;
+                            response = 'Offline Quick trip response: $responseString';
+                          });
+                        }, ({error}) {
+                          String errorString = jsonEncode(error?.toJson());
+                          print('Error: $errorString');
+                          CustomLogger.writeLog(errorString);
+                          setState(() {
+                            response = errorString;
+                          });
+                        },
+                            roamTrip: quickTrip,
+                            roamTrackingMode: RoamTrackingMode.time(5,
+                                desiredAccuracy: DesiredAccuracy.HIGH));
+                      } on PlatformException {
+                        print('Quick Trip Error');
+                      } catch (error){
+                        print(error);
+                      }
+                    }),
+                ElevatedButton(
+                    child: Text('Update Online Trip'),
+                    onPressed: () async {
+                      try {
+                        print('update trip id: ' + tripId);
                         RoamTrip updateTrip = RoamTrip(tripId: tripId);
+                        updateTrip.isLocal = false;
                         updateTrip.description = "test description";
                         Roam.updateTrip(updateTrip, ({roamTripResponse}) {
                           String responseString =
                               jsonEncode(roamTripResponse?.toJson());
+                          print('Update trip response: $responseString');
+                          CustomLogger.writeLog(
+                              'Update trip response: $responseString');
+                          setState(() {
+                            tripId = roamTripResponse?.tripDetails?.id;
+                            response = 'Update trip response: $responseString';
+                          });
+                        }, ({error}) {
+                          String errorString = jsonEncode(error?.toJson());
+                          print('Error: $errorString');
+                          CustomLogger.writeLog(errorString);
+                          response = errorString;
+                        });
+                        //_displayTripsInputDialog(context, "updateTrip");
+                      } on PlatformException {
+                        print('Update Trip Error');
+                      }
+                    }),
+                ElevatedButton(
+                    child: Text('Update Offline Trip'),
+                    onPressed: () async {
+                      try {
+                        print('update trip id: ' + tripId);
+                        RoamTrip updateTrip = RoamTrip(tripId: tripId);
+                        updateTrip.isLocal = true;
+                        updateTrip.description = "test description";
+                        Roam.updateTrip(updateTrip, ({roamTripResponse}) {
+                          String responseString =
+                          jsonEncode(roamTripResponse?.toJson());
                           print('Update trip response: $responseString');
                           CustomLogger.writeLog(
                               'Update trip response: $responseString');
@@ -692,7 +785,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                           CustomLogger.writeLog(
                               'Pause trip response: $responseString');
                           setState(() {
-                            tripId = roamTripResponse?.tripDetails?.id;
+                            //tripId = roamTripResponse?.tripDetails?.id;
                             response = 'Pause trip response: $responseString';
                           });
                         }, ({error}) {
@@ -720,7 +813,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                               'Resume trip response: $responseString');
                           setState(() {
                             response = 'Resume trip response: $responseString';
-                            tripId = roamTripResponse?.tripDetails?.id;
+                            //tripId = roamTripResponse?.tripDetails?.id;
                           });
                         }, ({error}) {
                           String errorString = jsonEncode(error?.toJson());
@@ -746,7 +839,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                           CustomLogger.writeLog(
                               'End trip response: $responseString');
                           setState(() {
-                            tripId = roamTripResponse?.tripDetails?.id;
+                            //tripId = roamTripResponse?.tripDetails?.id;
                             response = 'End trip response: $responseString';
                           });
                         }, ({error}) {
@@ -798,7 +891,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                           print('Delete trip response: $responseString}');
                           CustomLogger.writeLog(responseString);
                           setState(() {
-                            tripId = roamDeleteTripResponse?.trip?.id;
+                            //tripId = roamDeleteTripResponse?.trip?.id;
                             response = 'Delete trip response: $responseString}';
                           });
                         }, ({error}) {
@@ -843,18 +936,18 @@ class _MyItemsPageState extends State<MyItemsPage> {
                     child: Text('Get Trip Summary'),
                     onPressed: () async {
                       setState(() {
-                        tripId = "fetching trip summary..";
+                        response = "fetching trip summary..";
                       });
                       try {
                         Roam.getTripSummary(tripId, ({roamTripResponse}) {
                           String responseString =
                               jsonEncode(roamTripResponse?.toJson());
-                          print('End trip response: $responseString');
+                          print('trip summary response: $responseString');
                           CustomLogger.writeLog(
-                              'End trip response: $responseString');
+                              'trip summary response: $responseString');
                           setState(() {
-                            tripId = roamTripResponse?.tripDetails?.id;
-                            response = 'End trip response: $responseString';
+                            //tripId = roamTripResponse?.tripDetails?.id;
+                            response = 'Trip summary response: $responseString';
                           });
                         }, ({error}) {
                           String errorString = jsonEncode(error?.toJson());
@@ -969,6 +1062,8 @@ class _MyUsersPageState extends State<MyUsersPage> {
                             myUser = user;
                           });
                           print(user);
+                          Roam.offlineTracking(true);
+                          Roam.allowMockLocation(allow: true);
                         });
                   } on PlatformException {
                     print('Create User Error');

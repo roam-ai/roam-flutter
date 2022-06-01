@@ -2,6 +2,7 @@ package ai.roam.roam_flutter.json;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.roam.sdk.trips_v2.RoamTrip;
 import com.roam.sdk.trips_v2.models.EndLocation;
 import com.roam.sdk.trips_v2.models.Error;
@@ -31,6 +32,10 @@ public class JsonEncoder {
             return null;
         }
 
+        if (startLocation.getGeometry() == null){
+            return null;
+        }
+
         JSONObject startLocationJSON = new JSONObject();
         startLocationJSON.put("id", startLocation.getId());
         startLocationJSON.put("name", startLocation.getName());
@@ -40,6 +45,7 @@ public class JsonEncoder {
         startLocationJSON.put("recorded_at", startLocation.getRecordedAt());
 
         JSONObject geometry = new JSONObject();
+
         geometry.put("type", startLocation.getGeometry().getType());
         JSONArray coordinates = new JSONArray();
         for (int y=0; y<startLocation.getGeometry().getCoordinates().size(); y++){
@@ -53,6 +59,10 @@ public class JsonEncoder {
     public static JSONObject encodeEndLocation(EndLocation endLocation) throws JSONException {
 
         if(endLocation == null){
+            return null;
+        }
+
+        if (endLocation.getGeometry() == null){
             return null;
         }
 
@@ -209,20 +219,26 @@ public class JsonEncoder {
             tripDetails.put("has_more", roamTripResponse.getTripDetails().getHasMore());
 
             JSONArray stops = new JSONArray();
-            for (Stop stop : roamTripResponse.getTripDetails().getStops()) {
-                stops.put(JsonEncoder.encodeStop(stop));
+            if (roamTripResponse.getTripDetails().getStops() != null) {
+                for (Stop stop : roamTripResponse.getTripDetails().getStops()) {
+                    stops.put(JsonEncoder.encodeStop(stop));
+                }
             }
             tripDetails.put("stops", stops);
 
             JSONArray eventsArray = new JSONArray();
-            for (Events events : roamTripResponse.getTripDetails().getEvents()) {
-                eventsArray.put(JsonEncoder.encodeEvents(events));
+            if (roamTripResponse.getTripDetails().getEvents() != null) {
+                for (Events events : roamTripResponse.getTripDetails().getEvents()) {
+                    eventsArray.put(JsonEncoder.encodeEvents(events));
+                }
             }
             tripDetails.put("events", eventsArray);
 
             JSONArray route = new JSONArray();
-            for (Routes routes : roamTripResponse.getTripDetails().getRoutes()) {
-                route.put(JsonEncoder.encodeRoutes(routes));
+            if (roamTripResponse.getTripDetails().getRoutes() != null) {
+                for (Routes routes : roamTripResponse.getTripDetails().getRoutes()) {
+                    route.put(JsonEncoder.encodeRoutes(routes));
+                }
             }
             tripDetails.put("route", route);
 
@@ -291,8 +307,11 @@ public class JsonEncoder {
             json.put("description", response.getDescription());
             json.put("hasMore", response.isHas_more());
 
+            Log.e("ROAM", "trip size: " + response.getTrips().size());
             JSONArray trips = new JSONArray();
             for (Trips responseTrip : response.getTrips()) {
+                Log.e("ROAM", "encoding trip");
+                Log.e("ROAM", "Trip Gson: " + new Gson().toJson(responseTrip));
                 trips.put(JsonEncoder.encodeTrips(responseTrip));
             }
             json.put("trips", trips);

@@ -1,6 +1,6 @@
 class Coordinates{
 
-  late String? type;
+  late var type;
   List? coordinates = List.empty(growable: true);
 
   Coordinates({this.type, required this.coordinates});

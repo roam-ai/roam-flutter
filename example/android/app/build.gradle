@@ -47,7 +47,11 @@ android {
 }
 dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation'com.roam.sdk:roam-android:0.0.3'
+    //implementation fileTree(dir: '../../android/libs', include: ['*.aar'])
+    //compileOnly files('/Users/sahilsaini/StudioProjects/roam-android-core/roam/build/outputs/aar/roam-debug.aar')
+    //implementation'com.roam.sdk:roam-android:0.0.3'
+    //implementation'com.roam.sdk:roam-android:0.1.0'
+    //implementation(name:'roam-debug', ext:'aar')
 }
 
 flutter {
