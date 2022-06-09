@@ -306,6 +306,9 @@ class Roam {
     ErrorCallback errorCallback
 ) async {
 
+    if(roamTrip.tripId == null){
+      roamTrip.tripId = '';
+    }
     Map<String, dynamic> json = JsonEncoder.encodeRoamTrip(roamTrip);
 
     final String? result = await _channel.invokeMethod(METHOD_UPDATE_TRIP, {'roamTrip': jsonEncode(json)});
@@ -421,7 +424,7 @@ class Roam {
     } else {
       //start planned trip
 
-      final String? result = await _channel.invokeMethod(METHOD_START_TRIP, {'tripId' : tripId});
+      final String? result = await _channel.invokeMethod(METHOD_START_TRIP, {'tripId' : tripId ?? ''});
 
       if(result == null){
         log("Start trip result null!");
@@ -453,7 +456,7 @@ class Roam {
       ErrorCallback errorCallback
       ) async {
 
-    final String? result = await _channel.invokeMethod(METHOD_PAUSE_TRIP, {'tripId' : tripId});
+    final String? result = await _channel.invokeMethod(METHOD_PAUSE_TRIP, {'tripId' : tripId ?? ''});
 
     if(result == null){
       log("Pause trip result null!");
@@ -480,7 +483,7 @@ class Roam {
       ErrorCallback errorCallback
       ) async {
 
-    final String? result = await _channel.invokeMethod(METHOD_RESUME_TRIP, {'tripId' : tripId});
+    final String? result = await _channel.invokeMethod(METHOD_RESUME_TRIP, {'tripId' : tripId ?? ''});
 
     if(result == null){
       log("Resume trip result null!");
@@ -512,7 +515,7 @@ class Roam {
       ) async {
 
     Map<String, dynamic> json = Map();
-    json['tripId'] = tripId;
+    json['tripId'] = tripId ?? '';
     json['stopTracking'] = stopTracking;
 
 
@@ -543,7 +546,7 @@ class Roam {
       ErrorCallback errorCallback
       ) async {
 
-    final String? result = await _channel.invokeMethod(METHOD_DELETE_TRIP, {'tripId': tripId});
+    final String? result = await _channel.invokeMethod(METHOD_DELETE_TRIP, {'tripId': tripId ?? ''});
 
     if(result == null){
       log("Delete trip result null!");
@@ -580,7 +583,7 @@ class Roam {
       ErrorCallback errorCallback
       ) async {
     print('get trip id: ' + tripId);
-    final String? result = await _channel.invokeMethod(METHOD_GET_TRIP, {'tripId': tripId});
+    final String? result = await _channel.invokeMethod(METHOD_GET_TRIP, {'tripId': tripId ?? ''});
 
     if(result == null){
       log("Get trip result null!");
@@ -606,7 +609,7 @@ class Roam {
       ErrorCallback errorCallback
       ) async {
 
-    final String? result = await _channel.invokeMethod(METHOD_SYNC_TRIP, {'tripId': tripId});
+    final String? result = await _channel.invokeMethod(METHOD_SYNC_TRIP, {'tripId': tripId ?? ''});
 
     if(result == null){
       log("Sync trip result null!");
@@ -661,7 +664,7 @@ class Roam {
       RoamTripCallback roamTripCallback,
       ErrorCallback errorCallback
       ) async {
-    final String? result = await _channel.invokeMethod(METHOD_GET_TRIP_SUMMARY, {'tripId': tripId});
+    final String? result = await _channel.invokeMethod(METHOD_GET_TRIP_SUMMARY, {'tripId': tripId ?? ''});
 
 
     if(result == null){

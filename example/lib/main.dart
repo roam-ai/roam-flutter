@@ -504,7 +504,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
 
 
                         RoamTripStops stop =
-                            RoamTripStops(600, [85.30614739, 23.5155215]);
+                            RoamTripStops(600, [77.63414185889549,12.915192126794398]);
                         RoamTrip roamTrip = RoamTrip(isLocal: false);
                         roamTrip.stop.add(stop);
                         Roam.createTrip(roamTrip, ({roamTripResponse}) {
@@ -540,7 +540,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
 
 
                         RoamTripStops stop =
-                        RoamTripStops(600, [85.30614739, 23.5155215]);
+                        RoamTripStops(600, [77.63414185889549,12.915192126794398]);
                         RoamTrip roamTrip = RoamTrip(isLocal: true);
                         roamTrip.stop.add(stop);
                         Roam.createTrip(roamTrip, ({roamTripResponse}) {
@@ -652,7 +652,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                         // _displayTripsInputDialog(context, "quickTrip");
                         RoamTrip quickTrip = RoamTrip(isLocal: false);
                         RoamTripStops stop =
-                        RoamTripStops(600, [85.30614739, 23.5155215]);
+                        RoamTripStops(600, [77.63414185889549,12.915192126794398]);
                         quickTrip.stop.add(stop);
                         Roam.startTrip(({roamTripResponse}) {
                           String responseString =
@@ -687,7 +687,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                         // _displayTripsInputDialog(context, "quickTrip");
                         RoamTrip quickTrip = RoamTrip(isLocal: true);
                         RoamTripStops stop =
-                        RoamTripStops(600, [85.30614739, 23.5155215]);
+                        RoamTripStops(600, [77.63414185889549,12.915192126794398]);
                         quickTrip.stop.add(stop);
                         Roam.startTrip(({roamTripResponse}) {
                           String responseString =

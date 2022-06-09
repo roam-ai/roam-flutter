@@ -440,8 +440,6 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
             let tripId = arguments["tripId"]  as! String;
             print(tripId)
             Roam.startTrip(tripId){response, error in
-                print(response)
-                print(error)
                 do{
                     if(response != nil){
                         let jsonResponse = try JSONSerialization.data(withJSONObject: SwiftRoamFlutterPlugin.encodeRoamTripResponse(response: response!), options: [])
