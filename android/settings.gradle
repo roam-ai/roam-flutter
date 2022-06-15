@@ -1,1 +1,3 @@
 rootProject.name = 'roam_flutter'
+
+include ':roam'

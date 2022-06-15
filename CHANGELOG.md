@@ -1,3 +1,8 @@
+## 0.1.0
+* Updated to latest native Roam SDK versions. Android v0.1.1 and iOS v0.1.1
+* Updated SDK to support Roam Trip v2.
+
+
 ## 0.0.13
 * Updated to latest native Roam SDK versions. Android v0.0.17
 * Update `Roam.updateCurrentLocation()` with meta-data support for updating location.

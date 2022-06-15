@@ -8,6 +8,6 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        startService(new Intent(this, GeoSparkForegroundService.class));
+       // startService(new Intent(this, GeoSparkForegroundService.class));
     }
 }
