@@ -132,6 +132,9 @@ class Roam {
 
 
 
+  /// Location Listener
+  /// Accepts RoamLocationCallback object
+  /// Returns location map
   static Future<void> onLocation(RoamLocationCallback roamLocationCallback) async {
     _locationEventChannel.receiveBroadcastStream().listen((data) {
       roamLocationCallback(data);
@@ -170,6 +173,9 @@ class Roam {
     callBack(user: result);
   }
 
+  /// Set foreground notification for android
+  /// Accepts bool and String
+  /// Returns void
   static Future<void> setForeground(bool enabled,
       String title,
       String description,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -40,7 +41,8 @@ Future<void> main() async {
       ],
       debug: true
   );
-  initializeService();
+
+
   runApp(MyApp());
 }
 
@@ -55,14 +57,10 @@ Future<void> initializeService() async {
       autoStart: true,
       isForegroundMode: false,
     ),
-    iosConfiguration: IosConfiguration(autoStart:true, onForeground: onStart, onBackground: onBackground)
   );
   service.startService();
 }
 
-bool onBackground(ServiceInstance serviceInstance){
-  return true;
-}
 
  const platform = MethodChannel('roam_example');
 
@@ -70,17 +68,15 @@ void onStart(ServiceInstance serviceInstance){
   DartPluginRegistrant.ensureInitialized();
   Roam.onLocation((location) async {
     print(jsonEncode(location));
-
-    //await platform.invokeMethod('send_notification', {'body': jsonEncode(location)});
-    // Fluttertoast.showToast(
-    //     msg: jsonEncode(location),
-    //     toastLength: Toast.LENGTH_SHORT,
-    //     gravity: ToastGravity.CENTER,
-    //     timeInSecForIosWeb: 1,
-    //     backgroundColor: Colors.red,
-    //     textColor: Colors.white,
-    //     fontSize: 16.0
-    // );
+    Fluttertoast.showToast(
+        msg: jsonEncode(location),
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
   });
 }
 
@@ -1396,21 +1392,15 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                 textColor: Colors.white,
                 child: Text('OK'),
                 onPressed: () async {
-                  //initializeService();
-                  Roam.onLocation((location) async {
-                    print(jsonEncode(location));
-                    await platform.invokeMethod('send_notification', {'body': jsonEncode(location)});
+                  if(Platform.isAndroid){
+                    initializeService();
+                  } else {
+                    Roam.onLocation((location) async {
+                      print(jsonEncode(location));
+                      await platform.invokeMethod('send_notification', {'body': jsonEncode(location)});
+                    });
+                  }
 
-                    // Fluttertoast.showToast(
-                    //     msg: jsonEncode(location),
-                    //     toastLength: Toast.LENGTH_SHORT,
-                    //     gravity: ToastGravity.CENTER,
-                    //     timeInSecForIosWeb: 1,
-                    //     backgroundColor: Colors.red,
-                    //     textColor: Colors.white,
-                    //     fontSize: 16.0
-                    // );
-                  });
                   Roam.setForeground(true, "Flutter Example", "Tap to open", "mipmap/ic_launcher", "ai.roam.example.MainActivity");
                   try {
                     switch (valueText) {
@@ -1513,6 +1503,7 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
             ElevatedButton(
                 child: Text('Stop Tracking'),
                 onPressed: () async {
+
                   Roam.setForeground(false, "Flutter Example", "Tap to open", "mipmap/ic_launcher", "ai.roam.example.MainActivity");
                   try {
                     await Roam.stopTracking();

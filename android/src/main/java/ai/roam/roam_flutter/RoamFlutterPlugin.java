@@ -151,18 +151,11 @@ public class RoamFlutterPlugin extends RoamReceiver implements FlutterPlugin, Me
       @Override
       public void onListen(Object listener, EventChannel.EventSink eventSink) {
         locationEventSink = eventSink;
-        Log.e("TAG", "onListen: ");
-        if (eventSink == null){
-          Log.e("TAG", "onListen: null");
-        } else {
-          Log.e("TAG", "onListen: not null");
-        }
       }
 
       @Override
       public void onCancel(Object listener) {
         Log.e("TAG", "onCancel: ");
-        //locationEventSink = null;
       }
     });
   }
@@ -981,9 +974,6 @@ public class RoamFlutterPlugin extends RoamReceiver implements FlutterPlugin, Me
   @Override
   public void onLocationUpdated(Context context, RoamLocation roamLocation) {
 
-    Log.e("TAG", "onLocationUpdated: ");
-
-    //RoamFlutterPlugin.initializeBackgroundEngine(context);
     FlutterMain.startInitialization(context);
     FlutterMain.ensureInitializationComplete(context, null);
 
@@ -1005,13 +995,8 @@ public class RoamFlutterPlugin extends RoamReceiver implements FlutterPlugin, Me
 
       HashMap<String, Object> map = new Gson().fromJson(jsonObject.toString(), HashMap.class);
       if (locationEventSink != null){
-        Log.e("TAG", "onLocationUpdated: not null");
         locationEventSink.success(map);
-      } else {
-        Log.e("TAG", "onLocationUpdated: null");
       }
-
-
     } catch (Exception e) {
       e.printStackTrace();
     }

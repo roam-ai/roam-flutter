@@ -27,7 +27,7 @@ Add following lines to your applications pubspec.yml:
 
 ```dart
 dependencies:
-  roam_flutter: ^0.1.0
+  roam_flutter: ^0.1.1
 ```
 Install the plugin using the following command:
 ```dart
@@ -228,6 +228,17 @@ To stop the tracking use the below method.
 ``` dart
 Roam.stopTracking();
 ```
+
+## Location Listener
+
+To receive locations in dart use the below method.
+
+```dart
+Roam.onLocation((location) async {
+                      print(jsonEncode(location));
+                    });
+```
+
 ## SDK Methods
 - Please visit our [Developer Center](https://github.com/roam-ai/roam-flutter/wiki/SDK-Methods) for instructions on other SDK methods.
 ## Contributing
