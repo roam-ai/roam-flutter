@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:core';
 import 'dart:core';
 import 'dart:developer';
+import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:roam_flutter/json/JsonDecoder.dart';
 import 'package:roam_flutter/RoamTrackingMode.dart';
@@ -20,6 +22,7 @@ import 'package:roam_flutter/trips_v2/request/RoamTripStops.dart';
 typedef void RoamCallBack({String? location});
 typedef void RoamUserCallBack({String? user});
 typedef void RoamTripCallBack({String? trip});
+typedef void RoamLocationCallback(Map? location);
 
 class Roam {
   static const String METHOD_INITIALIZE = "initialize";
@@ -60,6 +63,8 @@ class Roam {
   static const String METHOD_DISABLE_BATTERY_OPTIMIZATION =
       "disableBatteryOptimization";
   static const String METHOD_ALLOW_MOCK_LOCATION = "allowMockLocation";
+  static const String METHOD_FOREGROUND_SERVICE = "foregroundService";
+  static const String METHOD_ON_LOCATION = "onLocation";
 
   static const String TRACKING_MODE_PASSIVE = "passive";
   static const String TRACKING_MODE_BALANCED = "balanced";
@@ -70,8 +75,12 @@ class Roam {
   static late RoamUserCallBack _userCallBack;
   static late RoamTripCallBack _tripCallBack;
 
+
+  static const EventChannel _locationEventChannel = const EventChannel(
+      'roam_flutter_event/location');
+
   /// Initialize SDK
-  /// Accepts SDK Key from GeoSpark Playground Project Setting
+  /// Accepts SDK Key from Roam Playground Project Setting
   static Future<bool?> initialize({
     required String publishKey,
   }) async {
@@ -85,20 +94,20 @@ class Roam {
 
   /// Create User
   /// Accepts Description in String Format
-  /// Returns GeoSpark User
+  /// Returns Roam User
   static Future<void> createUser(
       {required String description, required RoamUserCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{
       'description': description
     };
     final String? result =
-        await _channel.invokeMethod(METHOD_CREATE_USER, params);
+    await _channel.invokeMethod(METHOD_CREATE_USER, params);
     callBack(user: result);
   }
 
   /// Get User
-  /// Accepts GeoSpark User Id in String Format
-  /// Returns GeoSpark User
+  /// Accepts Roam User Id in String Format
+  /// Returns Roam User
   static Future<void> getUser(
       {required String userId, required RoamUserCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{'userId': userId};
@@ -108,29 +117,38 @@ class Roam {
 
   /// Toggle User Listener
   /// Accepts Boolean values for Events & Locations
-  /// Returns GeoSpark User
-  static Future<void> toggleListener(
-      {required bool events,
-      bool? locations,
-      required RoamUserCallBack callBack}) async {
+  /// Returns Roam User
+  static Future<void> toggleListener({required bool events,
+    bool? locations,
+    required RoamUserCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{
       'events': events,
       'locations': locations
     };
     final String? result =
-        await _channel.invokeMethod(METHOD_TOGGLE_LISTENER, params);
+    await _channel.invokeMethod(METHOD_TOGGLE_LISTENER, params);
     callBack(user: result);
   }
 
+
+
+  static Future<void> onLocation(RoamLocationCallback roamLocationCallback) async {
+    _locationEventChannel.receiveBroadcastStream().listen((data) {
+      roamLocationCallback(data);
+    });
+  }
+
+
+
+
   /// Toggle User Events
   /// Accepts Boolean values for Geofence, Trips, Moving Geofence & Location
-  /// Returns GeoSpark User
-  static Future<void> toggleEvents(
-      {required bool location,
-      bool? geofence,
-      bool? trips,
-      bool? movingGeofence,
-      required RoamUserCallBack callBack}) async {
+  /// Returns Roam User
+  static Future<void> toggleEvents({required bool location,
+    bool? geofence,
+    bool? trips,
+    bool? movingGeofence,
+    required RoamUserCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{
       'geofence': geofence,
       'location': location,
@@ -138,18 +156,33 @@ class Roam {
       'movingGeofence': movingGeofence
     };
     final String? result =
-        await _channel.invokeMethod(METHOD_TOGGLE_EVENTS, params);
+    await _channel.invokeMethod(METHOD_TOGGLE_EVENTS, params);
     callBack(user: result);
   }
 
   /// Get User Listener Status
-  /// Accepts GeoSpark User Id in String Format
-  /// Returns GeoSpark User
+  /// Accepts Roam User Id in String Format
+  /// Returns Roam User
   static Future<void> getListenerStatus(
       {required RoamUserCallBack callBack}) async {
     final String? result =
-        await _channel.invokeMethod(METHOD_GET_LISTENER_STATUS);
+    await _channel.invokeMethod(METHOD_GET_LISTENER_STATUS);
     callBack(user: result);
+  }
+
+  static Future<void> setForeground(bool enabled,
+      String title,
+      String description,
+      String icon,
+      String activity) async {
+    final Map<String, dynamic> param = <String, dynamic>{
+      'enableForeground': enabled,
+      'foregroundTitle': title,
+      'foregroundDescription': description,
+      'foregroundImage': icon,
+      'foregroundActivity': activity
+    };
+    await _channel.invokeMethod(METHOD_FOREGROUND_SERVICE, param);
   }
 
   /// Update Current Location
@@ -160,9 +193,12 @@ class Roam {
     Map<String, dynamic>? jsonObject
   }) async {
     String jsonString = (jsonObject == null) ? "" : jsonEncode(jsonObject);
-    final Map<String, dynamic> params = <String, dynamic>{'accuracy': accuracy, 'jsonObject': jsonString};
+    final Map<String, dynamic> params = <String, dynamic>{
+      'accuracy': accuracy,
+      'jsonObject': jsonString
+    };
     final bool? result =
-        await _channel.invokeMethod(METHOD_UPDATE_CURRENT_LOCATION, params);
+    await _channel.invokeMethod(METHOD_UPDATE_CURRENT_LOCATION, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
@@ -174,7 +210,7 @@ class Roam {
       {required int accuracy, required RoamCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{'accuracy': accuracy};
     final String? result =
-        await _channel.invokeMethod(METHOD_GET_CURRENT_LOCATION, params);
+    await _channel.invokeMethod(METHOD_GET_CURRENT_LOCATION, params);
     callBack(location: result);
   }
 
@@ -185,12 +221,13 @@ class Roam {
       'customMethods': customMethods
     };
     final bool? result =
-        await _channel.invokeMethod(METHOD_START_TRACKING, params);
+    await _channel.invokeMethod(METHOD_START_TRACKING, params);
     return result;
   }
 
   static Future<void> offlineTracking(bool enabled) async {
-    await _channel.invokeMethod(METHOD_OFFLINE_TRACKING, {'offlineTracking': enabled});
+    await _channel.invokeMethod(
+        METHOD_OFFLINE_TRACKING, {'offlineTracking': enabled});
   }
 
   /// Logout User
@@ -210,7 +247,7 @@ class Roam {
       await _channel.invokeMethod(METHOD_DISABLE_BATTERY_OPTIMIZATION);
       _channel.setMethodCallHandler(_methodCallHandler);
       return result;
-    } catch (error){
+    } catch (error) {
       print(error);
     }
   }
@@ -232,14 +269,14 @@ class Roam {
   }
 
   /// Subscribe User Location
-  /// Accepts GeoSpark User Id
+  /// Accepts Roam User Id
   /// Use this method to enable subscription to other user's location updates
   static Future<bool?> subscribeUserLocation({
     required String userId,
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{'userId': userId};
     final bool? result =
-        await _channel.invokeMethod(METHOD_SUBSCRIBE_USER_LOCATION, params);
+    await _channel.invokeMethod(METHOD_SUBSCRIBE_USER_LOCATION, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
@@ -256,7 +293,7 @@ class Roam {
   /// Use this method improve accuracy for location updates
   static Future<bool?> enableAccuracyEngine() async {
     final bool? result =
-        await _channel.invokeMethod(METHOD_ENABLE_ACCURACY_ENGINE);
+    await _channel.invokeMethod(METHOD_ENABLE_ACCURACY_ENGINE);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
@@ -265,81 +302,75 @@ class Roam {
   /// Use this method disable accuracy engine for location updates
   static Future<bool?> disableAccuracyEngine() async {
     final bool? result =
-        await _channel.invokeMethod(METHOD_DISABLE_ACCURACY_ENGINE);
+    await _channel.invokeMethod(METHOD_DISABLE_ACCURACY_ENGINE);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
 
-  static Future<void> createTrip(
-    RoamTrip roamTrip,
-    RoamTripCallback roamTripCallback,
-      ErrorCallback errorCallback
-  ) async {
-
+  static Future<void> createTrip(RoamTrip roamTrip,
+      RoamTripCallback roamTripCallback,
+      ErrorCallback errorCallback) async {
     Map<String, dynamic> json = JsonEncoder.encodeRoamTrip(roamTrip);
 
-    final String? result = await _channel.invokeMethod(METHOD_CREATE_TRIP, {'roamTrip': jsonEncode(json)});
+    final String? result = await _channel.invokeMethod(
+        METHOD_CREATE_TRIP, {'roamTrip': jsonEncode(json)});
 
-    if(result == null){
+    if (result == null) {
       log("Create trip result null!");
       return;
     }
 
-    try{
+    try {
       Map json = jsonDecode(result);
-      if(json.containsKey("error")){
+      if (json.containsKey("error")) {
         log('error');
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
-        roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+        roamTripCallback(
+            roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
       }
-    } catch (exception){
-      log('response error: '+exception.toString());
+    } catch (exception) {
+      log('response error: ' + exception.toString());
     }
   }
 
 
-  static Future<void> updateTrip(
-    RoamTrip roamTrip,
-    RoamTripCallback roamTripCallback,
-    ErrorCallback errorCallback
-) async {
-
-    if(roamTrip.tripId == null){
+  static Future<void> updateTrip(RoamTrip roamTrip,
+      RoamTripCallback roamTripCallback,
+      ErrorCallback errorCallback) async {
+    if (roamTrip.tripId == null) {
       roamTrip.tripId = '';
     }
     Map<String, dynamic> json = JsonEncoder.encodeRoamTrip(roamTrip);
 
-    final String? result = await _channel.invokeMethod(METHOD_UPDATE_TRIP, {'roamTrip': jsonEncode(json)});
+    final String? result = await _channel.invokeMethod(
+        METHOD_UPDATE_TRIP, {'roamTrip': jsonEncode(json)});
 
-    if(result == null){
+    if (result == null) {
       log("Update trip result null!");
       return;
     }
 
-    try{
+    try {
       Map json = jsonDecode(result);
-      if(json.containsKey("error")){
+      if (json.containsKey("error")) {
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
-        roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+        roamTripCallback(
+            roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
       }
-    } catch (exception){
+    } catch (exception) {
       log(exception.toString());
     }
-
   }
-
-
-
 
 
   static Future<void> getTripDetails(
       {required String tripId, required RoamTripCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
     final String? result =
-        await _channel.invokeMethod(METHOD_GET_TRIP_DETAILS, params);
+    await _channel.invokeMethod(METHOD_GET_TRIP_DETAILS, params);
     callBack(trip: result);
   }
 
@@ -347,7 +378,7 @@ class Roam {
       {required String tripId, required RoamTripCallBack callBack}) async {
     final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
     final String? result =
-        await _channel.invokeMethod(METHOD_GET_TRIP_STATUS, params);
+    await _channel.invokeMethod(METHOD_GET_TRIP_STATUS, params);
     callBack(trip: result);
   }
 
@@ -356,7 +387,7 @@ class Roam {
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
     final bool? result =
-        await _channel.invokeMethod(METHOD_SUBSCRIBE_TRIP_STATUS, params);
+    await _channel.invokeMethod(METHOD_SUBSCRIBE_TRIP_STATUS, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
@@ -366,32 +397,30 @@ class Roam {
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{'tripId': tripId};
     final bool? result =
-        await _channel.invokeMethod(METHOD_UNSUBSCRIBE_TRIP_STATUS, params);
+    await _channel.invokeMethod(METHOD_UNSUBSCRIBE_TRIP_STATUS, params);
     _channel.setMethodCallHandler(_methodCallHandler);
     return result;
   }
 
   static Future<void> allowMockLocation({
-  required bool allow
-})async {
-    await _channel.invokeMethod(METHOD_ALLOW_MOCK_LOCATION, {'allowMockLocation': allow});
+    required bool allow
+  }) async {
+    await _channel.invokeMethod(
+        METHOD_ALLOW_MOCK_LOCATION, {'allowMockLocation': allow});
   }
 
 
-  static Future<void> startTrip(
-    RoamTripCallback roamTripCallback,
+  static Future<void> startTrip(RoamTripCallback roamTripCallback,
       ErrorCallback errorCallback,
-    {
-      String? tripId,
-      RoamTrip? roamTrip,
-      RoamTrackingMode? roamTrackingMode,
-    }
-    ) async {
-
-    if(roamTrip != null){
+      {
+        String? tripId,
+        RoamTrip? roamTrip,
+        RoamTrackingMode? roamTrackingMode,
+      }) async {
+    if (roamTrip != null) {
       //start quick trip
 
-      if(roamTrackingMode == null){
+      if (roamTrackingMode == null) {
         roamTrackingMode = RoamTrackingMode.ACTIVE;
       }
 
@@ -400,120 +429,110 @@ class Roam {
       Map<String, dynamic> roamTripJson = JsonEncoder.encodeRoamTrip(roamTrip);
       json['roamTrip'] = jsonEncode(roamTripJson);
 
-      json['roamTrackingMode'] = jsonEncode(JsonEncoder.encodeRoamTrackingMode(roamTrackingMode));
+      json['roamTrackingMode'] =
+          jsonEncode(JsonEncoder.encodeRoamTrackingMode(roamTrackingMode));
 
-      final String? result = await _channel.invokeMethod(METHOD_START_QUICK_TRIP, json);
+      final String? result = await _channel.invokeMethod(
+          METHOD_START_QUICK_TRIP, json);
 
-      if(result == null){
+      if (result == null) {
         log("Update trip result null!");
         return;
       }
 
-      try{
+      try {
         Map json = jsonDecode(result);
-        if(json.containsKey("error")){
+        if (json.containsKey("error")) {
           errorCallback(error: JsonDecoder.decodeError(json['error']));
         } else {
-          roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+          roamTripCallback(
+              roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
         }
-      } catch (exception){
+      } catch (exception) {
         log(exception.toString());
       }
-
-
     } else {
       //start planned trip
 
-      final String? result = await _channel.invokeMethod(METHOD_START_TRIP, {'tripId' : tripId ?? ''});
+      final String? result = await _channel.invokeMethod(
+          METHOD_START_TRIP, {'tripId': tripId ?? ''});
 
-      if(result == null){
+      if (result == null) {
         log("Start trip result null!");
         return;
       }
 
       print(result);
 
-      try{
+      try {
         Map json = jsonDecode(result);
-        if(json.containsKey("error")){
+        if (json.containsKey("error")) {
           errorCallback(error: JsonDecoder.decodeError(json['error']));
         } else {
-          roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+          roamTripCallback(
+              roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
         }
-      } catch (exception){
+      } catch (exception) {
         log(exception.toString());
       }
-
-
     }
-
   }
 
 
-  static Future<void> pauseTrip(
-      String tripId,
+  static Future<void> pauseTrip(String tripId,
       RoamTripCallback roamTripCallback,
-      ErrorCallback errorCallback
-      ) async {
+      ErrorCallback errorCallback) async {
+    final String? result = await _channel.invokeMethod(
+        METHOD_PAUSE_TRIP, {'tripId': tripId ?? ''});
 
-    final String? result = await _channel.invokeMethod(METHOD_PAUSE_TRIP, {'tripId' : tripId ?? ''});
-
-    if(result == null){
+    if (result == null) {
       log("Pause trip result null!");
       return;
     }
 
-    try{
+    try {
       Map json = jsonDecode(result);
-      if(json.containsKey("error")){
+      if (json.containsKey("error")) {
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
-        roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+        roamTripCallback(
+            roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
       }
-    } catch (exception){
+    } catch (exception) {
       log(exception.toString());
     }
-
   }
 
 
-  static Future<void> resumeTrip(
-      String tripId,
+  static Future<void> resumeTrip(String tripId,
       RoamTripCallback roamTripCallback,
-      ErrorCallback errorCallback
-      ) async {
+      ErrorCallback errorCallback) async {
+    final String? result = await _channel.invokeMethod(
+        METHOD_RESUME_TRIP, {'tripId': tripId ?? ''});
 
-    final String? result = await _channel.invokeMethod(METHOD_RESUME_TRIP, {'tripId' : tripId ?? ''});
-
-    if(result == null){
+    if (result == null) {
       log("Resume trip result null!");
       return;
     }
 
-    try{
+    try {
       Map json = jsonDecode(result);
-      if(json.containsKey("error")){
+      if (json.containsKey("error")) {
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
-        roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+        roamTripCallback(
+            roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
       }
-    } catch (exception){
+    } catch (exception) {
       log(exception.toString());
     }
-
   }
 
 
-
-
-
-  static Future<void> endTrip(
-      String tripId,
+  static Future<void> endTrip(String tripId,
       bool stopTracking,
       RoamTripCallback roamTripCallback,
-      ErrorCallback errorCallback
-      ) async {
-
+      ErrorCallback errorCallback) async {
     Map<String, dynamic> json = Map();
     json['tripId'] = tripId ?? '';
     json['stopTracking'] = stopTracking;
@@ -521,172 +540,163 @@ class Roam {
 
     final String? result = await _channel.invokeMethod(METHOD_END_TRIP, json);
 
-    if(result == null){
+    if (result == null) {
       log("End trip result null!");
       return;
     }
 
-    try{
+    try {
       Map json = jsonDecode(result);
-      if(json.containsKey("error")){
+      if (json.containsKey("error")) {
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
-        roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+        roamTripCallback(
+            roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
       }
-    } catch (exception){
+    } catch (exception) {
       log(exception.toString());
     }
-
   }
 
 
-  static Future<void> deleteTrip(
-      String tripId,
+  static Future<void> deleteTrip(String tripId,
       RoamDeleteTripCallback roamDeleteTripCallback,
-      ErrorCallback errorCallback
-      ) async {
+      ErrorCallback errorCallback) async {
+    final String? result = await _channel.invokeMethod(
+        METHOD_DELETE_TRIP, {'tripId': tripId ?? ''});
 
-    final String? result = await _channel.invokeMethod(METHOD_DELETE_TRIP, {'tripId': tripId ?? ''});
-
-    if(result == null){
+    if (result == null) {
       log("Delete trip result null!");
       return;
     }
 
-    try{
+    try {
       Map json = jsonDecode(result);
-      if(json.containsKey("error")){
+      if (json.containsKey("error")) {
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
-        roamDeleteTripCallback(roamDeleteTripResponse: JsonDecoder.decodeRoamDeleteTripResponse(json));
+        roamDeleteTripCallback(
+            roamDeleteTripResponse: JsonDecoder.decodeRoamDeleteTripResponse(
+                json));
       }
-    } catch (exception){
+    } catch (exception) {
       log(exception.toString());
     }
   }
 
 
-  static void subscribeTrip(String tripId){
+  static void subscribeTrip(String tripId) {
     _channel.invokeMethod(METHOD_SUBSCRIBE_TRIP, {'tripId': tripId});
   }
 
-  static void unsubscribeTrip(String tripId){
+  static void unsubscribeTrip(String tripId) {
     _channel.invokeMethod(METHOD_UNSUBSCRIBE_TRIP, {'tripId': tripId});
   }
 
 
-
-
-  static Future<void> getTrip(
-      String tripId,
+  static Future<void> getTrip(String tripId,
       RoamTripCallback roamTripCallback,
-      ErrorCallback errorCallback
-      ) async {
+      ErrorCallback errorCallback) async {
     print('get trip id: ' + tripId);
-    final String? result = await _channel.invokeMethod(METHOD_GET_TRIP, {'tripId': tripId ?? ''});
+    final String? result = await _channel.invokeMethod(
+        METHOD_GET_TRIP, {'tripId': tripId ?? ''});
 
-    if(result == null){
+    if (result == null) {
       log("Get trip result null!");
       return;
     }
 
-    try{
+    try {
       Map json = jsonDecode(result);
-      if(json.containsKey("error")){
+      if (json.containsKey("error")) {
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
-        roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+        roamTripCallback(
+            roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
       }
-    } catch (exception){
+    } catch (exception) {
       log(exception.toString());
     }
   }
 
 
-  static Future<void> syncTrip(
-      String tripId,
+  static Future<void> syncTrip(String tripId,
       RoamSyncTripCallback roamSyncTripCallback,
-      ErrorCallback errorCallback
-      ) async {
+      ErrorCallback errorCallback) async {
+    final String? result = await _channel.invokeMethod(
+        METHOD_SYNC_TRIP, {'tripId': tripId ?? ''});
 
-    final String? result = await _channel.invokeMethod(METHOD_SYNC_TRIP, {'tripId': tripId ?? ''});
-
-    if(result == null){
+    if (result == null) {
       log("Sync trip result null!");
       return;
     }
 
-    try{
+    try {
       Map json = jsonDecode(result);
-      if(json.containsKey("error")){
+      if (json.containsKey("error")) {
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
-        roamSyncTripCallback(roamSyncTripResponse: JsonDecoder.decodeRoamSyncTripResponse(json));
+        roamSyncTripCallback(
+            roamSyncTripResponse: JsonDecoder.decodeRoamSyncTripResponse(json));
       }
-    } catch (exception){
+    } catch (exception) {
       log(exception.toString());
     }
-
   }
 
 
-
-  static Future<void> getActiveTrips(
-      bool isLocal,
+  static Future<void> getActiveTrips(bool isLocal,
       RoamActiveTripsCallback roamActiveTripsCallback,
-      ErrorCallback errorCallback
-      ) async {
+      ErrorCallback errorCallback) async {
+    final String? result = await _channel.invokeMethod(
+        METHOD_GET_ACTIVE_TRIPS, {'isLocal': isLocal});
 
-    final String? result = await _channel.invokeMethod(METHOD_GET_ACTIVE_TRIPS, {'isLocal': isLocal});
-
-    if(result == null){
+    if (result == null) {
       log("Active trip result null!");
       return;
     }
 
-    try{
+    try {
       Map json = jsonDecode(result);
-      if(json.containsKey("error")){
+      if (json.containsKey("error")) {
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
-        roamActiveTripsCallback(roamActiveTripResponse: JsonDecoder.decodeRoamActiveTripResopnse(json));
+        roamActiveTripsCallback(
+            roamActiveTripResponse: JsonDecoder.decodeRoamActiveTripResopnse(
+                json));
       }
-    } catch (exception){
+    } catch (exception) {
       log(exception.toString());
     }
-
-
   }
 
 
-  static Future<void> getTripSummary(
-      String tripId,
+  static Future<void> getTripSummary(String tripId,
       RoamTripCallback roamTripCallback,
-      ErrorCallback errorCallback
-      ) async {
-    final String? result = await _channel.invokeMethod(METHOD_GET_TRIP_SUMMARY, {'tripId': tripId ?? ''});
+      ErrorCallback errorCallback) async {
+    final String? result = await _channel.invokeMethod(
+        METHOD_GET_TRIP_SUMMARY, {'tripId': tripId ?? ''});
 
 
-    if(result == null){
+    if (result == null) {
       log("Get trip result null!");
       return;
     }
 
-    print('summary: '+result);
+    print('summary: ' + result);
 
-    try{
+    try {
       Map json = jsonDecode(result);
-      if(json.containsKey("error")){
+      if (json.containsKey("error")) {
         errorCallback(error: JsonDecoder.decodeError(json['error']));
       } else {
-        roamTripCallback(roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
+        roamTripCallback(
+            roamTripResponse: JsonDecoder.decodeRoamTripResponse(json));
       }
-    } catch (exception){
+    } catch (exception) {
       log(exception.toString());
     }
   }
-
-
 
 
   static Future<void> _methodCallHandler(MethodCall call) async {
@@ -702,6 +712,7 @@ class Roam {
           trip: call.arguments['trip'],
         );
         break;
+
       default:
         print('This normally shouldn\'t happen.');
     }
@@ -711,7 +722,5 @@ class Roam {
     final String? version = await _channel.invokeMethod('getPlatformVersion');
     return version;
   }
-
-
-
 }
+

@@ -1,28 +1,83 @@
-package ai.roam.example;
+package ai.roam.roam_flutter;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
+import android.os.IBinder;
+import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-public class NotificationHelper {
+
+public class RoamForegroundService extends Service {
+
+    RoamFlutterPlugin roamFlutterPlugin;
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.e("TAG", "onCreate: roamForegroundService");
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            startForeground(NotificationHelper.NOTIFICATION_ID, NotificationHelper.showNotification(this));
+//        }
+        register();
+
+    }
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        NotificationHelper.cancelNotification(this);
+        unRegister();
+        super.onDestroy();
+    }
+
+    private void register() {
+        roamFlutterPlugin = new RoamFlutterPlugin();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.roam.android.RECEIVED");
+        registerReceiver(roamFlutterPlugin, intentFilter);
+    }
+
+    private void unRegister() {
+        if (roamFlutterPlugin != null) {
+            unregisterReceiver(roamFlutterPlugin);
+        }
+    }
+
+
+
+}
+
+class NotificationHelper {
     public static final int NOTIFICATION_ID = 102;
     private static final int PENDING_INTENT_REQUEST_CODE = 103;
-    private static final String ANDROID_CHANNEL_ID = "ai.roam.example";
-    private static final String ANDROID_CHANNEL_NAME = "roam";
+    private static final String ANDROID_CHANNEL_ID = "com.module.react";
+    private static final String ANDROID_CHANNEL_NAME = "motion";
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private static Notification.Builder getAndroidChannelNotification(Context context) {
-        int resIcon = R.drawable.ic_geospark;
         String contentTitle = "App is running";
         String contentText = "Click here to open the app";
         return new Notification.Builder(context, ANDROID_CHANNEL_ID)
-                .setSmallIcon(resIcon)
                 .setContentTitle(contentTitle)
                 .setContentText(contentText)
                 .setStyle(new Notification.BigTextStyle().bigText(contentText))

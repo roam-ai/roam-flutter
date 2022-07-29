@@ -1,3 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="ai.roam.roam_flutter">
+    <application>
+        <service android:name=".RoamForegroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location"
+            />
+
+    </application>
 </manifest>
