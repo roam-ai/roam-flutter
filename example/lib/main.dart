@@ -1,10 +1,16 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
+import 'dart:ui';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:example/logger.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:roam_flutter/RoamTrackingMode.dart';
 import 'package:roam_flutter/roam_flutter.dart';
 
@@ -14,23 +20,84 @@ import 'package:roam_flutter/trips_v2/models/Geometry.dart';
 import 'package:roam_flutter/trips_v2/request/RoamTripStops.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  AwesomeNotifications().initialize(
+    // set the icon to null if you want to use the default app icon
+      'null',
+      [
+        NotificationChannel(
+            channelGroupKey: 'basic_channel_group',
+            channelKey: 'basic_channel',
+            channelName: 'Basic notifications',
+            channelDescription: 'Notification channel for basic tests',
+            defaultColor: Color(0xFF9D50DD),
+            ledColor: Colors.white)
+      ],
+      // Channel groups are only visual and are not required
+      channelGroups: [
+        NotificationChannelGroup(
+            channelGroupkey: 'basic_channel_group',
+            channelGroupName: 'Basic group')
+      ],
+      debug: true
+  );
+
+
   runApp(MyApp());
 }
 
+Future<void> initializeService() async {
+  final service = FlutterBackgroundService();
+  await service.configure(
+    androidConfiguration: AndroidConfiguration(
+      // this will be executed when app is in foreground or background in separated isolate
+      onStart: onStart,
+
+      // auto start service
+      autoStart: true,
+      isForegroundMode: false,
+    ),
+  );
+  service.startService();
+}
+
+
+ const platform = MethodChannel('roam_example');
+
+void onStart(ServiceInstance serviceInstance){
+  DartPluginRegistrant.ensureInitialized();
+  Roam.onLocation((location) async {
+    print(jsonEncode(location));
+    Fluttertoast.showToast(
+        msg: jsonEncode(location),
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
+  });
+}
+
+
+
 class MyApp extends StatelessWidget {
+
+
   @override
   Widget build(BuildContext context) {
     var routes = <String, WidgetBuilder>{
       MyItemsPage.routeName: (BuildContext context) =>
-          new MyItemsPage(title: "Trips Page"),
+      new MyItemsPage(title: "Trips Page"),
       MyUsersPage.routeName: (BuildContext context) =>
-          new MyUsersPage(title: "Users Page"),
+      new MyUsersPage(title: "Users Page"),
       MySubcriptionPage.routeName: (BuildContext context) =>
-          new MySubcriptionPage(title: "Subcription Page"),
+      new MySubcriptionPage(title: "Subcription Page"),
       MyAccuracyEnginePage.routeName: (BuildContext context) =>
-          new MyAccuracyEnginePage(title: "Accuracy Engine Page"),
+      new MyAccuracyEnginePage(title: "Accuracy Engine Page"),
       MyLocationTrackingPage.routeName: (BuildContext context) =>
-          new MyLocationTrackingPage(title: "Location Tracking Page"),
+      new MyLocationTrackingPage(title: "Location Tracking Page"),
     };
     return MaterialApp(
       title: 'Flutter Demo',
@@ -60,6 +127,8 @@ class _MyHomePage extends State<MyHomePage> {
   String myUser;
   bool isAccuracyEngineEnabled = false;
 
+
+
   //Native to Flutter Channel
   static const platform = const MethodChannel("myChannel");
 
@@ -71,7 +140,15 @@ class _MyHomePage extends State<MyHomePage> {
     initPlatformState();
     Roam.initialize(
         publishKey:
-            "bbbf78b0184d74b026437d4bb51df89798ba4c015b3d39dae8c6d3a8fcc0222d");
+        "bbbf78b0184d74b026437d4bb51df89798ba4c015b3d39dae8c6d3a8fcc0222d");
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        // This is just a basic example. For real apps, you must show some
+        // friendly dialog box before call the request method.
+        // This is very important to not harm the user experience
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
   }
 
   //Native to Flutter Channel
@@ -118,76 +195,76 @@ class _MyHomePage extends State<MyHomePage> {
         ),
         body: Center(
             child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SelectableText('Running on: $_platformVersion\n'),
-            SelectableText(
-              'Received Location:\n $myLocation\n',
-              textAlign: TextAlign.center,
-            ),
-            ElevatedButton(
-                child: Text('Request Location Permissions'),
-                onPressed: () async {
-                  try {
-                    await Permission.locationWhenInUse.request();
-                  } on PlatformException {
-                    print('Error getting location permissions');
-                  }
-                }),
-            ElevatedButton(
-                child: Text('Disable Battery Optimization'),
-                onPressed: () async {
-                  try {
-                    await Roam.disableBatteryOptimization();
-                  } on PlatformException {
-                    print('Disable Battery Optimization Error');
-                  }
-                }),
-            ElevatedButton(
-                child: Text('Get Current Location'),
-                onPressed: () async {
-                  setState(() {
-                    myLocation = "fetching location..";
-                  });
-                  try {
-                    await Roam.getCurrentLocation(
-                      accuracy: 100,
-                      callBack: ({location}) {
-                        setState(() {
-                          myLocation = location;
-                        });
-                        print(location);
-                      },
-                    );
-                  } on PlatformException {
-                    print('Get Current Location Error');
-                  }
-                }),
-            ElevatedButton(
-                child: Text('Initialize SDK'),
-                onPressed: () async {
-                  try {
-                    await Roam.initialize(
-                        publishKey:
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SelectableText('Running on: $_platformVersion\n'),
+                SelectableText(
+                  'Received Location:\n $myLocation\n',
+                  textAlign: TextAlign.center,
+                ),
+                ElevatedButton(
+                    child: Text('Request Location Permissions'),
+                    onPressed: () async {
+                      try {
+                        await Permission.locationWhenInUse.request();
+                      } on PlatformException {
+                        print('Error getting location permissions');
+                      }
+                    }),
+                ElevatedButton(
+                    child: Text('Disable Battery Optimization'),
+                    onPressed: () async {
+                      try {
+                        await Roam.disableBatteryOptimization();
+                      } on PlatformException {
+                        print('Disable Battery Optimization Error');
+                      }
+                    }),
+                ElevatedButton(
+                    child: Text('Get Current Location'),
+                    onPressed: () async {
+                      setState(() {
+                        myLocation = "fetching location..";
+                      });
+                      try {
+                        await Roam.getCurrentLocation(
+                          accuracy: 100,
+                          callBack: ({location}) {
+                            setState(() {
+                              myLocation = location;
+                            });
+                            print(location);
+                          },
+                        );
+                      } on PlatformException {
+                        print('Get Current Location Error');
+                      }
+                    }),
+                ElevatedButton(
+                    child: Text('Initialize SDK'),
+                    onPressed: () async {
+                      try {
+                        await Roam.initialize(
+                            publishKey:
                             'bbbf78b0184d74b026437d4bb51df89798ba4c015b3d39dae8c6d3a8fcc0222d');
-                  } on PlatformException {
-                    print('Initialization Error');
-                  }
-                }),
-            ElevatedButton(
-                child: Text('Users'), onPressed: _onUsersButtonPressed),
-            ElevatedButton(
-                child: Text('Subcribe Location/Events'),
-                onPressed: _onSubscriptionButtonPressed),
-            ElevatedButton(
-                child: Text('Accuracy Engine'),
-                onPressed: _onAccuracyEngineButtonPressed),
-            ElevatedButton(
-                child: Text('Location Tracking'),
-                onPressed: _onLocationTrackingButtonPressed),
-            ElevatedButton(child: Text('Trips'), onPressed: _onButtonPressed),
-          ],
-        )),
+                      } on PlatformException {
+                        print('Initialization Error');
+                      }
+                    }),
+                ElevatedButton(
+                    child: Text('Users'), onPressed: _onUsersButtonPressed),
+                ElevatedButton(
+                    child: Text('Subcribe Location/Events'),
+                    onPressed: _onSubscriptionButtonPressed),
+                ElevatedButton(
+                    child: Text('Accuracy Engine'),
+                    onPressed: _onAccuracyEngineButtonPressed),
+                ElevatedButton(
+                    child: Text('Location Tracking'),
+                    onPressed: _onLocationTrackingButtonPressed),
+                ElevatedButton(child: Text('Trips'), onPressed: _onButtonPressed),
+              ],
+            )),
       ),
     );
   }
@@ -265,31 +342,31 @@ class _MyItemsPageState extends State<MyItemsPage> {
                 onPressed: () async {
                   try {
                     switch (type) {
-                      // case "getTripStatus":
-                      //   Roam.getTripStatus(
-                      //       tripId: tripId,
-                      //       callBack: ({trip}) {
-                      //         setState(() {
-                      //           myTrip = trip;
-                      //         });
-                      //         print(trip);
-                      //       });
-                      //   break;
-                      //
+                    // case "getTripStatus":
+                    //   Roam.getTripStatus(
+                    //       tripId: tripId,
+                    //       callBack: ({trip}) {
+                    //         setState(() {
+                    //           myTrip = trip;
+                    //         });
+                    //         print(trip);
+                    //       });
+                    //   break;
+                    //
                       case "getTrip":
-                        // Roam.getTrip(tripId, ({roamTripResponse}) {
-                        //   String responseString =
-                        //       jsonEncode(roamTripResponse?.toJson());
-                        //   print('Get trip response: $responseString');
-                        //   CustomLogger.writeLog(responseString);
-                        //   setState(() {
-                        //     tripId = roamTripResponse?.tripDetails?.id;
-                        //   });
-                        // }, ({error}) {
-                        //   String errorString = jsonEncode(error?.toJson());
-                        //   print('Error: $errorString');
-                        //   CustomLogger.writeLog(errorString);
-                        // });
+                      // Roam.getTrip(tripId, ({roamTripResponse}) {
+                      //   String responseString =
+                      //       jsonEncode(roamTripResponse?.toJson());
+                      //   print('Get trip response: $responseString');
+                      //   CustomLogger.writeLog(responseString);
+                      //   setState(() {
+                      //     tripId = roamTripResponse?.tripDetails?.id;
+                      //   });
+                      // }, ({error}) {
+                      //   String errorString = jsonEncode(error?.toJson());
+                      //   print('Error: $errorString');
+                      //   CustomLogger.writeLog(errorString);
+                      // });
                         break;
 
                       case "subscribeTrip":
@@ -304,164 +381,164 @@ class _MyItemsPageState extends State<MyItemsPage> {
                         );
                         break;
                       case "startTrip":
-                        // Roam.startTrip(({roamTripResponse}) {
-                        //   String responseString =
-                        //       jsonEncode(roamTripResponse?.toJson());
-                        //   print('Start trip response: $responseString');
-                        //   CustomLogger.writeLog(responseString);
-                        //   setState(() {
-                        //     tripId = roamTripResponse?.tripDetails?.id;
-                        //   });
-                        // }, ({error}) {
-                        //   String errorString = jsonEncode(error?.toJson());
-                        //   print('Error: $errorString');
-                        //   CustomLogger.writeLog(errorString);
-                        // }, tripId: tripId);
+                      // Roam.startTrip(({roamTripResponse}) {
+                      //   String responseString =
+                      //       jsonEncode(roamTripResponse?.toJson());
+                      //   print('Start trip response: $responseString');
+                      //   CustomLogger.writeLog(responseString);
+                      //   setState(() {
+                      //     tripId = roamTripResponse?.tripDetails?.id;
+                      //   });
+                      // }, ({error}) {
+                      //   String errorString = jsonEncode(error?.toJson());
+                      //   print('Error: $errorString');
+                      //   CustomLogger.writeLog(errorString);
+                      // }, tripId: tripId);
                         break;
 
                       case "quickTrip":
-                        // RoamTrip quickTrip = RoamTrip(false);
-                        // Roam.startTrip(({roamTripResponse}) {
-                        //   String responseString =
-                        //       jsonEncode(roamTripResponse?.toJson());
-                        //   print('Start quick trip response: $responseString');
-                        //   CustomLogger.writeLog(
-                        //       'Start quick trip response: $responseString');
-                        //   setState(() {
-                        //     tripId = roamTripResponse?.tripDetails?.id;
-                        //   });
-                        // }, ({error}) {
-                        //   String errorString = jsonEncode(error?.toJson());
-                        //   print('Error: $errorString');
-                        //   CustomLogger.writeLog(errorString);
-                        // },
-                        //     roamTrip: quickTrip,
-                        //     roamTrackingMode: RoamTrackingMode.time(5,
-                        //         desiredAccuracy: DesiredAccuracy.HIGH));
+                      // RoamTrip quickTrip = RoamTrip(false);
+                      // Roam.startTrip(({roamTripResponse}) {
+                      //   String responseString =
+                      //       jsonEncode(roamTripResponse?.toJson());
+                      //   print('Start quick trip response: $responseString');
+                      //   CustomLogger.writeLog(
+                      //       'Start quick trip response: $responseString');
+                      //   setState(() {
+                      //     tripId = roamTripResponse?.tripDetails?.id;
+                      //   });
+                      // }, ({error}) {
+                      //   String errorString = jsonEncode(error?.toJson());
+                      //   print('Error: $errorString');
+                      //   CustomLogger.writeLog(errorString);
+                      // },
+                      //     roamTrip: quickTrip,
+                      //     roamTrackingMode: RoamTrackingMode.time(5,
+                      //         desiredAccuracy: DesiredAccuracy.HIGH));
                         break;
 
                       case "updateTrip":
-                        // RoamTrip updateTrip = RoamTrip(false);
-                        // updateTrip.description = "test description";
-                        // Roam.updateTrip(updateTrip, ({roamTripResponse}) {
-                        //   String responseString =
-                        //       jsonEncode(roamTripResponse?.toJson());
-                        //   print('Update trip response: $responseString');
-                        //   CustomLogger.writeLog('Update trip response: $responseString');
-                        //   setState(() {
-                        //     tripId = roamTripResponse?.tripDetails?.id;
-                        //   });
-                        // }, ({error}) {
-                        //   String errorString = jsonEncode(error?.toJson());
-                        //   print('Error: $errorString');
-                        //   CustomLogger.writeLog(errorString);
-                        // });
+                      // RoamTrip updateTrip = RoamTrip(false);
+                      // updateTrip.description = "test description";
+                      // Roam.updateTrip(updateTrip, ({roamTripResponse}) {
+                      //   String responseString =
+                      //       jsonEncode(roamTripResponse?.toJson());
+                      //   print('Update trip response: $responseString');
+                      //   CustomLogger.writeLog('Update trip response: $responseString');
+                      //   setState(() {
+                      //     tripId = roamTripResponse?.tripDetails?.id;
+                      //   });
+                      // }, ({error}) {
+                      //   String errorString = jsonEncode(error?.toJson());
+                      //   print('Error: $errorString');
+                      //   CustomLogger.writeLog(errorString);
+                      // });
                         break;
 
                       case "pauseTrip":
-                        // Roam.pauseTrip(tripId, ({roamTripResponse}) {
-                        //   String responseString =
-                        //       jsonEncode(roamTripResponse?.toJson());
-                        //   print('Pause trip response: $responseString');
-                        //   CustomLogger.writeLog(responseString);
-                        //   setState(() {
-                        //     tripId = roamTripResponse?.tripDetails?.id;
-                        //   });
-                        // }, ({error}) {
-                        //   String errorString = jsonEncode(error?.toJson());
-                        //   print('Error: $errorString');
-                        //   CustomLogger.writeLog(errorString);
-                        // });
+                      // Roam.pauseTrip(tripId, ({roamTripResponse}) {
+                      //   String responseString =
+                      //       jsonEncode(roamTripResponse?.toJson());
+                      //   print('Pause trip response: $responseString');
+                      //   CustomLogger.writeLog(responseString);
+                      //   setState(() {
+                      //     tripId = roamTripResponse?.tripDetails?.id;
+                      //   });
+                      // }, ({error}) {
+                      //   String errorString = jsonEncode(error?.toJson());
+                      //   print('Error: $errorString');
+                      //   CustomLogger.writeLog(errorString);
+                      // });
                         break;
 
                       case "resumeTrip":
-                        // Roam.resumeTrip(tripId, ({roamTripResponse}) {
-                        //   String responseString =
-                        //       jsonEncode(roamTripResponse?.toJson());
-                        //   print('Resume trip response: $responseString');
-                        //   CustomLogger.writeLog(responseString);
-                        //   setState(() {
-                        //     tripId = roamTripResponse?.tripDetails?.id;
-                        //   });
-                        // }, ({error}) {
-                        //   String errorString = jsonEncode(error?.toJson());
-                        //   print('Error: $errorString');
-                        //   CustomLogger.writeLog(errorString);
-                        // });
+                      // Roam.resumeTrip(tripId, ({roamTripResponse}) {
+                      //   String responseString =
+                      //       jsonEncode(roamTripResponse?.toJson());
+                      //   print('Resume trip response: $responseString');
+                      //   CustomLogger.writeLog(responseString);
+                      //   setState(() {
+                      //     tripId = roamTripResponse?.tripDetails?.id;
+                      //   });
+                      // }, ({error}) {
+                      //   String errorString = jsonEncode(error?.toJson());
+                      //   print('Error: $errorString');
+                      //   CustomLogger.writeLog(errorString);
+                      // });
                         break;
 
                       case "endTrip":
-                        // Roam.endTrip(tripId, false, ({roamTripResponse}) {
-                        //   String responseString =
-                        //       jsonEncode(roamTripResponse?.toJson());
-                        //   print('End trip response: $responseString');
-                        //   CustomLogger.writeLog(responseString);
-                        //   setState(() {
-                        //     tripId = roamTripResponse?.tripDetails?.id;
-                        //   });
-                        // }, ({error}) {
-                        //   String errorString = jsonEncode(error?.toJson());
-                        //   print('Error: $errorString');
-                        //   CustomLogger.writeLog(errorString);
-                        // });
+                      // Roam.endTrip(tripId, false, ({roamTripResponse}) {
+                      //   String responseString =
+                      //       jsonEncode(roamTripResponse?.toJson());
+                      //   print('End trip response: $responseString');
+                      //   CustomLogger.writeLog(responseString);
+                      //   setState(() {
+                      //     tripId = roamTripResponse?.tripDetails?.id;
+                      //   });
+                      // }, ({error}) {
+                      //   String errorString = jsonEncode(error?.toJson());
+                      //   print('Error: $errorString');
+                      //   CustomLogger.writeLog(errorString);
+                      // });
                         break;
 
                       case "syncTrip":
-                        // Roam.syncTrip(tripId, ({roamSyncTripResponse}) {
-                        //   String responseString =
-                        //       jsonEncode(roamSyncTripResponse?.toJson());
-                        //   print('End trip response: $responseString');
-                        //   CustomLogger.writeLog(responseString);
-                        // }, ({error}) {
-                        //   String errorString = jsonEncode(error?.toJson());
-                        //   print('Error: $errorString');
-                        //   CustomLogger.writeLog(errorString);
-                        // });
+                      // Roam.syncTrip(tripId, ({roamSyncTripResponse}) {
+                      //   String responseString =
+                      //       jsonEncode(roamSyncTripResponse?.toJson());
+                      //   print('End trip response: $responseString');
+                      //   CustomLogger.writeLog(responseString);
+                      // }, ({error}) {
+                      //   String errorString = jsonEncode(error?.toJson());
+                      //   print('Error: $errorString');
+                      //   CustomLogger.writeLog(errorString);
+                      // });
                         break;
 
                       case "deleteTrip":
-                        // Roam.deleteTrip(tripId, ({roamDeleteTripResponse}) {
-                        //   String responseString =
-                        //       jsonEncode(roamDeleteTripResponse?.toJson());
-                        //   print('Delete trip response: $responseString}');
-                        //   CustomLogger.writeLog(responseString);
-                        //   setState(() {
-                        //     tripId = roamDeleteTripResponse?.trip?.id;
-                        //   });
-                        // }, ({error}) {
-                        //   String errorString = jsonEncode(error?.toJson());
-                        //   print('Error: $errorString');
-                        //   CustomLogger.writeLog(errorString);
-                        // });
+                      // Roam.deleteTrip(tripId, ({roamDeleteTripResponse}) {
+                      //   String responseString =
+                      //       jsonEncode(roamDeleteTripResponse?.toJson());
+                      //   print('Delete trip response: $responseString}');
+                      //   CustomLogger.writeLog(responseString);
+                      //   setState(() {
+                      //     tripId = roamDeleteTripResponse?.trip?.id;
+                      //   });
+                      // }, ({error}) {
+                      //   String errorString = jsonEncode(error?.toJson());
+                      //   print('Error: $errorString');
+                      //   CustomLogger.writeLog(errorString);
+                      // });
                         break;
 
                       case "getTripSummary":
-                        // Roam.getTripSummary(tripId, ({roamTripResponse}) {
-                        //   String responseString =
-                        //       jsonEncode(roamTripResponse?.toJson());
-                        //   print('End trip response: $responseString');
-                        //   CustomLogger.writeLog(responseString);
-                        //   setState(() {
-                        //     tripId = roamTripResponse?.tripDetails?.id;
-                        //   });
-                        // }, ({error}) {
-                        //   String errorString = jsonEncode(error?.toJson());
-                        //   print('Error: $errorString');
-                        //   CustomLogger.writeLog(errorString);
-                        // });
+                      // Roam.getTripSummary(tripId, ({roamTripResponse}) {
+                      //   String responseString =
+                      //       jsonEncode(roamTripResponse?.toJson());
+                      //   print('End trip response: $responseString');
+                      //   CustomLogger.writeLog(responseString);
+                      //   setState(() {
+                      //     tripId = roamTripResponse?.tripDetails?.id;
+                      //   });
+                      // }, ({error}) {
+                      //   String errorString = jsonEncode(error?.toJson());
+                      //   print('Error: $errorString');
+                      //   CustomLogger.writeLog(errorString);
+                      // });
                         break;
 
                       case "getActiveTrips":
-                        // Roam.getActiveTrips(false, ({roamActiveTripResponse}) {
-                        //   String responseString =
-                        //       jsonEncode(roamActiveTripResponse?.toJson());
-                        //   print('Get active trips response: $responseString}');
-                        //   CustomLogger.writeLog(responseString);
-                        // }, ({error}) {
-                        //   String errorString = jsonEncode(error?.toJson());
-                        //   print('Error: $errorString');
-                        //   CustomLogger.writeLog(errorString);
-                        // });
+                      // Roam.getActiveTrips(false, ({roamActiveTripResponse}) {
+                      //   String responseString =
+                      //       jsonEncode(roamActiveTripResponse?.toJson());
+                      //   print('Get active trips response: $responseString}');
+                      //   CustomLogger.writeLog(responseString);
+                      // }, ({error}) {
+                      //   String errorString = jsonEncode(error?.toJson());
+                      //   print('Error: $errorString');
+                      //   CustomLogger.writeLog(errorString);
+                      // });
                         break;
 
                       default:
@@ -504,12 +581,12 @@ class _MyItemsPageState extends State<MyItemsPage> {
 
 
                         RoamTripStops stop =
-                            RoamTripStops(600, [77.63414185889549,12.915192126794398]);
+                        RoamTripStops(600, [77.63414185889549,12.915192126794398]);
                         RoamTrip roamTrip = RoamTrip(isLocal: false);
                         roamTrip.stop.add(stop);
                         Roam.createTrip(roamTrip, ({roamTripResponse}) {
                           String responseString =
-                              jsonEncode(roamTripResponse?.toJson());
+                          jsonEncode(roamTripResponse?.toJson());
                           print('Create online trip response: $responseString');
                           CustomLogger.writeLog(
                               'Create online trip response: $responseString');
@@ -572,7 +649,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                       try {
                         Roam.getTrip(tripId, ({roamTripResponse}) {
                           String responseString =
-                              jsonEncode(roamTripResponse?.toJson());
+                          jsonEncode(roamTripResponse?.toJson());
                           print('Get trip response: $responseString');
                           CustomLogger.writeLog(
                               'Get trip response: $responseString');
@@ -624,7 +701,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                         // _displayTripsInputDialog(context, "startTrip");
                         Roam.startTrip(({roamTripResponse}) {
                           String responseString =
-                              jsonEncode(roamTripResponse?.toJson());
+                          jsonEncode(roamTripResponse?.toJson());
                           print('Start trip response: $responseString');
                           CustomLogger.writeLog(
                               'Start trip response: $responseString');
@@ -656,7 +733,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                         quickTrip.stop.add(stop);
                         Roam.startTrip(({roamTripResponse}) {
                           String responseString =
-                              jsonEncode(roamTripResponse?.toJson());
+                          jsonEncode(roamTripResponse?.toJson());
                           print('Online Quick trip response: $responseString');
                           CustomLogger.writeLog(
                               'Online Quick trip response: $responseString');
@@ -726,7 +803,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                         updateTrip.description = "test description";
                         Roam.updateTrip(updateTrip, ({roamTripResponse}) {
                           String responseString =
-                              jsonEncode(roamTripResponse?.toJson());
+                          jsonEncode(roamTripResponse?.toJson());
                           print('Update trip response: $responseString');
                           CustomLogger.writeLog(
                               'Update trip response: $responseString');
@@ -780,7 +857,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                       try {
                         Roam.pauseTrip(tripId, ({roamTripResponse}) {
                           String responseString =
-                              jsonEncode(roamTripResponse?.toJson());
+                          jsonEncode(roamTripResponse?.toJson());
                           print('Pause trip response: $responseString');
                           CustomLogger.writeLog(
                               'Pause trip response: $responseString');
@@ -807,7 +884,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                       try {
                         Roam.resumeTrip(tripId, ({roamTripResponse}) {
                           String responseString =
-                              jsonEncode(roamTripResponse?.toJson());
+                          jsonEncode(roamTripResponse?.toJson());
                           print('Resume trip response: $responseString');
                           CustomLogger.writeLog(
                               'Resume trip response: $responseString');
@@ -834,7 +911,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                       try {
                         Roam.endTrip(tripId, false, ({roamTripResponse}) {
                           String responseString =
-                              jsonEncode(roamTripResponse?.toJson());
+                          jsonEncode(roamTripResponse?.toJson());
                           print('End trip response: $responseString');
                           CustomLogger.writeLog(
                               'End trip response: $responseString');
@@ -861,7 +938,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                       try {
                         Roam.syncTrip(tripId, ({roamSyncTripResponse}) {
                           String responseString =
-                              jsonEncode(roamSyncTripResponse?.toJson());
+                          jsonEncode(roamSyncTripResponse?.toJson());
                           print('Sync trip response: $responseString');
                           CustomLogger.writeLog(
                               'Sync trip response: $responseString');
@@ -887,7 +964,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                       try {
                         Roam.deleteTrip(tripId, ({roamDeleteTripResponse}) {
                           String responseString =
-                              jsonEncode(roamDeleteTripResponse?.toJson());
+                          jsonEncode(roamDeleteTripResponse?.toJson());
                           print('Delete trip response: $responseString}');
                           CustomLogger.writeLog(responseString);
                           setState(() {
@@ -913,7 +990,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                       try {
                         Roam.getActiveTrips(false, ({roamActiveTripResponse}) {
                           String responseString =
-                              jsonEncode(roamActiveTripResponse?.toJson());
+                          jsonEncode(roamActiveTripResponse?.toJson());
                           print('Get active trips response: $responseString}');
                           CustomLogger.writeLog(responseString);
                           setState(() {
@@ -941,7 +1018,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                       try {
                         Roam.getTripSummary(tripId, ({roamTripResponse}) {
                           String responseString =
-                              jsonEncode(roamTripResponse?.toJson());
+                          jsonEncode(roamTripResponse?.toJson());
                           print('trip summary response: $responseString');
                           CustomLogger.writeLog(
                               'trip summary response: $responseString');
@@ -1280,6 +1357,8 @@ class MyLocationTrackingPage extends StatefulWidget {
 class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
   bool isTracking;
   String valueText;
+  String locationResponse;
+  static const platform = MethodChannel('roam_example');
   TextEditingController _textFieldController = TextEditingController();
   Future<void> _displayTextInputDialog(BuildContext context) async {
     return showDialog(
@@ -1313,6 +1392,16 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                 textColor: Colors.white,
                 child: Text('OK'),
                 onPressed: () async {
+                  if(Platform.isAndroid){
+                    initializeService();
+                  } else {
+                    Roam.onLocation((location) async {
+                      print(jsonEncode(location));
+                      await platform.invokeMethod('send_notification', {'body': jsonEncode(location)});
+                    });
+                  }
+
+                  Roam.setForeground(true, "Flutter Example", "Tap to open", "mipmap/ic_launcher", "ai.roam.example.MainActivity");
                   try {
                     switch (valueText) {
                       case "active":
@@ -1346,7 +1435,7 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                           "showsBackgroundLocationIndicator": true,
                           "allowBackgroundLocationUpdates": true,
                           "desiredAccuracy": "kCLLocationAccuracyBest",
-                          "timeInterval": 1
+                          "timeInterval": 5
                         };
                         Roam.startTracking(
                             trackingMode: "custom",
@@ -1392,6 +1481,7 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
         child: Column(
           children: [
             SelectableText('\nTracking status: $isTracking\n'),
+            SelectableText('\nLocation: $locationResponse\n'),
             ElevatedButton(
                 child: Text('Update Current Location'),
                 onPressed: () async {
@@ -1413,12 +1503,15 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
             ElevatedButton(
                 child: Text('Stop Tracking'),
                 onPressed: () async {
+
+                  Roam.setForeground(false, "Flutter Example", "Tap to open", "mipmap/ic_launcher", "ai.roam.example.MainActivity");
                   try {
                     await Roam.stopTracking();
                   } on PlatformException {
                     print('Stop Tracking Error');
                   }
                 }),
+
           ],
         ),
       ),

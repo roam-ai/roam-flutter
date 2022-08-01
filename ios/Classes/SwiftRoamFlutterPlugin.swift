@@ -4,7 +4,14 @@ import Roam
 import CoreLocation
 
 
-public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
+public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, RoamDelegate {
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable : Any] = [:]) -> Bool {
+        Roam.delegate = self
+        return true
+    }
+    
+    
+    
     private static let METHOD_INITIALIZE = "initialize";
     private static let METHOD_GET_CURRENT_LOCATION = "getCurrentLocation";
     private static let METHOD_CREATE_USER = "createUser";
@@ -50,16 +57,52 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
     private static let ACTIVITY_TYPE_FITNESS = "fitness";
 
     private static var channel: FlutterMethodChannel?;
+    private static var locationEventChannel: FlutterEventChannel?;
+     static var eventSink: FlutterEventSink?;
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "roam_flutter", binaryMessenger: registrar.messenger())
         let instance = SwiftRoamFlutterPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
         registrar.addApplicationDelegate(instance)
+        let locationEventChannel = FlutterEventChannel(name: "roam_flutter_event/location", binaryMessenger: registrar.messenger())
+        locationEventChannel.setStreamHandler(EventStreamHandler())
+        
     }
+    
+    class EventStreamHandler: NSObject, FlutterStreamHandler{
+        func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+            SwiftRoamFlutterPlugin.eventSink = events
+            return nil;
+        }
+        
+        func onCancel(withArguments arguments: Any?) -> FlutterError? {
+            return nil;
+        }
+    }
+
+    
 
     public func didUpdateLocation(_ roam: RoamLocation) {
         debugPrint("Location Received SDK")
+        let location: NSDictionary = [
+            "latitude": roam.location.coordinate.latitude,
+            "longitude": roam.location.coordinate.longitude,
+            "accuracy": roam.location.horizontalAccuracy,
+            "altitude": roam.location.altitude,
+            "speed": roam.location.speed,
+            "bearing": roam.location.course,
+            "userId": roam.userId as Any,
+            "activity": roam.activity as Any,
+            "recordedAt": roam.recordedAt as Any,
+            "timezoneOffset": roam.timezoneOffset as Any,
+            "metadata": roam.metaData as Any,
+            "batteryStatus": roam.batteryRemaining,
+            "networkStatus": roam.networkStatus
+        ]
+        if(SwiftRoamFlutterPlugin.eventSink != nil){
+            SwiftRoamFlutterPlugin.eventSink!(location)
+        }
     }
 
     public func applicationDidBecomeActive(_ application: UIApplication) {
@@ -1050,3 +1093,5 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin {
     
     
 }
+
+

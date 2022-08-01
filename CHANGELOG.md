@@ -1,3 +1,6 @@
+## 0.1.1
+* Added `Roam.setForeground()` and `Roam.onLocation()` methods
+
 ## 0.1.0
 * Updated to latest native Roam SDK versions. Android v0.1.1 and iOS v0.1.1
 * Updated SDK to support Roam Trip v2.
