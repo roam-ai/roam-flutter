@@ -18,7 +18,7 @@ import androidx.annotation.RequiresApi;
 
 public class RoamForegroundService extends Service {
 
-    RoamFlutterPlugin roamFlutterPlugin;
+    RoamFlutterPlugin.RoamFlutterReceiver roamFlutterReceiver;
 
     @Nullable
     @Override
@@ -51,15 +51,15 @@ public class RoamForegroundService extends Service {
     }
 
     private void register() {
-        roamFlutterPlugin = new RoamFlutterPlugin();
+        roamFlutterReceiver = new RoamFlutterPlugin.RoamFlutterReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("com.roam.android.RECEIVED");
-        registerReceiver(roamFlutterPlugin, intentFilter);
+        registerReceiver(roamFlutterReceiver, intentFilter);
     }
 
     private void unRegister() {
-        if (roamFlutterPlugin != null) {
-            unregisterReceiver(roamFlutterPlugin);
+        if (roamFlutterReceiver != null) {
+            unregisterReceiver(roamFlutterReceiver);
         }
     }
 
