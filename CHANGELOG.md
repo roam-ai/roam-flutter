@@ -1,3 +1,6 @@
+## 0.1.2
+* Fixed build failure due to RoamReceiver
+
 ## 0.1.1
 * Added `Roam.setForeground()` and `Roam.onLocation()` methods
 
