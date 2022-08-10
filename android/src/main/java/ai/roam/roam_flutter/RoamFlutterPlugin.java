@@ -80,7 +80,7 @@ import io.flutter.view.FlutterMain;
 
 
 /** RoamFlutterPlugin */
-public class RoamFlutterPlugin extends RoamReceiver implements FlutterPlugin, MethodCallHandler, ActivityAware {
+public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -971,37 +971,44 @@ public class RoamFlutterPlugin extends RoamReceiver implements FlutterPlugin, Me
   }
 
 
-  @Override
-  public void onLocationUpdated(Context context, RoamLocation roamLocation) {
+  public static class RoamFlutterReceiver extends RoamReceiver{
 
-    FlutterMain.startInitialization(context);
-    FlutterMain.ensureInitializationComplete(context, null);
+    @Override
+    public void onLocationUpdated(Context context, RoamLocation roamLocation) {
 
-    try {
-      JSONObject jsonObject = new JSONObject();
-      jsonObject.put("latitude", roamLocation.getLocation().getLatitude());
-      jsonObject.put("longitude", roamLocation.getLocation().getLongitude());
-      jsonObject.put("accuracy", roamLocation.getLocation().getAccuracy());
-      jsonObject.put("altitude", roamLocation.getLocation().getAltitude());
-      jsonObject.put("speed", roamLocation.getLocation().getSpeed());
-      jsonObject.put("bearing", roamLocation.getLocation().getBearing());
-      jsonObject.put("userId", roamLocation.getUserId());
-      jsonObject.put("activity", roamLocation.getActivity());
-      jsonObject.put("recordedAt", roamLocation.getRecordedAt());
-      jsonObject.put("timezoneOffset", roamLocation.getTimezoneOffset());
-      jsonObject.put("metadata", roamLocation.getMetadata() == null ? new JSONObject() : roamLocation.getMetadata());
-      jsonObject.put("batteryStatus", roamLocation.getBatteryStatus());
-      jsonObject.put("networkStatus", roamLocation.getNetworkStatus());
+      FlutterMain.startInitialization(context);
+      FlutterMain.ensureInitializationComplete(context, null);
 
-      HashMap<String, Object> map = new Gson().fromJson(jsonObject.toString(), HashMap.class);
-      if (locationEventSink != null){
-        locationEventSink.success(map);
+      try {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("latitude", roamLocation.getLocation().getLatitude());
+        jsonObject.put("longitude", roamLocation.getLocation().getLongitude());
+        jsonObject.put("accuracy", roamLocation.getLocation().getAccuracy());
+        jsonObject.put("altitude", roamLocation.getLocation().getAltitude());
+        jsonObject.put("speed", roamLocation.getLocation().getSpeed());
+        jsonObject.put("bearing", roamLocation.getLocation().getBearing());
+        jsonObject.put("userId", roamLocation.getUserId());
+        jsonObject.put("activity", roamLocation.getActivity());
+        jsonObject.put("recordedAt", roamLocation.getRecordedAt());
+        jsonObject.put("timezoneOffset", roamLocation.getTimezoneOffset());
+        jsonObject.put("metadata", roamLocation.getMetadata() == null ? new JSONObject() : roamLocation.getMetadata());
+        jsonObject.put("batteryStatus", roamLocation.getBatteryStatus());
+        jsonObject.put("networkStatus", roamLocation.getNetworkStatus());
+
+        HashMap<String, Object> map = new Gson().fromJson(jsonObject.toString(), HashMap.class);
+        if (locationEventSink != null){
+          locationEventSink.success(map);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
       }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
 
     }
+
+
+  }
+
+
 
 
 
