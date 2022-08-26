@@ -1,3 +1,6 @@
+## 0.1.3
+* Fixed release build failure for error `attribute android:foregroundServiceType not found`
+
 ## 0.1.2
 * Fixed build failure due to RoamReceiver
 
