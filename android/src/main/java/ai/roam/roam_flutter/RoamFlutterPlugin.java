@@ -31,9 +31,9 @@ import com.roam.sdk.models.tripsummary.RoamTripSummary;
 import com.roam.sdk.service.RoamReceiver;
 import com.roam.sdk.trips_v2.RoamTrip;
 import com.roam.sdk.trips_v2.callback.RoamActiveTripsCallback;
-import com.roam.sdk.trips_v2.callback.RoamDeleteTripCallback;
 import com.roam.sdk.trips_v2.callback.RoamSyncTripCallback;
 import com.roam.sdk.trips_v2.callback.RoamTripCallback;
+import com.roam.sdk.trips_v2.callback.a;
 import com.roam.sdk.trips_v2.models.EndLocation;
 import com.roam.sdk.trips_v2.models.Error;
 import com.roam.sdk.trips_v2.models.Errors;
@@ -844,9 +844,9 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
            final String deleteTripId = call.argument("tripId");
 
-           Roam.deleteTrip(deleteTripId, new RoamDeleteTripCallback() {
+           Roam.deleteTrip(deleteTripId, new a() {
              @Override
-             public void onSuccess(RoamDeleteTripResponse roamDeleteTripResponse) {
+             public void a(RoamDeleteTripResponse roamDeleteTripResponse) {
                JSONObject json = JsonEncoder.encodeRoamDeleteTripResponse(roamDeleteTripResponse);
                result.success(json.toString());
              }
@@ -974,36 +974,43 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
   public static class RoamFlutterReceiver extends RoamReceiver{
 
     @Override
-    public void onLocationUpdated(Context context, RoamLocation roamLocation) {
+    public void onLocationUpdated(Context context, List<RoamLocation> list) {
+      super.onLocationUpdated(context, list);
 
       FlutterMain.startInitialization(context);
       FlutterMain.ensureInitializationComplete(context, null);
 
-      try {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("latitude", roamLocation.getLocation().getLatitude());
-        jsonObject.put("longitude", roamLocation.getLocation().getLongitude());
-        jsonObject.put("accuracy", roamLocation.getLocation().getAccuracy());
-        jsonObject.put("altitude", roamLocation.getLocation().getAltitude());
-        jsonObject.put("speed", roamLocation.getLocation().getSpeed());
-        jsonObject.put("bearing", roamLocation.getLocation().getBearing());
-        jsonObject.put("userId", roamLocation.getUserId());
-        jsonObject.put("activity", roamLocation.getActivity());
-        jsonObject.put("recordedAt", roamLocation.getRecordedAt());
-        jsonObject.put("timezoneOffset", roamLocation.getTimezoneOffset());
-        jsonObject.put("metadata", roamLocation.getMetadata() == null ? new JSONObject() : roamLocation.getMetadata());
-        jsonObject.put("batteryStatus", roamLocation.getBatteryStatus());
-        jsonObject.put("networkStatus", roamLocation.getNetworkStatus());
+      for (RoamLocation roamLocation: list){
+        try {
+          JSONObject jsonObject = new JSONObject();
+          jsonObject.put("latitude", roamLocation.getLocation().getLatitude());
+          jsonObject.put("longitude", roamLocation.getLocation().getLongitude());
+          jsonObject.put("accuracy", roamLocation.getLocation().getAccuracy());
+          jsonObject.put("altitude", roamLocation.getLocation().getAltitude());
+          jsonObject.put("speed", roamLocation.getLocation().getSpeed());
+          jsonObject.put("bearing", roamLocation.getLocation().getBearing());
+          jsonObject.put("userId", roamLocation.getUserId());
+          jsonObject.put("activity", roamLocation.getActivity());
+          jsonObject.put("recordedAt", roamLocation.getRecordedAt());
+          jsonObject.put("timezoneOffset", roamLocation.getTimezoneOffset());
+          jsonObject.put("metadata", roamLocation.getMetadata() == null ? new JSONObject() : roamLocation.getMetadata());
+          jsonObject.put("batteryStatus", roamLocation.getBatteryStatus());
+          jsonObject.put("networkStatus", roamLocation.getNetworkStatus());
 
-        HashMap<String, Object> map = new Gson().fromJson(jsonObject.toString(), HashMap.class);
-        if (locationEventSink != null){
-          locationEventSink.success(map);
+          HashMap<String, Object> map = new Gson().fromJson(jsonObject.toString(), HashMap.class);
+          if (locationEventSink != null){
+            locationEventSink.success(map);
+          }
+        } catch (Exception e) {
+          e.printStackTrace();
         }
-      } catch (Exception e) {
-        e.printStackTrace();
       }
 
+
+
     }
+
+
 
 
   }

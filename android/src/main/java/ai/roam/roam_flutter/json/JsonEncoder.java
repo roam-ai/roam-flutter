@@ -357,10 +357,6 @@ public class JsonEncoder {
             json.put("stops", stops);
 
             json.put("syncStatus", trips.getSyncStatus());
-            json.put("isPaused", trips.isPaused());
-            json.put("isStarted", trips.isStarted());
-            json.put("isEnded", trips.isEnded());
-            json.put("isResumed", trips.isEnded());
         } catch (Exception e){
             e.printStackTrace();
         }

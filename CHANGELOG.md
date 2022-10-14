@@ -1,3 +1,7 @@
+## 0.1.4
+* Updated Roam Android SDK to 0.1.4
+* Fixed noise location update for distance based tracking and for stationary location update.
+
 ## 0.1.3
 * Fixed release build failure for error `attribute android:foregroundServiceType not found`
 
