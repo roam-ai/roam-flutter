@@ -31,9 +31,9 @@ import com.roam.sdk.models.tripsummary.RoamTripSummary;
 import com.roam.sdk.service.RoamReceiver;
 import com.roam.sdk.trips_v2.RoamTrip;
 import com.roam.sdk.trips_v2.callback.RoamActiveTripsCallback;
+import com.roam.sdk.trips_v2.callback.RoamDeleteTripCallback;
 import com.roam.sdk.trips_v2.callback.RoamSyncTripCallback;
 import com.roam.sdk.trips_v2.callback.RoamTripCallback;
-import com.roam.sdk.trips_v2.callback.a;
 import com.roam.sdk.trips_v2.models.EndLocation;
 import com.roam.sdk.trips_v2.models.Error;
 import com.roam.sdk.trips_v2.models.Errors;
@@ -243,7 +243,8 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                        foregroundTitle,
                        foregroundDescription,
                        resId,
-                       foregroundActivity
+                       foregroundActivity,
+                       "ai.roam.roam_flutter.RoamForegroundService"
                );
              } catch (Exception e){
                e.printStackTrace();
@@ -256,9 +257,9 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
          case METHOD_GET_CURRENT_LOCATION:
            final Integer accuracy = call.argument("accuracy");
-           Roam.getCurrentLocation(RoamTrackingMode.DesiredAccuracy.MEDIUM, accuracy, new RoamLocationCallback() {
+           Roam.getCurrentLocation(RoamTrackingMode.DesiredAccuracy.HIGH, accuracy, new RoamLocationCallback() {
              @Override
-             public void location(Location location) {
+             public void location(Location location, float direction) {
                JSONObject coordinates = new JSONObject();
                JSONObject roamLocation = new JSONObject();
                try {
@@ -268,6 +269,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                  roamLocation.put("altitude", location.getAltitude());
                  roamLocation.put("accuracy", location.getAccuracy());
                  String locationText = roamLocation.toString();
+                 Log.e("TAG", locationText);
                  result.success(locationText);
                } catch (JSONException e) {
                  e.printStackTrace();
@@ -278,6 +280,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              public void onFailure(RoamError roamError) {
                roamError.getCode();
                roamError.getMessage();
+               Log.e("TAG", roamError.getMessage());
              }
            });
            break;
@@ -492,8 +495,6 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
          case METHOD_START_TRACKING:
            final String trackingMode = call.argument("trackingMode");
 
-           context.startService(new Intent(context, RoamForegroundService.class));
-
            switch (trackingMode) {
              case TRACKING_MODE_PASSIVE:
                RoamPublish roamPublish = new RoamPublish.Builder()
@@ -548,7 +549,6 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            break;
 
          case METHOD_STOP_TRACKING:
-           context.stopService(new Intent(context, RoamForegroundService.class));
            Roam.stopTracking();
            break;
 
@@ -844,9 +844,9 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
            final String deleteTripId = call.argument("tripId");
 
-           Roam.deleteTrip(deleteTripId, new a() {
+           Roam.deleteTrip(deleteTripId, new RoamDeleteTripCallback() {
              @Override
-             public void a(RoamDeleteTripResponse roamDeleteTripResponse) {
+             public void onSuccess(RoamDeleteTripResponse roamDeleteTripResponse) {
                JSONObject json = JsonEncoder.encodeRoamDeleteTripResponse(roamDeleteTripResponse);
                result.success(json.toString());
              }
