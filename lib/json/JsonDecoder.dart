@@ -482,10 +482,6 @@ class JsonDecoder{
       });
 
       String? syncStatus = map['syncStatus'];
-      bool? isPaused = map['isPaused'];
-      bool? isStarted = map['isStarted'];
-      bool? isEnded = map['isEnded'];
-      bool? isResumed = map['isResumed'];
 
 
       Trips? trips = Trips();
@@ -504,10 +500,6 @@ class JsonDecoder{
       trips.events = events;
       trips.stop = stops;
       trips.syncStatus = syncStatus;
-      trips.isPaused = isPaused;
-      trips.isStarted = isStarted;
-      trips.isEnded = isEnded;
-      trips.isResumed = isResumed;
 
 
       return trips;

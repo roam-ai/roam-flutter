@@ -22,7 +22,7 @@ import 'package:roam_flutter/trips_v2/request/RoamTripStops.dart';
 typedef void RoamCallBack({String? location});
 typedef void RoamUserCallBack({String? user});
 typedef void RoamTripCallBack({String? trip});
-typedef void RoamLocationCallback(Map? location);
+typedef void RoamLocationCallback(List? locations);
 
 class Roam {
   static const String METHOD_INITIALIZE = "initialize";

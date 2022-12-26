@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:example/logger.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -21,26 +20,6 @@ import 'package:roam_flutter/trips_v2/request/RoamTripStops.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  AwesomeNotifications().initialize(
-    // set the icon to null if you want to use the default app icon
-      'null',
-      [
-        NotificationChannel(
-            channelGroupKey: 'basic_channel_group',
-            channelKey: 'basic_channel',
-            channelName: 'Basic notifications',
-            channelDescription: 'Notification channel for basic tests',
-            defaultColor: Color(0xFF9D50DD),
-            ledColor: Colors.white)
-      ],
-      // Channel groups are only visual and are not required
-      channelGroups: [
-        NotificationChannelGroup(
-            channelGroupkey: 'basic_channel_group',
-            channelGroupName: 'Basic group')
-      ],
-      debug: true
-  );
 
 
   runApp(MyApp());
@@ -140,15 +119,7 @@ class _MyHomePage extends State<MyHomePage> {
     initPlatformState();
     Roam.initialize(
         publishKey:
-        "bbbf78b0184d74b026437d4bb51df89798ba4c015b3d39dae8c6d3a8fcc0222d");
-    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-      if (!isAllowed) {
-        // This is just a basic example. For real apps, you must show some
-        // friendly dialog box before call the request method.
-        // This is very important to not harm the user experience
-        AwesomeNotifications().requestPermissionToSendNotifications();
-      }
-    });
+        "34efb72045ad4307d10f527f4727f055115421f787a19dce31135d8820207e7f");
   }
 
   //Native to Flutter Channel
@@ -246,7 +217,7 @@ class _MyHomePage extends State<MyHomePage> {
                       try {
                         await Roam.initialize(
                             publishKey:
-                            'bbbf78b0184d74b026437d4bb51df89798ba4c015b3d39dae8c6d3a8fcc0222d');
+                            '34efb72045ad4307d10f527f4727f055115421f787a19dce31135d8820207e7f');
                       } on PlatformException {
                         print('Initialization Error');
                       }
@@ -1395,9 +1366,12 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                   if(Platform.isAndroid){
                     initializeService();
                   } else {
-                    Roam.onLocation((location) async {
-                      print(jsonEncode(location));
-                      await platform.invokeMethod('send_notification', {'body': jsonEncode(location)});
+                    Roam.onLocation((locations) async {
+                      print(jsonEncode(locations));
+                      locations.forEach((element) async {await platform.invokeMethod('send_notification', {'body': jsonEncode(locations)});});
+                      setState(() {
+                        locationResponse = locations.toString();
+                      });
                     });
                   }
 

@@ -18,10 +18,6 @@ class Trips{
   List<Events?>? events = List.empty(growable: true);
   List<Stop?>? stop = List.empty(growable: true);
   String? syncStatus;
-  bool? isPaused=false;
-  bool? isStarted=false;
-  bool? isEnded=false;
-  bool? isResumed=false;
 
   Map toJson () => {
     'id': id,
@@ -38,10 +34,6 @@ class Trips{
     'events': getEventsMapList(events ?? List.empty(growable: true)),
     'stops': getStopList(stop ?? List.empty(growable: true)),
     'syncStatus': syncStatus,
-    'isPaused': isPaused,
-    'isStarted': isStarted,
-    'isEnded': isEnded,
-    'isResumed': isResumed
   };
 
 

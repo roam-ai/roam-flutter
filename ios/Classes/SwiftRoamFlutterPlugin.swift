@@ -5,11 +5,23 @@ import CoreLocation
 
 
 public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, RoamDelegate {
+    
+    
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable : Any] = [:]) -> Bool {
         Roam.delegate = self
         return true
     }
+
     
+    public func didUpdateLocation(_ locations: [RoamLocation]) {
+                var locationArray: NSMutableArray = []
+                for location in locations {
+                    locationArray.add(mapLocation(location))
+                }
+                if(SwiftRoamFlutterPlugin.eventSink != nil){
+                    SwiftRoamFlutterPlugin.eventSink!(locationArray)
+                }
+    }
     
     
     private static let METHOD_INITIALIZE = "initialize";
@@ -83,8 +95,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, RoamDelegate {
 
     
 
-    public func didUpdateLocation(_ roam: RoamLocation) {
-        debugPrint("Location Received SDK")
+    public func mapLocation(_ roam: RoamLocation) -> NSDictionary{
         let location: NSDictionary = [
             "latitude": roam.location.coordinate.latitude,
             "longitude": roam.location.coordinate.longitude,
@@ -100,10 +111,10 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, RoamDelegate {
             "batteryStatus": roam.batteryRemaining,
             "networkStatus": roam.networkStatus
         ]
-        if(SwiftRoamFlutterPlugin.eventSink != nil){
-            SwiftRoamFlutterPlugin.eventSink!(location)
-        }
+        return location;
     }
+    
+    
 
     public func applicationDidBecomeActive(_ application: UIApplication) {
         debugPrint("applicationDidBecomeActive")
