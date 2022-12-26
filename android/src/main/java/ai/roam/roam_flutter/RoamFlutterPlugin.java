@@ -58,7 +58,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -155,7 +154,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
       @Override
       public void onCancel(Object listener) {
-        Log.e("TAG", "onCancel: ");
+
       }
     });
   }
@@ -269,7 +268,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                  roamLocation.put("altitude", location.getAltitude());
                  roamLocation.put("accuracy", location.getAccuracy());
                  String locationText = roamLocation.toString();
-                 Log.e("TAG", locationText);
+
                  result.success(locationText);
                } catch (JSONException e) {
                  e.printStackTrace();
@@ -280,7 +279,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              public void onFailure(RoamError roamError) {
                roamError.getCode();
                roamError.getMessage();
-               Log.e("TAG", roamError.getMessage());
+
              }
            });
            break;
@@ -564,17 +563,17 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            if (roamTripString != null && !roamTripString.equals("")) {
              JSONObject roamTripJSON = new JSONObject(roamTripString);
 
-             Log.e("TAG", "creating trip");
+
 
              RoamTrip trip = JsonDecoder.decodeRoamTrip(roamTripJSON);
 
-             Log.e("TEST", "roam trip: " + new Gson().toJson(trip));
+
 
 
              Roam.createTrip(trip, new RoamTripCallback() {
                @Override
                public void onSuccess(RoamTripResponse roamTripResponse) {
-                 Log.e("TEST", "create trip gson: " + new Gson().toJson(roamTripResponse));
+
 
                  JSONObject json = JsonEncoder.encodeRoamTripResponse(roamTripResponse);
                  result.success(json.toString());
@@ -600,11 +599,11 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
            final String roamTripUpdateString = call.argument("roamTrip");
            if (roamTripUpdateString != null && !roamTripUpdateString.equals("")) {
-             Log.e("TEST", roamTripUpdateString);
+
              JSONObject roamTripJSON = new JSONObject(roamTripUpdateString);
              RoamTrip trip = JsonDecoder.decodeRoamTrip(roamTripJSON);
 
-             Log.e("TEST", "update trip: " + new Gson().toJson(trip));
+
 
                Roam.updateTrip(trip, new RoamTripCallback() {
                  @Override
@@ -729,14 +728,14 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              Roam.startTrip(roamTrip, roamTrackingMode, new RoamTripCallback() {
                @Override
                public void onSuccess(RoamTripResponse roamTripResponse) {
-                 Log.e("TEST", "offline trip response: " + new Gson().toJson(roamTripResponse));
+
                  JSONObject json = JsonEncoder.encodeRoamTripResponse(roamTripResponse);
                  result.success(json.toString());
                }
 
                @Override
                public void onError(Error error) {
-                 Log.e("TEST", "offline quick trip: " + new Gson().toJson(error));
+
                  JSONObject json = new JSONObject();
                  try {
                    json.put("error", JsonEncoder.encodeError(error));
@@ -903,7 +902,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            Roam.getActiveTrips(isLocal, new RoamActiveTripsCallback() {
              @Override
              public void onSuccess(RoamActiveTripsResponse roamActiveTripsResponse) {
-               Log.e("ROAM", "active trips response: " +new Gson().toJson(roamActiveTripsResponse));
+
                JSONObject json = JsonEncoder.encodeRoamActiveTripsResponse(roamActiveTripsResponse);
                result.success(json.toString());
              }
