@@ -205,8 +205,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            break;
 
          case METHOD_INITIALIZE:
-           final String publishKey = call.argument("publishKey");
-           Roam.initialize(this.context, publishKey);
+           initialize(call, result);
            break;
 
          case METHOD_ALLOW_MOCK_LOCATION:
@@ -963,7 +962,13 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
      }
   }
 
-    @Override
+  private void initialize(@NonNull MethodCall call, @NonNull Result result) {
+    final String publishKey = call.argument("publishKey");
+    Roam.initialize(this.context, publishKey);
+    result.success(true);
+  }
+
+  @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     this.context = null;
     channel.setMethodCallHandler(null);
