@@ -108,11 +108,11 @@ class Roam {
   /// Get User
   /// Accepts Roam User Id in String Format
   /// Returns Roam User
-  static Future<void> getUser(
-      {required String userId, required RoamUserCallBack callBack}) async {
+  static Future<String?> getUser({
+    required String userId,
+  }) async {
     final Map<String, dynamic> params = <String, dynamic>{'userId': userId};
-    final String? result = await _channel.invokeMethod(METHOD_GET_USER, params);
-    callBack(user: result);
+    return await _channel.invokeMethod(METHOD_GET_USER, params);
   }
 
   /// Toggle User Listener
