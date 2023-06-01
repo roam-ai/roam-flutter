@@ -1366,11 +1366,11 @@ class _MyLocationTrackingPageState extends State<MyLocationTrackingPage> {
                   if(Platform.isAndroid){
                     initializeService();
                   } else {
-                    Roam.onLocation((locations) async {
-                      print(jsonEncode(locations));
-                      locations.forEach((element) async {await platform.invokeMethod('send_notification', {'body': jsonEncode(locations)});});
+                    Roam.onLocation((location) async {
+                      print(jsonEncode(location));
+                      await platform.invokeMethod('send_notification', {'body': jsonEncode(location)});
                       setState(() {
-                        locationResponse = locations.toString();
+                        locationResponse = location.toString();
                       });
                     });
                   }

@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'roam_flutter'
-  s.version          = '0.1.0'
+  s.version          = '0.1.5'
   s.summary          = 'This plugin allows to use the Roam.ai SDK in your Flutter mobile application on iOS and Android.'
   s.description      = 'This plugin allows to use the Roam.ai SDK in your Flutter mobile application on iOS and Android.'
   s.homepage         = 'https://roam.ai'
@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'roam-ios', '~> 0.1.4'
+  s.dependency 'roam-ios', '~> 0.1.12'
   s.static_framework = true
   s.platform = :ios, '14.0'
 

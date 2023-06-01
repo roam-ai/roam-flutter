@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:core';
@@ -22,7 +23,7 @@ import 'package:roam_flutter/trips_v2/request/RoamTripStops.dart';
 typedef void RoamCallBack({String? location});
 typedef void RoamUserCallBack({String? user});
 typedef void RoamTripCallBack({String? trip});
-typedef void RoamLocationCallback(List? locations);
+typedef void RoamLocationCallback(Map? location);
 
 class Roam {
   static const String METHOD_INITIALIZE = "initialize";

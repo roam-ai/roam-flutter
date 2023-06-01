@@ -16,10 +16,9 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, RoamDelegate {
     public func didUpdateLocation(_ locations: [RoamLocation]) {
                 var locationArray: NSMutableArray = []
                 for location in locations {
-                    locationArray.add(mapLocation(location))
-                }
-                if(SwiftRoamFlutterPlugin.eventSink != nil){
-                    SwiftRoamFlutterPlugin.eventSink!(locationArray)
+                    if(SwiftRoamFlutterPlugin.eventSink != nil){
+                        SwiftRoamFlutterPlugin.eventSink!(mapLocation(location))
+                    }
                 }
     }
     

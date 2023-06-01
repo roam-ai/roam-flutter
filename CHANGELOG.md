@@ -1,3 +1,7 @@
+## 0.1.5
+* Updated Roam Android SDK to 0.1.14 and iOS SDK 0.1.12
+* Fixed location listener output
+
 ## 0.1.4
 * Updated Roam Android SDK to 0.1.7 and iOS SDK 0.1.4
 
