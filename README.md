@@ -27,7 +27,7 @@ Add following lines to your applications pubspec.yml:
 
 ```dart
 dependencies:
-  roam_flutter: ^0.1.5
+  roam_flutter: ^0.1.6
 ```
 Install the plugin using the following command:
 ```dart
@@ -232,6 +232,7 @@ Roam.stopTracking();
 ## Location Listener
 
 To receive locations in dart use the below method.
+
 
 ```dart
 Roam.onLocation((location) {
