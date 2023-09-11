@@ -1,6 +1,6 @@
 name: roam_flutter
 description: This plugin allows to use the Roam.ai SDK in your Flutter mobile application on iOS and Android.
-version: 0.1.5
+version: 0.1.6
 homepage: https://www.roam.ai
 
 environment:
