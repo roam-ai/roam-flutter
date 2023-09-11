@@ -233,6 +233,7 @@ Roam.stopTracking();
 
 To receive locations in dart use the below method.
 
+
 ```dart
 Roam.onLocation((location) {
                       print(jsonEncode(location));
