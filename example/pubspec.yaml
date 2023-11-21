@@ -3,10 +3,12 @@ description: Demonstrates how to use the roam_flutter plugin.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=3.0.3 <4.0.0"
 
 dependencies:
   permission_handler: ^9.2.0
@@ -28,7 +30,6 @@ dependencies:
   cupertino_icons: ^1.0.3
   path_provider: ^2.0.9
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -40,7 +41,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
