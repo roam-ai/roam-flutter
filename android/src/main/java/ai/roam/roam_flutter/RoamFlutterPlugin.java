@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.util.Log;
 
 
 import com.google.gson.Gson;
@@ -309,27 +310,7 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            break;
 
          case METHOD_GET_USER:
-           final String userId = call.argument("userId");
-           Roam.getUser(userId, new RoamCallback() {
-             @Override
-             public void onSuccess(RoamUser roamUser) {
-               JSONObject user = new JSONObject();
-               try {
-                 user.put("userId", roamUser.getUserId());
-                 user.put("description", roamUser.getDescription());
-                 String userText = user.toString();
-                 result.success(userText);
-               } catch (JSONException e) {
-                 e.printStackTrace();
-               }
-             }
-
-             @Override
-             public void onFailure(RoamError roamError) {
-               roamError.getMessage();
-               roamError.getCode();
-             }
-           });
+           getUser(call, result);
            break;
 
          case METHOD_TOGGLE_LISTENER:
@@ -963,7 +944,35 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
      }
   }
 
-    @Override
+  private void getUser(@NonNull MethodCall call, final Result result) {
+    final String userId = call.argument("userId");
+    Roam.getUser(userId, new RoamCallback() {
+      @Override
+      public void onSuccess(RoamUser roamUser) {
+        JSONObject user = new JSONObject();
+        try {
+          user.put("userId", roamUser.getUserId());
+          user.put("description", roamUser.getDescription());
+          String userText = user.toString();
+          result.success(userText);
+        } catch (JSONException e) {
+          e.printStackTrace();
+        }
+      }
+
+      @Override
+      public void onFailure(RoamError roamError) {
+        result.error(
+          "roam_" + roamError.getCode(),
+          roamError.getMessage(),
+          null
+        );
+      }
+    });
+  }
+
+
+  @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     this.context = null;
     channel.setMethodCallHandler(null);

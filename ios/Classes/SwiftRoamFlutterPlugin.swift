@@ -258,20 +258,8 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, RoamDelegate {
                 }
             }
         case SwiftRoamFlutterPlugin.METHOD_GET_USER:
-            let arguments = call.arguments as! [String: Any]
-            let userId = arguments["userId"]  as! String;
-            Roam.getUser(userId) {(roamUser, error) in
-                let user: NSDictionary = [
-                    "userId": roamUser?.userId as Any,
-                    "description":roamUser?.userDescription as Any
-                ]
-                if let theJSONData = try? JSONSerialization.data(
-                    withJSONObject: user,
-                    options: []) {
-                    let theJSONText = String(data: theJSONData,encoding: .ascii)
-                    result(theJSONText)
-                }
-            }
+            getUser(call, result)
+        
         case SwiftRoamFlutterPlugin.METHOD_UPDATE_CURRENT_LOCATION:
             let arguments = call.arguments as! [String: Any]
             let accuracy = arguments["accuracy"]  as! Int;
@@ -771,8 +759,31 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, RoamDelegate {
             result("iOS " + UIDevice.current.systemVersion)
         }
     }
-    
-    
+
+    private func getUser(_ call: FlutterMethodCall,_ result: @escaping FlutterResult) {
+        let arguments = call.arguments as! [String: Any]
+        let userId = arguments["userId"]  as! String;
+        Roam.getUser(userId) {(roamUser, error) in
+            if error != nil {
+                result(FlutterError.init(
+                   code: "roam_" + error!.code!,
+                   message: error!.message!,
+                   details: nil
+               ))
+                return
+            }
+            let user: NSDictionary = [
+                "userId": roamUser?.userId as Any,
+                "description":roamUser?.userDescription as Any
+            ]
+            if let theJSONData = try? JSONSerialization.data(
+                withJSONObject: user,
+                options: []) {
+                let theJSONText = String(data: theJSONData,encoding: .ascii)
+                result(theJSONText)
+            }
+        }
+    } 
     
     //JSON encode
     
