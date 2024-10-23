@@ -1,57 +1,41 @@
+import '../models/Coordinates.dart';
+import '../trips_v2/models/Data.dart';
+import '../trips_v2/models/User.dart';
+import '../trips_v2/models/Stop.dart';
+import '../trips_v2/models/Error.dart';
+import '../trips_v2/models/Trips.dart';
+import '../trips_v2/models/Errors.dart';
+import '../trips_v2/models/Events.dart';
+import '../trips_v2/models/Routes.dart';
+import '../trips_v2/models/Geometry.dart';
+import '../trips_v2/models/TripDetails.dart';
+import '../trips_v2/models/EndLocation.dart';
+import '../trips_v2/models/StartLocation.dart';
+import '../trips_v2/models/RoamTripResponse.dart';
+import '../trips_v2/models/Trip.dart' as ResponseTrip;
+import '../trips_v2/models/RoamSyncTripResponse.dart';
+import '../trips_v2/models/RoamDeleteTripResponse.dart';
+import '../trips_v2/models/RoamActiveTripsResponse.dart';
 
-import 'dart:developer';
-
-import 'package:roam_flutter/RoamTrackingMode.dart';
-import 'package:roam_flutter/models/Coordinates.dart';
-import 'package:roam_flutter/trips_v2/models/Data.dart';
-import 'package:roam_flutter/trips_v2/models/EndLocation.dart';
-import 'package:roam_flutter/trips_v2/models/Error.dart';
-import 'package:roam_flutter/trips_v2/models/Errors.dart';
-import 'package:roam_flutter/trips_v2/models/Events.dart';
-import 'package:roam_flutter/trips_v2/models/Geometry.dart';
-import 'package:roam_flutter/trips_v2/models/RoamActiveTripsResponse.dart';
-import 'package:roam_flutter/trips_v2/models/RoamDeleteTripResponse.dart';
-import 'package:roam_flutter/trips_v2/models/RoamSyncTripResponse.dart';
-import 'package:roam_flutter/trips_v2/models/RoamTripResponse.dart';
-import 'package:roam_flutter/trips_v2/models/Routes.dart';
-import 'package:roam_flutter/trips_v2/models/StartLocation.dart';
-import 'package:roam_flutter/trips_v2/models/Stop.dart';
-import 'package:roam_flutter/trips_v2/models/Trip.dart' as ResponseTrip;
-import 'package:roam_flutter/trips_v2/models/TripDetails.dart';
-import 'package:roam_flutter/trips_v2/models/Trips.dart';
-import 'package:roam_flutter/trips_v2/models/User.dart';
-
-class JsonDecoder{
-
-  static RoamTripResponse? decodeRoamTripResponse(Map json){
-
-    if(!json.containsKey("trip")){
+class JsonDecoder {
+  static RoamTripResponse? decodeRoamTripResponse(Map json) {
+    if (!json.containsKey("trip")) {
       return null;
     }
-
 
     var code = json['code'];
     String? message = json['message'];
     String? description = json['description'];
     TripDetails? tripDetails = (json['trip'] == "") ? null : JsonDecoder.decodeTripDetails(json['trip']);
 
-    RoamTripResponse roamTripResponse = RoamTripResponse(
-      code: code,
-      message: message,
-      description: description,
-      tripDetails: tripDetails
-    );
+    RoamTripResponse roamTripResponse = RoamTripResponse(code: code, message: message, description: description, tripDetails: tripDetails);
     return roamTripResponse;
   }
 
-
-
-  static TripDetails? decodeTripDetails(Object? mapInput){
-
-    if(mapInput == null || !(mapInput is Map?)){
+  static TripDetails? decodeTripDetails(Object? mapInput) {
+    if (mapInput == null || !(mapInput is Map?)) {
       return null;
     }
-
 
     try {
       Map map = mapInput as Map;
@@ -64,11 +48,9 @@ class JsonDecoder{
       var totalDuration = map['total_duration'];
       var totalElevationGain = map['total_elevation_gain'];
       var metadata = map['metadata'];
-      StartLocation? startLocation = JsonDecoder.decodeStartLocation(
-          map['start_location']);
+      StartLocation? startLocation = JsonDecoder.decodeStartLocation(map['start_location']);
 
-      EndLocation? endLocation = JsonDecoder.decodeEndLocation(
-          map['end_location']);
+      EndLocation? endLocation = JsonDecoder.decodeEndLocation(map['end_location']);
       User? user = JsonDecoder.decodeUser(map['user']);
       String? startedAt = map['started_at'];
       String? endedAt = map['ended_at'];
@@ -121,22 +103,16 @@ class JsonDecoder{
           stops: stops,
           events: eventsList,
           route: routesList,
-          routeIndex: routeIndex
-      );
+          routeIndex: routeIndex);
       return tripDetails;
-    } catch(error){
+    } catch (error) {
       print('decodeTripDetail: ' + error.toString());
       return null;
     }
   }
 
-
-
-
-
-  static StartLocation? decodeStartLocation(Object? mapInput){
-
-    if(mapInput == null || !(mapInput is Map?)){
+  static StartLocation? decodeStartLocation(Object? mapInput) {
+    if (mapInput == null || !(mapInput is Map?)) {
       return null;
     }
 
@@ -155,25 +131,16 @@ class JsonDecoder{
       List? coordinates = geometryMap?['coordinates'];
 
       Geometry geometry = Geometry(type: type, coordinates: coordinates);
-      StartLocation startLocation = StartLocation(
-          id: id,
-          name: name,
-          description: description,
-          address: address,
-          metadata: metadata,
-          recordedAt: recordedAt,
-          geometry: geometry
-      );
+      StartLocation startLocation = StartLocation(id: id, name: name, description: description, address: address, metadata: metadata, recordedAt: recordedAt, geometry: geometry);
       return startLocation;
-    } catch(error){
+    } catch (error) {
       print('decodeStartLocation' + error.toString());
       return null;
     }
   }
 
-  static EndLocation? decodeEndLocation(Object? mapInput){
-
-    if(mapInput == null || !(mapInput is Map?)){
+  static EndLocation? decodeEndLocation(Object? mapInput) {
+    if (mapInput == null || !(mapInput is Map?)) {
       return null;
     }
 
@@ -192,26 +159,16 @@ class JsonDecoder{
       List? coordinates = geometryMap?['coordinates'];
 
       Geometry geometry = Geometry(type: type, coordinates: coordinates);
-      EndLocation endLocation = EndLocation(
-          id: id,
-          name: name,
-          description: description,
-          address: address,
-          metadata: metadata,
-          recordedAt: recordedAt,
-          geometry: geometry
-      );
+      EndLocation endLocation = EndLocation(id: id, name: name, description: description, address: address, metadata: metadata, recordedAt: recordedAt, geometry: geometry);
       return endLocation;
-    } catch(error){
+    } catch (error) {
       print('decodeEndLocation' + error.toString());
       return null;
     }
   }
 
-
-  static User? decodeUser(Object? mapInput){
-
-    if(mapInput == null || !(mapInput is Map?)){
+  static User? decodeUser(Object? mapInput) {
+    if (mapInput == null || !(mapInput is Map?)) {
       return null;
     }
 
@@ -222,24 +179,16 @@ class JsonDecoder{
       String? description = map['description'];
       String? id = map['id'];
       var metadata = map['metadata'];
-      User user = User(
-          name: name,
-          description: description,
-          metadata: metadata,
-          id: id
-      );
+      User user = User(name: name, description: description, metadata: metadata, id: id);
       return user;
-    } catch (error){
+    } catch (error) {
       print('decodeUser ' + error.toString());
       return null;
     }
-
   }
 
-
-  static Stop? decodeStop(Object? mapInput){
-
-    if(mapInput == null || !(mapInput is Map?)){
+  static Stop? decodeStop(Object? mapInput) {
+    if (mapInput == null || !(mapInput is Map?)) {
       return null;
     }
 
@@ -256,7 +205,6 @@ class JsonDecoder{
       String? updatedAt = map['updated_at'];
       String? arrivedAt = map['arrived_at'];
       String? departedAt = map['departed_at'];
-
 
       var geometryMap = map['geometry'];
       String? type = geometryMap?['type'];
@@ -275,20 +223,16 @@ class JsonDecoder{
           updatedAt: updatedAt,
           arrivedAt: arrivedAt,
           departedAt: departedAt,
-          geometry: geometry
-      );
+          geometry: geometry);
       return stop;
-    } catch (error){
+    } catch (error) {
       print('decodeStop ' + error.toString());
       return null;
     }
   }
 
-
-
-  static Events? decodeEvents(Object? mapInput){
-
-    if(mapInput == null || !(mapInput is Map?)){
+  static Events? decodeEvents(Object? mapInput) {
+    if (mapInput == null || !(mapInput is Map?)) {
       return null;
     }
 
@@ -304,28 +248,17 @@ class JsonDecoder{
       String? eventVersion = map['event_version'];
       String? locationId = map['location_id'];
 
-      Events events = Events(
-          id: id,
-          tripId: tripId,
-          userId: userId,
-          eventType: eventType,
-          createdAt: createdAt,
-          eventSource: eventSource,
-          eventVersion: eventVersion,
-          locationId: locationId
-      );
+      Events events =
+          Events(id: id, tripId: tripId, userId: userId, eventType: eventType, createdAt: createdAt, eventSource: eventSource, eventVersion: eventVersion, locationId: locationId);
       return events;
-    } catch (error){
-      print('Decode event '+error.toString());
+    } catch (error) {
+      print('Decode event ' + error.toString());
       return null;
     }
   }
 
-
-
-  static Routes? decodeRoutes(Object? mapInput){
-
-    if(mapInput == null || !(mapInput is Map?)){
+  static Routes? decodeRoutes(Object? mapInput) {
+    if (mapInput == null || !(mapInput is Map?)) {
       return null;
     }
 
@@ -339,15 +272,11 @@ class JsonDecoder{
       var duration = map['duration'];
       var elevationGain = map['elevation_gain'];
 
-
       Map? coordinatesMap = map['coordinates'];
       String? type = coordinatesMap?['type'];
       List? coordinatesList = coordinatesMap?['coordinates'];
 
-      Coordinates? coordinates = Coordinates(
-          type: type,
-          coordinates: coordinatesList
-      );
+      Coordinates? coordinates = Coordinates(type: type, coordinates: coordinatesList);
 
       String? recordedAt = map['recorded_at'];
       String? locationId = map['location_id'];
@@ -362,20 +291,17 @@ class JsonDecoder{
           elevationGain: elevationGain,
           coordinates: coordinates,
           recordedAt: recordedAt,
-          locationId: locationId
-      );
+          locationId: locationId);
 
       return routes;
-    } catch(error){
-      print('decode route '+error.toString());
+    } catch (error) {
+      print('decode route ' + error.toString());
       return null;
     }
   }
 
-
-  static Error? decodeError(Object? mapInput){
-
-    if(mapInput == null || !(mapInput is Map?)){
+  static Error? decodeError(Object? mapInput) {
+    if (mapInput == null || !(mapInput is Map?)) {
       return null;
     }
 
@@ -391,29 +317,19 @@ class JsonDecoder{
       errorsMapList?.forEach((errorsMap) {
         String? field = errorsMap['field'];
         String? message = errorsMap['message'];
-        Errors errors = Errors(
-            field: field,
-            message: message
-        );
+        Errors errors = Errors(field: field, message: message);
         errorsList.add(errors);
       });
 
-      Error error = Error(
-          errorCode: errorCode,
-          errorMessage: errorMessage,
-          errorDescription: errorDescription,
-          errors: errorsList
-      );
+      Error error = Error(errorCode: errorCode, errorMessage: errorMessage, errorDescription: errorDescription, errors: errorsList);
       return error;
-    } catch(error){
-      print('decodeError '+error.toString());
+    } catch (error) {
+      print('decodeError ' + error.toString());
       return null;
     }
   }
 
-
-  static RoamDeleteTripResponse? decodeRoamDeleteTripResponse(Map map){
-
+  static RoamDeleteTripResponse? decodeRoamDeleteTripResponse(Map map) {
     String? message = map['message'];
     String? description = map['description'];
     var code = map['code'];
@@ -427,11 +343,7 @@ class JsonDecoder{
     return RoamDeleteTripResponse(message, description, code, trip);
   }
 
-
-
-  static RoamActiveTripResponse? decodeRoamActiveTripResopnse(Map map){
-
-
+  static RoamActiveTripResponse? decodeRoamActiveTripResponse(Map map) {
     var code = map['code'];
     var message = map['message'];
     var description = map['description'];
@@ -444,13 +356,10 @@ class JsonDecoder{
     });
 
     return RoamActiveTripResponse(code, message, description, hasMore, trips);
-
   }
 
-
-  static Trips? decodeTrips(Object? mapInput){
-
-    if(mapInput == null || !(mapInput is Map?)){
+  static Trips? decodeTrips(Object? mapInput) {
+    if (mapInput == null || !(mapInput is Map?)) {
       return null;
     }
 
@@ -483,7 +392,6 @@ class JsonDecoder{
 
       String? syncStatus = map['syncStatus'];
 
-
       Trips? trips = Trips();
 
       trips.id = id;
@@ -501,31 +409,24 @@ class JsonDecoder{
       trips.stop = stops;
       trips.syncStatus = syncStatus;
 
-
       return trips;
-    } catch (error){
-      print('decodeTrips '+error.toString());
+    } catch (error) {
+      print('decodeTrips ' + error.toString());
       return null;
     }
   }
 
-
-
-  static RoamSyncTripResponse? decodeRoamSyncTripResponse(Map map){
-
-
+  static RoamSyncTripResponse? decodeRoamSyncTripResponse(Map map) {
     String? msg = map['msg'];
     String? description = map['description'];
     var code = map['code'];
     Data? data = JsonDecoder.decodeData(map['data']);
 
     return RoamSyncTripResponse(msg, description, code, data);
-
   }
 
-  static Data? decodeData(Object? mapInput){
-
-    if(mapInput == null || !(mapInput is Map?)){
+  static Data? decodeData(Object? mapInput) {
+    if (mapInput == null || !(mapInput is Map?)) {
       return null;
     }
 
@@ -535,12 +436,5 @@ class JsonDecoder{
     bool? is_synced = map['is_synced'];
 
     return Data(trip_id, is_synced);
-
   }
-
-
-
-
-
-
 }
