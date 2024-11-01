@@ -1,6 +1,3 @@
-import 'package:roam_flutter/trips_v2/models/Error.dart';
-import 'package:roam_flutter/trips_v2/models/RoamActiveTripsResponse.dart';
+import '../../trips_v2/models/RoamActiveTripsResponse.dart';
 
-typedef void RoamActiveTripsCallback({
-  RoamActiveTripResponse? roamActiveTripResponse
-});
+typedef void RoamActiveTripsCallback({RoamActiveTripResponse? roamActiveTripResponse});

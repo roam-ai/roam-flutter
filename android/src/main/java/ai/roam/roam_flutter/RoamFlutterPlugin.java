@@ -8,8 +8,9 @@ import android.location.Location;
 
 import com.google.gson.Gson;
 import com.roam.sdk.Roam;
-import com.roam.sdk.RoamPublish;
-import com.roam.sdk.RoamTrackingMode;
+import com.roam.sdk.builder.RoamPublish;
+import com.roam.sdk.builder.RoamTrackingMode;
+import com.roam.sdk.callback.PublishCallback;
 import com.roam.sdk.callback.RoamCallback;
 import com.roam.sdk.callback.RoamCreateTripCallback;
 import com.roam.sdk.callback.RoamLocationCallback;
@@ -18,6 +19,8 @@ import com.roam.sdk.callback.RoamLogoutCallback;
 import com.roam.sdk.callback.RoamTripDetailCallback;
 import com.roam.sdk.callback.RoamTripStatusCallback;
 import com.roam.sdk.callback.RoamTripSummaryCallback;
+import com.roam.sdk.callback.SubscribeCallback;
+import com.roam.sdk.callback.TrackingCallback;
 import com.roam.sdk.models.RoamError;
 import com.roam.sdk.models.RoamLocation;
 import com.roam.sdk.models.RoamLocationReceived;
@@ -436,7 +439,17 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              @Override
              public void onSuccess(RoamUser roamUser) {
                String ownUserId = roamUser.getUserId();
-               Roam.subscribe(Roam.Subscribe.LOCATION, ownUserId);
+               Roam.subscribe(Roam.Subscribe.LOCATION, ownUserId, new SubscribeCallback() {
+                 @Override
+                 public void onSuccess(String s, String s1) {
+
+                 }
+
+                 @Override
+                 public void onError(RoamError roamError) {
+
+                 }
+               });
              }
 
              @Override
@@ -449,7 +462,17 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
 
          case METHOD_SUBSCRIBE_USER_LOCATION:
            final String otherUserId = call.argument("userId");
-           Roam.subscribe(Roam.Subscribe.LOCATION, otherUserId);
+           Roam.subscribe(Roam.Subscribe.LOCATION, otherUserId, new SubscribeCallback() {
+             @Override
+             public void onSuccess(String s, String s1) {
+
+             }
+
+             @Override
+             public void onError(RoamError roamError) {
+
+             }
+           });
            break;
 
          case METHOD_SUBSCRIBE_EVENTS:
@@ -457,7 +480,17 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              @Override
              public void onSuccess(RoamUser roamUser) {
                String ownUserIdEvents = roamUser.getUserId();
-               Roam.subscribe(Roam.Subscribe.EVENTS, ownUserIdEvents);
+               Roam.subscribe(Roam.Subscribe.EVENTS, ownUserIdEvents, new SubscribeCallback() {
+                 @Override
+                 public void onSuccess(String s, String s1) {
+
+                 }
+
+                 @Override
+                 public void onError(RoamError roamError) {
+
+                 }
+               });
              }
 
              @Override
@@ -498,22 +531,82 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
              case TRACKING_MODE_PASSIVE:
                RoamPublish roamPublish = new RoamPublish.Builder()
                        .build();
-               Roam.publishAndSave(roamPublish);
-               Roam.startTracking(RoamTrackingMode.PASSIVE);
+               Roam.publishAndSave(roamPublish, new PublishCallback() {
+                 @Override
+                 public void onSuccess(String s) {
+
+                 }
+
+                 @Override
+                 public void onError(RoamError roamError) {
+
+                 }
+               });
+               Roam.startTracking(RoamTrackingMode.PASSIVE, new TrackingCallback() {
+                 @Override
+                 public void onSuccess(String s) {
+
+                 }
+
+                 @Override
+                 public void onError(RoamError roamError) {
+
+                 }
+               });
                break;
 
              case TRACKING_MODE_BALANCED:
                RoamPublish roamPublishBalanced = new RoamPublish.Builder()
                        .build();
-               Roam.publishAndSave(roamPublishBalanced);
-               Roam.startTracking(RoamTrackingMode.BALANCED);
+               Roam.publishAndSave(roamPublishBalanced, new PublishCallback() {
+                 @Override
+                 public void onSuccess(String s) {
+
+                 }
+
+                 @Override
+                 public void onError(RoamError roamError) {
+
+                 }
+               });
+               Roam.startTracking(RoamTrackingMode.BALANCED, new TrackingCallback() {
+                 @Override
+                 public void onSuccess(String s) {
+
+                 }
+
+                 @Override
+                 public void onError(RoamError roamError) {
+
+                 }
+               });
                break;
 
              case TRACKING_MODE_ACTIVE:
                RoamPublish roamPublishActive = new RoamPublish.Builder()
                        .build();
-               Roam.publishAndSave(roamPublishActive);
-               Roam.startTracking(RoamTrackingMode.ACTIVE);
+               Roam.publishAndSave(roamPublishActive, new PublishCallback() {
+                 @Override
+                 public void onSuccess(String s) {
+
+                 }
+
+                 @Override
+                 public void onError(RoamError roamError) {
+
+                 }
+               });
+               Roam.startTracking(RoamTrackingMode.ACTIVE, new TrackingCallback() {
+                 @Override
+                 public void onSuccess(String s) {
+
+                 }
+
+                 @Override
+                 public void onError(RoamError roamError) {
+
+                 }
+               });
                break;
 
              case TRACKING_MODE_CUSTOM:
@@ -524,21 +617,81 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
                  customTrackingMode = new RoamTrackingMode.Builder(distanceInterval, 30).setDesiredAccuracy(RoamTrackingMode.DesiredAccuracy.HIGH).build();
                  RoamPublish roamPublishCustom = new RoamPublish.Builder()
                          .build();
-                 Roam.publishAndSave(roamPublishCustom);
-                 Roam.startTracking(customTrackingMode);
+                 Roam.publishAndSave(roamPublishCustom, new PublishCallback() {
+                   @Override
+                   public void onSuccess(String s) {
+
+                   }
+
+                   @Override
+                   public void onError(RoamError roamError) {
+
+                   }
+                 });
+                 Roam.startTracking(customTrackingMode, new TrackingCallback() {
+                   @Override
+                   public void onSuccess(String s) {
+
+                   }
+
+                   @Override
+                   public void onError(RoamError roamError) {
+
+                   }
+                 });
                } else if (customMethods.containsKey("timeInterval")) {
                  final int timeInterval = (int) customMethods.get("timeInterval");
                  customTrackingMode = new RoamTrackingMode.Builder(timeInterval).setDesiredAccuracy(RoamTrackingMode.DesiredAccuracy.HIGH).build();
                  RoamPublish roamPublishCustom = new RoamPublish.Builder()
                          .build();
-                 Roam.publishAndSave(roamPublishCustom);
-                 Roam.startTracking(customTrackingMode);
+                 Roam.publishAndSave(roamPublishCustom, new PublishCallback() {
+                   @Override
+                   public void onSuccess(String s) {
+
+                   }
+
+                   @Override
+                   public void onError(RoamError roamError) {
+
+                   }
+                 });
+                 Roam.startTracking(customTrackingMode, new TrackingCallback() {
+                   @Override
+                   public void onSuccess(String s) {
+
+                   }
+
+                   @Override
+                   public void onError(RoamError roamError) {
+
+                   }
+                 });
                } else {
                  customTrackingMode = new RoamTrackingMode.Builder(15, 30).setDesiredAccuracy(RoamTrackingMode.DesiredAccuracy.HIGH).build();
                  RoamPublish roamPublishCustom = new RoamPublish.Builder()
                          .build();
-                 Roam.publishAndSave(roamPublishCustom);
-                 Roam.startTracking(customTrackingMode);
+                 Roam.publishAndSave(roamPublishCustom, new PublishCallback() {
+                   @Override
+                   public void onSuccess(String s) {
+
+                   }
+
+                   @Override
+                   public void onError(RoamError roamError) {
+
+                   }
+                 });
+                 Roam.startTracking(customTrackingMode, new TrackingCallback() {
+                   @Override
+                   public void onSuccess(String s) {
+
+                   }
+
+                   @Override
+                   public void onError(RoamError roamError) {
+
+                   }
+                 });
                }
                break;
 
@@ -548,7 +701,17 @@ public class RoamFlutterPlugin implements FlutterPlugin, MethodCallHandler, Acti
            break;
 
          case METHOD_STOP_TRACKING:
-           Roam.stopTracking();
+           Roam.stopTracking(new TrackingCallback() {
+             @Override
+             public void onSuccess(String s) {
+
+             }
+
+             @Override
+             public void onError(RoamError roamError) {
+
+             }
+           });
            break;
 
 

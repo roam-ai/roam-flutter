@@ -870,7 +870,7 @@ public class SwiftRoamFlutterPlugin: NSObject, FlutterPlugin, RoamDelegate {
         for route in routes{
             let coordinate: [String: Any] = [
                 "type": "" as String,
-                "coordinates": route.coordinates as [Double]
+                "coordinates": (route.coordinates!).coordinates as [Double]
             ]
             let routeDictionary: [String: Any] = [
                 "metadata": "" as String,

@@ -1,50 +1,44 @@
-import 'package:roam_flutter/RoamTrackingMode.dart';
-import 'package:roam_flutter/json/JsonDecoder.dart';
-import 'package:roam_flutter/trips_v2/RoamTrip.dart';
-import 'package:roam_flutter/trips_v2/request/RoamTripStops.dart';
+import '../RoamTrackingMode.dart';
+import '../trips_v2/RoamTrip.dart';
+import '../trips_v2/request/RoamTripStops.dart';
 
-class JsonEncoder{
-
-  static Map<String, dynamic> encodeRoamTrip(RoamTrip roamTrip){
-
+class JsonEncoder {
+  static Map<String, dynamic> encodeRoamTrip(RoamTrip roamTrip) {
     Map<String, dynamic> json = Map();
 
     List<Map<String, dynamic>> stops = List.empty(growable: true);
     roamTrip.stop?.forEach((stop) {
       stops.add(JsonEncoder.encodeRoamTripStops(stop));
     });
-    if(roamTrip.stop != null){
+    if (roamTrip.stop != null) {
       json['stops'] = stops;
     }
-    if(roamTrip.tripId != null){
+    if (roamTrip.tripId != null) {
       json['tripId'] = roamTrip.tripId;
     }
-    if(roamTrip.isLocal != null){
+    if (roamTrip.isLocal != null) {
       json['isLocal'] = roamTrip.isLocal;
     }
-    if(roamTrip.userId != null){
+    if (roamTrip.userId != null) {
       json['userId'] = roamTrip.userId;
     }
-    if(roamTrip.metadata != null){
+    if (roamTrip.metadata != null) {
       json['metadata'] = roamTrip.metadata;
     }
-    if(roamTrip.description != null){
+    if (roamTrip.description != null) {
       json['description'] = roamTrip.description;
     }
-    if(roamTrip.name != null){
+    if (roamTrip.name != null) {
       json['name'] = roamTrip.name;
     }
-    if(roamTrip.tripId != null){
+    if (roamTrip.tripId != null) {
       json['tripId'] = roamTrip.tripId;
     }
 
     return json;
   }
 
-
-
-  static Map<String, dynamic> encodeRoamTripStops(RoamTripStops stop){
-
+  static Map<String, dynamic> encodeRoamTripStops(RoamTripStops stop) {
     Map<String, dynamic> stopMap = Map();
     stopMap['metadata'] = stop.metadata ?? "";
     stopMap['description'] = stop.description ?? "";
@@ -56,9 +50,7 @@ class JsonEncoder{
     return stopMap;
   }
 
-
-  static Map<String, dynamic> encodeRoamTrackingMode(RoamTrackingMode roamTrackingMode){
-
+  static Map<String, dynamic> encodeRoamTrackingMode(RoamTrackingMode roamTrackingMode) {
     Map<String, dynamic> map = Map();
 
     map['desiredAccuracy'] = roamTrackingMode.desiredAccuracy.value;
@@ -73,12 +65,6 @@ class JsonEncoder{
     map["showsBackgroundLocationIndicator"] = roamTrackingMode.showsBackgroundLocationIndicator;
     map["accuracyFilter"] = roamTrackingMode.accuracyFilter;
 
-
     return map;
   }
-
-
-
-
-
 }
