@@ -54,7 +54,13 @@ public class RoamForegroundService extends Service {
         roamFlutterReceiver = new RoamFlutterPlugin.RoamFlutterReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("com.roam.android.RECEIVED");
-        registerReceiver(roamFlutterReceiver, intentFilter);
+//        registerReceiver(roamFlutterReceiver, intentFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(roamFlutterReceiver, intentFilter, RECEIVER_EXPORTED);
+        }else{
+            registerReceiver(roamFlutterReceiver, intentFilter);
+        }
+
     }
 
     private void unRegister() {
