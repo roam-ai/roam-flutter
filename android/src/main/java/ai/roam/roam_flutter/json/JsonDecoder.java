@@ -3,7 +3,7 @@ package ai.roam.roam_flutter.json;
 import android.util.Log;
 
 import com.roam.sdk.Roam;
-import com.roam.sdk.RoamTrackingMode;
+import com.roam.sdk.builder.RoamTrackingMode;
 import com.roam.sdk.trips_v2.RoamTrip;
 import com.roam.sdk.trips_v2.models.Stop;
 import com.roam.sdk.trips_v2.request.RoamTripStops;
