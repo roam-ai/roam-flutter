@@ -9,11 +9,13 @@
 [![Pub.dev Publish](https://github.com/roam-ai/roam-flutter/actions/workflows/dart.yml/badge.svg?branch=master)](https://github.com/roam-ai/roam-flutter/actions/workflows/dart.yml)
 
 # Official Roam Flutter SDK
+
 This is the official Roam Flutter SDK developed and maintained by Roam B.V
 
 Note: Before you get started [signup to our dashboard](https://roam.ai) to get your API Keys.
 
 # Quick Start
+
 The Roam Flutter Plugin makes it quick and easy to build a
 location tracker for your Flutter app. We provide powerful and
 customizable tracking modes and features that can be used to collect
@@ -27,12 +29,15 @@ Add following lines to your applications pubspec.yml:
 
 ```dart
 dependencies:
-  roam_flutter: ^0.1.6
+  roam_flutter: ^0.1.7
 ```
+
 Install the plugin using the following command:
+
 ```dart
 flutter pub get
 ```
+
 Alternatively, the code editor might support flutter pub get. Check the editor docs for your editor to learn more.
 
 ## Platform Configuration
@@ -56,7 +61,7 @@ Embed Swift Standard Libraries' to 'Yes'.
 
 Add below lines in your `AndroidManifest.xml` file.
 
-``` xml
+```xml
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -71,30 +76,31 @@ Add below lines in your `AndroidManifest.xml` file.
 
 Import the plugin in the main.dart file of your project
 
-``` dart
+```dart
 import 'package:roam_flutter/roam_flutter.dart';
 ```
 
 Initialize the plugin with your `sdk key`.
 
-``` dart
+```dart
 Roam.initialize(publishKey:'YOUR-SDK-KEY');
 ```
 
 ## Creating Users
 
-Once the SDK is initialized, we need to *create* or *get a user* to
+Once the SDK is initialized, we need to _create_ or _get a user_ to
 start the tracking and use other methods. Every user created will have a
 unique Roam identifier which will be used later to login and access
 developer APIs. We can call it as Roam userId.
 
-``` dart
+```dart
 Roam.createUser(description:'Joe',callBack: ({user}) {
 // do something on create user
 print(user);
 });
 ```
-The option *user description* can be used to update your user
+
+The option _user description_ can be used to update your user
 information such as name, address or add an existing user ID. Make sure
 the information is encrypted if you are planning to save personal user
 information like email or phone number.
@@ -109,7 +115,7 @@ Roam.setDescription(description:'Joe');
 If you already have a Roam userID which you would like to reuse
 instead of creating a new user, use the below to get user session.
 
-``` dart
+```dart
 Roam.getUser(userId:'60181b1f521e0249023652bc',callBack: ({user}) {
 // do something on get user
 print(user);
@@ -127,19 +133,24 @@ Add this to your package's pubspec.yaml file:
 dependencies:
   permission_handler: ^5.1.0+2
 ```
+
 Now in your Dart code, you can use:
 
 ```dart
 import 'package:permission_handler/permission_handler.dart';
 ```
+
 Used the below below method to request location permissions.
+
 ```dart
 Permission.locationAlways.request();
 ```
+
 ## Location Tracking
+
 ### Start Tracking
 
-``` dart
+```dart
 Roam.startTracking(trackingMode: 'TRACKING-MODE');
 ```
 
@@ -180,13 +191,13 @@ customize and build your own tracking modes.
 
 **iOS**
 
-``` dart
+```dart
 Roam.startTracking(trackingMode: "custom",customMethods: <CUSTOM_TRACKING_METHOD>);
 ```
 
 Example
 
-``` dart
+```dart
 Map<String, dynamic> fitnessTracking = {
                           "activityType": "fitness",
                           "pausesLocationUpdatesAutomatically": true,
@@ -207,14 +218,14 @@ connectivity issues.
 
 In Android, you can set custom tracking to two different tracking options. Once with fixed distance interval and another with time based interval.
 
-``` dart
+```dart
 Map<String, dynamic> fitnessTracking = {
                           "distanceInterval": 10
                         };
 Roam.startTracking(trackingMode: "custom",customMethods: fitnessTracking);
 ```
 
-``` dart
+```dart
 Map<String, dynamic> fitnessTracking = {
                           "timeInterval": 10
                         };
@@ -225,14 +236,13 @@ Roam.startTracking(trackingMode: "custom",customMethods: fitnessTracking);
 
 To stop the tracking use the below method.
 
-``` dart
+```dart
 Roam.stopTracking();
 ```
 
 ## Location Listener
 
 To receive locations in dart use the below method.
-
 
 ```dart
 Roam.onLocation((location) {
@@ -241,9 +251,13 @@ Roam.onLocation((location) {
 ```
 
 ## SDK Methods
+
 - Please visit our [Developer Center](https://github.com/roam-ai/roam-flutter/wiki/SDK-Methods) for instructions on other SDK methods.
+
 ## Contributing
+
 - For developing the SDK, please visit our [CONTRIBUTING.md](https://github.com/roam-ai/roam-flutter/blob/master/CONTRIBUTING.md) to get started.
 
 ## Need Help?
+
 If you have any problems or issues over our SDK, feel free to create a github issue or submit a request on [Roam Help](https://geosparkai.atlassian.net/servicedesk/customer/portal/2).
